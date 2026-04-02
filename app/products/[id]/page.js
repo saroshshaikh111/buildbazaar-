@@ -98,12 +98,12 @@ export default function ProductDetailPage() {
             </div>
 
             <main className="max-w-7xl mx-auto px-4 pt-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-12 items-start">
                     
-                    {/* Left: Media Section */}
-                    <div className="lg:sticky lg:top-24 h-fit">
-                        <div className="bg-white rounded-3xl overflow-hidden border shadow-sm relative group max-w-md mx-auto lg:mx-0">
-                            <div className="aspect-[4/3] bg-slate-50 flex items-center justify-center p-6">
+                    {/* Left: Media Section (Now Compact) */}
+                    <div className="lg:sticky lg:top-24">
+                        <div className="bg-white rounded-3xl overflow-hidden border shadow-sm relative group">
+                            <div className="aspect-[4/3] bg-slate-50 flex items-center justify-center p-4">
                                 {product.images?.[activeImage] ? (
                                     <img 
                                         src={product.images[activeImage]} 
