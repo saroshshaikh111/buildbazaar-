@@ -80,135 +80,153 @@ export default function ProductDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20 font-sans">
-            {/* Header / Breadcrumbs */}
-            <div className="bg-white border-b sticky top-0 z-10">
-                <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <button 
-                        onClick={() => router.back()}
-                        className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-                    >
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <div className="text-sm text-slate-400 font-bold hidden sm:block uppercase tracking-widest text-center flex-1 pr-10">
-                        Catalogue / {product.category} / {product.brand}
+        <div className="min-h-screen bg-slate-50 pb-24 font-sans animate-pro-load">
+            {/* Pro Header / Command Bar */}
+            <div className="bg-slate-900 border-b border-white/10 sticky top-0 z-50 text-white">
+                <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                        <button 
+                            onClick={() => router.back()}
+                            className="p-2.5 hover:bg-white/10 rounded-xl transition-all border border-white/5"
+                        >
+                            <ChevronLeft className="w-6 h-6" />
+                        </button>
+                        <div className="h-8 w-px bg-white/10"></div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-0.5">Procurement Node</span>
+                            <span className="text-sm font-bold text-slate-300">#{params.id.toUpperCase()} // {product.category}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <main className="max-w-4xl mx-auto px-4 pt-16">
-                {/* Product Header */}
-                <div className="mb-12">
-                    <div className="flex items-center gap-3 mb-4">
-                        <span className="bg-orange-600 text-white px-3 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter">
-                            {product.brand}
-                        </span>
+            {/* Technical Hero Section */}
+            <div className="pro-grid-bg py-24 border-b border-white/5 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/50"></div>
+                <div className="max-w-5xl mx-auto px-6 relative z-10">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="bg-orange-600/20 text-orange-500 px-4 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border border-orange-500/30">
+                            {product.brand} Industrial Grade
+                        </div>
                         {product.verified && (
-                            <span className="flex items-center gap-1 text-blue-600 font-bold text-[10px] uppercase">
-                                <ShieldCheck className="w-3.5 h-3.5" /> Verified Supplier
-                            </span>
+                            <div className="flex items-center gap-2 text-blue-400 font-bold text-[11px] uppercase tracking-widest px-4 py-1 bg-blue-500/10 rounded-full border border-blue-500/20">
+                                <ShieldCheck className="w-4 h-4" /> Authenticated Supplier
+                            </div>
                         )}
                     </div>
                     
-                    <h1 className="text-5xl sm:text-6xl font-black text-slate-900 leading-[1.1] mb-6 tracking-tight">
+                    <h1 className="text-6xl sm:text-7xl font-black text-white leading-tight mb-8 tracking-tighter drop-shadow-2xl">
                         {product.title}
                     </h1>
 
-                    <div className="flex items-center gap-8">
-                        <div className="flex items-center text-slate-900 font-black text-lg">
-                            <Star className="w-5 h-5 fill-orange-500 text-orange-500 mr-2" />
-                            {product.rating} <span className="text-slate-400 font-bold ml-2 text-sm">/ 5.0 Rating</span>
+                    <div className="flex flex-wrap items-center gap-10">
+                        <div className="flex items-center">
+                            <div className="flex gap-1 mr-4">
+                                {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 fill-orange-500 text-orange-500" />)}
+                            </div>
+                            <span className="text-white font-black text-2xl">{product.rating}</span>
+                            <span className="text-slate-500 font-bold ml-3 text-sm tracking-wide uppercase">/ 5.0 Rating</span>
                         </div>
-                        <div className="h-4 w-px bg-slate-200"></div>
-                        <span className="text-slate-500 text-sm font-bold uppercase tracking-wide">
-                            {product.reviews.toLocaleString()} Verified Procurements
-                        </span>
+                        <div className="h-10 w-px bg-white/10 hidden sm:block"></div>
+                        <div className="flex flex-col">
+                            <span className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Market Trust</span>
+                            <span className="text-white font-bold tracking-tight">
+                                {product.reviews.toLocaleString()} Verified Deployments
+                            </span>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Primary Action Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-                    {/* Pricing Card */}
-                    <div className="bg-white p-10 rounded-[32px] border-2 border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col justify-between">
-                        <div>
-                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-4">Current Market Price</p>
-                            <div className="flex items-baseline gap-4 mb-1">
-                                <span className="text-6xl font-black text-slate-900">₹{product.priceCurrent.toLocaleString()}</span>
-                                {product.priceOld && (
-                                    <span className="text-2xl text-slate-300 line-through font-bold">₹{product.priceOld.toLocaleString()}</span>
-                                )}
-                            </div>
-                            <div className="text-orange-600 font-black text-sm mb-8 uppercase tracking-tight">{product.unit}</div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="flex items-center bg-slate-50 rounded-2xl p-1 border border-slate-100">
-                                <button 
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="w-12 h-12 flex items-center justify-center hover:bg-white rounded-xl transition-all text-slate-400 hover:text-orange-600"
-                                >
-                                    <Minus className="w-5 h-5" />
-                                </button>
-                                <span className="flex-1 text-center font-black text-xl text-slate-900">{quantity}</span>
-                                <button 
-                                    onClick={() => setQuantity(quantity + 1)}
-                                    className="w-12 h-12 flex items-center justify-center hover:bg-white rounded-xl transition-all text-slate-400 hover:text-orange-600"
-                                >
-                                    <Plus className="w-5 h-5" />
-                                </button>
-                            </div>
-                            
-                            <button 
-                                onClick={handleAddToCart}
-                                className="w-full bg-slate-900 hover:bg-orange-600 text-white h-16 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-xl shadow-slate-900/10"
-                            >
-                                <ShoppingCart className="w-6 h-6" />
-                                PROCEED TO PROCURE
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Calculator Component */}
-                    <MaterialCalculator category={product.category} unit={product.unit} />
-                </div>
-
-                {/* Technical Ecosystem */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-slate-200 pt-16">
-                    <div className="md:col-span-2 space-y-12">
-                        <section>
-                            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Material Intelligence</h2>
-                            <p className="text-xl text-slate-500 leading-relaxed font-medium">
-                                {product.description || "High-performance construction material engineered for industrial durability and professional grade standards."}
+            <main className="max-w-6xl mx-auto px-6 -mt-12 relative z-20">
+                <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-8">
+                    {/* Primary Dashboard Modules */}
+                    <div className="space-y-8">
+                        {/* Material Intelligence Hub */}
+                        <div className="glass-card rounded-[40px] p-12 border-2 border-white">
+                            <h2 className="text-4xl font-black text-slate-900 mb-8 tracking-tight flex items-center gap-4">
+                                <div className="w-3 h-12 bg-orange-600 rounded-full" />
+                                Material Intelligence
+                            </h2>
+                            <p className="text-2xl text-slate-500 leading-[1.6] font-medium mb-12">
+                                {product.description || "Synthesizing high-performance structural integrity with modern construction requirements."}
                             </p>
-                        </section>
 
-                        <section>
-                            <h3 className="text-xs font-black text-orange-600 uppercase tracking-[0.2em] mb-8">Engineering Characteristics</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {product.features?.length > 0 ? product.features.map((feature, i) => (
-                                    <div key={i} className="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
-                                        <div className="w-2 h-2 rounded-full bg-orange-500" />
-                                        <span className="font-bold text-slate-700 text-sm">{feature}</span>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {product.features?.map((feature, i) => (
+                                    <div key={i} className="flex flex-col gap-4 p-8 bg-slate-50 rounded-[32px] border border-slate-100 pro-border-glow group transition-all hover:bg-white">
+                                        <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                                            <CheckCircle2 className="w-6 h-6" />
+                                        </div>
+                                        <span className="font-black text-slate-900 text-sm uppercase tracking-tight leading-relaxed">{feature}</span>
                                     </div>
-                                )) : (
-                                    <div className="text-slate-300 italic text-sm">Specs Pending Verification</div>
-                                )}
+                                ))}
                             </div>
-                        </section>
+                        </div>
+
+                        {/* Procure Node Details */}
+                        <div className="dark-glass-card rounded-[40px] p-12 text-white">
+                            <div className="flex items-center justify-between mb-10">
+                                <h3 className="text-2xl font-black tracking-tight underline decoration-orange-600 decoration-4 underline-offset-8">Technical Parameters</h3>
+                                <Info className="w-6 h-6 text-white/30" />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
+                                {Object.entries(product.product_specs || {}).map(([key, value]) => (
+                                    <div key={key} className="flex flex-col gap-2 pt-6 border-t border-white/5">
+                                        <span className="text-white/30 text-[11px] font-black uppercase tracking-[0.15em]">{key.replace('_', ' ')}</span>
+                                        <span className="text-white font-bold text-xl tech-monogram">{value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="bg-slate-900 rounded-[40px] p-10 shadow-2xl h-fit">
-                        <h3 className="text-white font-black text-xl mb-8 border-b border-white/10 pb-4">Technical Specs</h3>
-                        <div className="space-y-6">
-                            {Object.entries(product.product_specs || {}).length > 0 ? Object.entries(product.product_specs).map(([key, value]) => (
-                                <div key={key} className="flex flex-col gap-1">
-                                    <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">{key.replace('_', ' ')}</span>
-                                    <span className="text-white font-bold text-lg">{value}</span>
+                    {/* Transactional Modules */}
+                    <div className="space-y-8 h-fit lg:sticky lg:top-24">
+                        {/* Procurement Terminal */}
+                        <div className="bg-white rounded-[40px] p-12 border-2 border-slate-100 shadow-2xl flex flex-col pro-border-glow">
+                            <div className="mb-10">
+                                <span className="text-slate-400 text-[11px] font-black uppercase tracking-[0.2em] mb-4 block">Spot Market Index</span>
+                                <div className="flex items-baseline gap-4 mb-2">
+                                    <span className="text-7xl font-black text-slate-900 tracking-tighter">₹{product.priceCurrent.toLocaleString()}</span>
+                                    {product.priceOld && (
+                                        <span className="text-3xl text-slate-200 line-through font-bold">₹{product.priceOld.toLocaleString()}</span>
+                                    )}
                                 </div>
-                            )) : (
-                                <div className="text-white/20 italic text-sm">Loading technical data...</div>
-                            )}
+                                <div className="inline-block px-4 py-1.5 bg-orange-600 text-white font-black text-xs rounded-lg uppercase tracking-widest shadow-lg shadow-orange-600/20">
+                                    {product.unit}
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="flex items-center bg-slate-50 rounded-3xl p-2 border-2 border-slate-100">
+                                    <button 
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        className="w-16 h-16 flex items-center justify-center hover:bg-white rounded-2xl transition-all shadow-sm hover:text-orange-600"
+                                    >
+                                        <Minus className="w-6 h-6" />
+                                    </button>
+                                    <span className="flex-1 text-center font-black text-3xl text-slate-900 tech-monogram">{quantity}</span>
+                                    <button 
+                                        onClick={() => setQuantity(quantity + 1)}
+                                        className="w-16 h-16 flex items-center justify-center hover:bg-white rounded-2xl transition-all shadow-sm hover:text-orange-600"
+                                    >
+                                        <Plus className="w-6 h-6" />
+                                    </button>
+                                </div>
+                                
+                                <button 
+                                    onClick={handleAddToCart}
+                                    className="w-full bg-slate-900 hover:bg-orange-600 text-white h-20 rounded-[28px] font-black text-xl flex items-center justify-center gap-4 transition-all active:scale-[0.98] shadow-2xl shadow-slate-900/20 group"
+                                >
+                                    <ShoppingCart className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                                    PROCURE NOW
+                                </button>
+                            </div>
                         </div>
+
+                        {/* Project Estimation Node */}
+                        <MaterialCalculator category={product.category} unit={product.unit} />
                     </div>
                 </div>
             </main>
