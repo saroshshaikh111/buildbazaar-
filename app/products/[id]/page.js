@@ -101,19 +101,21 @@ export default function ProductDetailPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     
                     {/* Left: Media Section */}
-                    <div className="space-y-4">
-                        <div className="aspect-square bg-white rounded-3xl overflow-hidden border shadow-sm relative group">
-                            {product.images?.[activeImage] ? (
-                                <img 
-                                    src={product.images[activeImage]} 
-                                    alt={product.title}
-                                    className="w-full h-full object-contain p-8 group-hover:scale-105 transition-transform duration-500"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
-                                    No Image Available
-                                </div>
-                            )}
+                    <div className="lg:sticky lg:top-24 h-fit">
+                        <div className="bg-white rounded-3xl overflow-hidden border shadow-sm relative group max-w-md mx-auto lg:mx-0">
+                            <div className="aspect-[4/3] bg-slate-50 flex items-center justify-center p-6">
+                                {product.images?.[activeImage] ? (
+                                    <img 
+                                        src={product.images[activeImage]} 
+                                        alt={product.title}
+                                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
+                                        No Image Available
+                                    </div>
+                                )}
+                            </div>
                             {product.tag && (
                                 <span className="absolute top-6 left-6 bg-orange-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
                                     {product.tag}
