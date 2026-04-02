@@ -135,7 +135,11 @@ function ProductCatalog() {
                                     )}
                                 </div>
                                 
-                                <h3 style={{fontSize: '1.125rem', marginBottom: '0.5rem', lineHeight: '1.4', flex: 1}}>{prod.title}</h3>
+                                <Link href={`/products/${prod.id}`} style={{textDecoration: 'none', color: 'inherit'}}>
+                                    <h3 style={{fontSize: '1.125rem', marginBottom: '0.5rem', lineHeight: '1.4', flex: 1, cursor: 'pointer', transition: 'color 0.2s'}} className="hover:text-orange-600">
+                                        {prod.title}
+                                    </h3>
+                                </Link>
                                 
                                 <div style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--slate-500)'}}>
                                     <Star style={{width: 16, height: 16, fill: '#eab308', color: '#eab308'}} />
