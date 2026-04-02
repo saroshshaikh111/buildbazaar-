@@ -80,181 +80,133 @@ export default function ProductDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20">
+        <div className="min-h-screen bg-slate-50 pb-20 font-sans">
             {/* Header / Breadcrumbs */}
             <div className="bg-white border-b sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                     <button 
                         onClick={() => router.back()}
                         className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
-                    <div className="text-sm text-slate-500 font-medium hidden sm:block">
-                        BuildBazaar Catalog / {product.category} / {product.brand}
+                    <div className="text-sm text-slate-400 font-bold hidden sm:block uppercase tracking-widest text-center flex-1 pr-10">
+                        Catalogue / {product.category} / {product.brand}
                     </div>
-                    <div className="w-10"></div> {/* Spacer */}
                 </div>
             </div>
 
-            <main className="max-w-7xl mx-auto px-4 pt-8">
-                <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-12 items-start">
-                    
-                    {/* Left: Media Section (Now Compact) */}
-                    <div className="lg:sticky lg:top-24">
-                        <div className="bg-white rounded-3xl overflow-hidden border shadow-sm relative group">
-                            <div className="aspect-[4/3] bg-slate-50 flex items-center justify-center p-4">
-                                {product.images?.[activeImage] ? (
-                                    <img 
-                                        src={product.images[activeImage]} 
-                                        alt={product.title}
-                                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">
-                                        No Image Available
-                                    </div>
-                                )}
-                            </div>
-                            {product.tag && (
-                                <span className="absolute top-6 left-6 bg-orange-600 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
-                                    {product.tag}
-                                </span>
-                            )}
-                        </div>
-                        
-                        {/* Thumbnails if multiple images */}
-                        {product.images?.length > 1 && (
-                            <div className="flex gap-4 overflow-x-auto pb-2">
-                                {product.images.map((img, idx) => (
-                                    <button 
-                                        key={idx}
-                                        onClick={() => setActiveImage(idx)}
-                                        className={`w-20 h-20 rounded-xl border-2 flex-shrink-0 overflow-hidden bg-white ${activeImage === idx ? 'border-orange-600' : 'border-transparent hover:border-slate-300'}`}
-                                    >
-                                        <img src={img} alt="" className="w-full h-full object-cover" />
-                                    </button>
-                                ))}
-                            </div>
+            <main className="max-w-4xl mx-auto px-4 pt-16">
+                {/* Product Header */}
+                <div className="mb-12">
+                    <div className="flex items-center gap-3 mb-4">
+                        <span className="bg-orange-600 text-white px-3 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter">
+                            {product.brand}
+                        </span>
+                        {product.verified && (
+                            <span className="flex items-center gap-1 text-blue-600 font-bold text-[10px] uppercase">
+                                <ShieldCheck className="w-3.5 h-3.5" /> Verified Supplier
+                            </span>
                         )}
                     </div>
+                    
+                    <h1 className="text-5xl sm:text-6xl font-black text-slate-900 leading-[1.1] mb-6 tracking-tight">
+                        {product.title}
+                    </h1>
 
-                    {/* Right: Info Section */}
-                    <div className="flex flex-col">
-                        <div className="mb-2 flex items-center gap-2">
-                            <span className="text-orange-600 font-bold tracking-tight text-sm uppercase">{product.brand}</span>
-                            {product.verified && <ShieldCheck className="w-4 h-4 text-blue-500" />}
+                    <div className="flex items-center gap-8">
+                        <div className="flex items-center text-slate-900 font-black text-lg">
+                            <Star className="w-5 h-5 fill-orange-500 text-orange-500 mr-2" />
+                            {product.rating} <span className="text-slate-400 font-bold ml-2 text-sm">/ 5.0 Rating</span>
                         </div>
-                        
-                        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-4">
-                            {product.title}
-                        </h1>
-
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="flex items-center bg-green-50 px-2 py-1 rounded text-green-700 font-bold text-sm">
-                                <Star className="w-4 h-4 fill-green-700 mr-1" />
-                                {product.rating}
-                            </div>
-                            <span className="text-slate-500 text-sm font-medium border-l pl-4">
-                                {product.reviews.toLocaleString()} verified reviews
-                            </span>
-                        </div>
-
-                        <div className="bg-white p-8 rounded-3xl border shadow-sm mb-8">
-                            <div className="flex items-end gap-3 mb-2">
-                                <span className="text-4xl font-black text-slate-900">₹{product.priceCurrent.toLocaleString()}</span>
-                                {product.priceOld && (
-                                    <span className="text-xl text-slate-400 line-through mb-1">₹{product.priceOld.toLocaleString()}</span>
-                                )}
-                                {product.discount && (
-                                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold mb-1 ml-2">
-                                        {product.discount}
-                                    </span>
-                                )}
-                            </div>
-                            <div className="text-slate-500 font-medium mb-6 italic">{product.unit}</div>
-
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <div className="flex items-center border-2 border-slate-200 rounded-2xl h-14 px-2 bg-slate-50">
-                                    <button 
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        className="p-2 hover:bg-white rounded-xl transition-colors"
-                                    >
-                                        <Minus className="w-5 h-5 text-slate-600" />
-                                    </button>
-                                    <span className="w-12 text-center font-bold text-lg text-slate-800">{quantity}</span>
-                                    <button 
-                                        onClick={() => setQuantity(quantity + 1)}
-                                        className="p-2 hover:bg-white rounded-xl transition-colors"
-                                    >
-                                        <Plus className="w-5 h-5 text-slate-600" />
-                                    </button>
-                                </div>
-                                
-                                <button 
-                                    onClick={handleAddToCart}
-                                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white h-14 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-orange-200"
-                                >
-                                    <ShoppingCart className="w-6 h-6" />
-                                    Add to Cart
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Trust Badges */}
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div className="flex items-center gap-3 p-4 bg-slate-100 rounded-2xl border border-slate-200">
-                                <Truck className="w-5 h-5 text-slate-600" />
-                                <span className="text-xs font-bold text-slate-700">Lightning Express Delivery</span>
-                            </div>
-                            <div className="flex items-center gap-3 p-4 bg-slate-100 rounded-2xl border border-slate-200">
-                                <RotateCcw className="w-5 h-5 text-slate-600" />
-                                <span className="text-xs font-bold text-slate-700">E-Z 7 Day Returns</span>
-                            </div>
-                        </div>
-
-                        {/* Calculator Component */}
-                        <MaterialCalculator category={product.category} unit={product.unit} />
+                        <div className="h-4 w-px bg-slate-200"></div>
+                        <span className="text-slate-500 text-sm font-bold uppercase tracking-wide">
+                            {product.reviews.toLocaleString()} Verified Procurements
+                        </span>
                     </div>
                 </div>
 
-                {/* Bottom Section: Specs & Features */}
-                <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-12 border-t pt-16">
+                {/* Primary Action Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                    {/* Pricing Card */}
+                    <div className="bg-white p-10 rounded-[32px] border-2 border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col justify-between">
+                        <div>
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-4">Current Market Price</p>
+                            <div className="flex items-baseline gap-4 mb-1">
+                                <span className="text-6xl font-black text-slate-900">₹{product.priceCurrent.toLocaleString()}</span>
+                                {product.priceOld && (
+                                    <span className="text-2xl text-slate-300 line-through font-bold">₹{product.priceOld.toLocaleString()}</span>
+                                )}
+                            </div>
+                            <div className="text-orange-600 font-black text-sm mb-8 uppercase tracking-tight">{product.unit}</div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="flex items-center bg-slate-50 rounded-2xl p-1 border border-slate-100">
+                                <button 
+                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                    className="w-12 h-12 flex items-center justify-center hover:bg-white rounded-xl transition-all text-slate-400 hover:text-orange-600"
+                                >
+                                    <Minus className="w-5 h-5" />
+                                </button>
+                                <span className="flex-1 text-center font-black text-xl text-slate-900">{quantity}</span>
+                                <button 
+                                    onClick={() => setQuantity(quantity + 1)}
+                                    className="w-12 h-12 flex items-center justify-center hover:bg-white rounded-xl transition-all text-slate-400 hover:text-orange-600"
+                                >
+                                    <Plus className="w-5 h-5" />
+                                </button>
+                            </div>
+                            
+                            <button 
+                                onClick={handleAddToCart}
+                                className="w-full bg-slate-900 hover:bg-orange-600 text-white h-16 rounded-2xl font-black text-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-xl shadow-slate-900/10"
+                            >
+                                <ShoppingCart className="w-6 h-6" />
+                                PROCEED TO PROCURE
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Calculator Component */}
+                    <MaterialCalculator category={product.category} unit={product.unit} />
+                </div>
+
+                {/* Technical Ecosystem */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-slate-200 pt-16">
                     <div className="md:col-span-2 space-y-12">
                         <section>
-                            <h2 className="text-2xl font-extrabold text-slate-900 mb-6 flex items-center gap-3 underline decoration-orange-500 decoration-4 underline-offset-8">
-                                Product Intelligence
-                            </h2>
-                            <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                                {product.description || "Premium construction quality material sourced directly from verified manufacturers. Designed to meet high-performance standards for modern structural needs."}
+                            <h2 className="text-3xl font-black text-slate-900 mb-6 tracking-tight">Material Intelligence</h2>
+                            <p className="text-xl text-slate-500 leading-relaxed font-medium">
+                                {product.description || "High-performance construction material engineered for industrial durability and professional grade standards."}
                             </p>
                         </section>
 
                         <section>
-                            <h3 className="text-xl font-bold text-slate-900 mb-6">Key Engineering Features</h3>
+                            <h3 className="text-xs font-black text-orange-600 uppercase tracking-[0.2em] mb-8">Engineering Characteristics</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {product.features?.length > 0 ? product.features.map((feature, i) => (
-                                    <div key={i} className="flex items-center gap-3 p-4 bg-white border rounded-2xl shadow-sm">
-                                        <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                                        <span className="font-semibold text-slate-700">{feature}</span>
+                                    <div key={i} className="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="w-2 h-2 rounded-full bg-orange-500" />
+                                        <span className="font-bold text-slate-700 text-sm">{feature}</span>
                                     </div>
                                 )) : (
-                                    <div className="text-slate-400 italic">No features listed</div>
+                                    <div className="text-slate-300 italic text-sm">Specs Pending Verification</div>
                                 )}
                             </div>
                         </section>
                     </div>
 
-                    <div className="bg-white rounded-3xl border p-8 shadow-sm h-fit sticky top-24">
-                        <h3 className="text-xl font-bold text-slate-900 mb-6 px-1">Technical Specs</h3>
-                        <div className="space-y-4">
+                    <div className="bg-slate-900 rounded-[40px] p-10 shadow-2xl h-fit">
+                        <h3 className="text-white font-black text-xl mb-8 border-b border-white/10 pb-4">Technical Specs</h3>
+                        <div className="space-y-6">
                             {Object.entries(product.product_specs || {}).length > 0 ? Object.entries(product.product_specs).map(([key, value]) => (
-                                <div key={key} className="flex justify-between items-center py-3 border-b border-slate-100 last:border-0">
-                                    <span className="text-slate-500 text-sm font-bold uppercase tracking-wider">{key.replace('_', ' ')}</span>
-                                    <span className="text-slate-900 font-bold">{value}</span>
+                                <div key={key} className="flex flex-col gap-1">
+                                    <span className="text-white/40 text-[10px] font-black uppercase tracking-widest">{key.replace('_', ' ')}</span>
+                                    <span className="text-white font-bold text-lg">{value}</span>
                                 </div>
                             )) : (
-                                <div className="text-slate-400 italic text-sm">Specs coming soon</div>
+                                <div className="text-white/20 italic text-sm">Loading technical data...</div>
                             )}
                         </div>
                     </div>
