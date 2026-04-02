@@ -1,31 +1,33 @@
-/* Base Variables & Reset */
 :root {
-    --primary-orange: #f97316;
-    --primary-orange-hover: #ea580c;
+    --primary-orange: #f59e0b;
+    --primary-orange-hover: #d97706;
     --slate-50: #f8fafc;
     --slate-100: #f1f5f9;
     --slate-200: #e2e8f0;
-    --slate-800: #1e293b;
-    --slate-900: #0f172a;
-    --text-dark: #334155;
-    --text-light: #94a3b8;
+    --slate-800: #0f172a;
+    --slate-900: #020617;
+    --text-dark: #0f172a;
+    --text-light: #64748b;
     --white: #ffffff;
-    --green: #10b981;
+    --green: #059669;
     --green-bg: #ecfdf5;
-    --border-radius-sm: 8px;
-    --border-radius-md: 12px;
-    --border-radius-lg: 16px;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --font-inter: 'Inter', sans-serif;
+    --border-radius-sm: 10px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 24px;
+    --shadow-elite: 
+        0 1px 2px rgba(0,0,0,0.06), 
+        0 2px 4px rgba(0,0,0,0.06), 
+        0 4px 8px rgba(0,0,0,0.06), 
+        0 8px 16px rgba(0,0,0,0.06),
+        0 16px 32px rgba(0,0,0,0.06);
+    --font-outfit: 'Outfit', sans-serif;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: var(--font-inter);
+    font-family: var(--font-outfit);
 }
 
 body {
