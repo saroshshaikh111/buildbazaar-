@@ -81,8 +81,10 @@ export default function BuildBazaar() {
     // Delivery Location State
     const [pincode, setPincode] = useState('110001');
     const [city, setCity] = useState('Delhi');
+    const [isUpdatingPin, setIsUpdatingPin] = useState(false);
 
     const fetchCity = async (pin) => {
+        setIsUpdatingPin(true);
         try {
             const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
             const data = await res.json();
@@ -90,9 +92,15 @@ export default function BuildBazaar() {
                 const cityName = data[0].PostOffice[0].District || data[0].PostOffice[0].State;
                 setCity(cityName);
                 localStorage.setItem('bb-city', cityName);
+            } else {
+                setCity('Invalid Pincode');
+                localStorage.setItem('bb-city', 'Invalid Pincode');
             }
         } catch (err) {
             console.error("Pincode API failed:", err);
+            setCity('Network Error');
+        } finally {
+            setIsUpdatingPin(false);
         }
     };
 
@@ -193,7 +201,7 @@ export default function BuildBazaar() {
                     }} style={{display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '5px', flexShrink: 0, borderRadius: '4px', border: '1px solid transparent', transition: 'border 0.2s'}} onMouseEnter={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor='transparent'}>
                         <div style={{marginRight: '2px', marginTop: '8px'}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <span style={{fontSize: '12px', color: '#ccc', lineHeight: '14px', marginLeft: '2px'}}>Delivering to {city} {pincode}</span>
+                            <span style={{fontSize: '12px', color: '#ccc', lineHeight: '14px', marginLeft: '2px'}}>Delivering to {isUpdatingPin ? 'Finding...' : `${city} ${pincode}`}</span>
                             <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Update location</span>
                         </div>
                     </div>
