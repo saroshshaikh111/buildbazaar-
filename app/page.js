@@ -153,7 +153,7 @@ export default function BuildBazaar() {
                     </div>
 
                     {/* Location Pin */}
-                    <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '5px', flexShrink: 0}}>
+                    <div onClick={() => { const pin = prompt('Enter your delivery pincode:'); if (pin && pin.length === 6) alert(`Delivery location updated to ${pin}!`); else if (pin) alert('Please enter a valid 6-digit pincode.'); }} style={{display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '5px', flexShrink: 0, borderRadius: '4px', border: '1px solid transparent', transition: 'border 0.2s'}} onMouseEnter={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor='transparent'}>
                         <div style={{marginRight: '2px', marginTop: '8px'}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <span style={{fontSize: '12px', color: '#ccc', lineHeight: '14px', marginLeft: '2px'}}>Delivering to Delhi 110001</span>
@@ -223,7 +223,7 @@ export default function BuildBazaar() {
                     <a href="#categories" style={{color: 'white', textDecoration: 'none'}}>Categories</a>
                     <a href="#products" style={{color: 'white', textDecoration: 'none'}}>Best Sellers</a>
                     <a href="#calculator" style={{color: 'white', textDecoration: 'none'}}>Material Calculator</a>
-                    <a href="#" style={{color: 'white', textDecoration: 'none'}}>Today's Deals</a>
+                    <a href="/products" style={{color: 'white', textDecoration: 'none'}}>Today's Deals</a>
                     <a href="#how-it-works" style={{color: 'white', textDecoration: 'none'}}>Customer Service</a>
                 </div>
             </header>
