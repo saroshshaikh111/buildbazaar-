@@ -29,6 +29,9 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
 
+    // FINAL VISUAL LOCK: Professional 3D-styled Industrial Data URI for guaranteed load and elite look.
+    const MATERIAL_HERO_DATA_URI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDYwMCA2MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNmOGZhZmMiLz48ZyBmaWx0ZXI9InVybCgjZmlsdGVyMF9kXzc0NF83MDUpIj48cGF0aCBkPSJNNDI1IDE1MEgxNzVMMTUwIDQ1MEg0NTBMNDI1IDE1MFoiIGZpbGw9IiNlMmU4ZjAiIHN0cm9rZT0iIzA0MDkwYSIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9nPjxkZWZzPjxmaWx0ZXIgaWQ9ImZpbHRlcjBfZF83NDRfNzA1IiB4PSIxNDAiIHk9IjE0MCIgd2lkdGg9IjMyMCIgaGVpZ2h0PSIzNDAiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj48ZmVGbG9vZCBmaWxsLW9wYWNpdHk9IjAiIHJlc3VsdD0iQmFja2dyb3VuZEltYWdlU2tpc2hPIi8+PGZlQ29sb3JNYXRyaXggaW49IlNvdXJjZUFscGhhIiB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMTI3IDAiIHJlc3VsdD0iaGFyZEFscGhhIi8+PGZlT2Zmc2V0IGR5PSI0Ii8+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMTAiLz48ZmVDb2xvck1hdHJpeCB0eXBlPSJtYXRyaXgiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4xIDAiLz48ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluMj0iQmFja2dyb3VuZEltYWdlU2tpc2hPIiByZXN1bHQ9ImVmZmVjdDFfZHJvcFNoYWRvd183NDRfNzA1Ii8+PGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJlZmZlY3QxX2Ryb3BTaGFkb3dfNzQ0XzcwNSIgcmVzdWx0PSJzaGFwZSIvPjwvZmlsdGVyPjwvZGVmcz48cmVjdCB4PSIxODUiIHk9IjE4MCIgd2lkdGg9IjIzMCIgaGVpZ2h0PSIyNDAiIHJ4PSI4IiBmaWxsPSJ3aGl0ZSIgZmlsbC1vcGFjaXR5PSIwLjUiLz48dGV4dCB4PSIzMDAiIHk9IjI2MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzA0MDkwYSIgc3R5bGU9ImZvbnQtZmFtaWx5OiBJbnRlciwgc2Fucy1zZXJpZjsgZm9udC13ZWlnaHQ6IDkwMDsgZm9udC1zaXplOiAzMnB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC4xZW07Ij5QUkVNSVVOPC90ZXh0Pjx0ZXh0IHg9IjMwMCIgeT0iMzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZjA3MzE2IiBzdHlsZT0iZm9udC1mYW1pbHk6IEludGVyLCBzYW5zLXNlcmlmOyBmb250LXdlaWdodDogOTAwOyBmb250LXNpemU6IDI0cHg7Ij5NQVRFUklBTDwvdGV4dD48dGV4dIHg9IjMwMCIgeT0iMzQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTRhM2I4IiBzdHlsZT0iZm9udC1mYW1pbHk6IEludGVyLCBzYW5zLXNlcmlmOyBmb250LXdlaWdodDogODAwOyBmb250LXNpemU6IDEycHg7IGxldHRlci1zcGFjaW5nOiAwLjFlbTsiPklORFVTVFJJQUwgUFJPIFBST0NVUkVNRU5UPC90ZXh0Pjwvc3ZnPg==';
+
     useEffect(() => {
         async function fetchProduct() {
             setLoading(true);
@@ -41,14 +44,10 @@ export default function ProductDetailPage() {
 
                 if (error) throw error;
 
-                // FINAL RESTORATION: Data-driven price & visual integrity
+                // STAGING OVERRIDE: Ensuring the demo data is always high-fidelity and hard-locked.
                 let updatedProduct = data;
                 if (data.id === 'p1') {
-                    // VERIFIED Industrial Assets: Professional material stacks & bags (No more city/nature photos)
-                    updatedProduct.images = [
-                        'https://images.unsplash.com/photo-1589934301540-3b0277bd2228?q=80&w=1200&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200&auto=format&fit=crop'
-                    ];
+                    updatedProduct.images = [MATERIAL_HERO_DATA_URI];
                     updatedProduct.priceCurrent = 450;
                 } else if (data.id === 'p2') {
                     updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop'];
@@ -182,9 +181,9 @@ export default function ProductDetailPage() {
                                 <div>
                                     <label style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px', display: 'block'}}>Order Quantity</label>
                                     <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '6px'}}>
-                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14, height: 14}} /></button>
+                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14}} /></button>
                                         <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} style={{flex: 1, border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem'}} />
-                                        <button onClick={() => setQuantity(quantity + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14, height: 14}} /></button>
+                                        <button onClick={() => setQuantity(quantity + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14}} /></button>
                                     </div>
                                 </div>
 
