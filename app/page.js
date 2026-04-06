@@ -207,7 +207,9 @@ export default function BuildBazaar() {
                     {/* Cart Tool */}
                     <div onClick={() => setCartDrawerOpen(true)} style={{display: 'flex', alignItems: 'flex-end', cursor: 'pointer', padding: '5px', flexShrink: 0, position: 'relative'}}>
                         <ShoppingCart style={{width: 36, height: 36, color: 'white'}} />
-                        <span style={{position: 'absolute', top: '2px', left: '19px', color: '#f97316', fontWeight: 900, fontSize: '16px'}}>{totalItems}</span>
+                        {totalItems > 0 && (
+                            <span style={{position: 'absolute', top: '-2px', left: '22px', backgroundColor: '#f97316', color: 'white', fontWeight: 800, fontSize: '11px', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', border: '2px solid var(--slate-900)'}}>{totalItems}</span>
+                        )}
                         <span style={{fontSize: '14px', fontWeight: 700, marginLeft: '4px', marginBottom: '4px'}}>Cart</span>
                     </div>
                 </div>

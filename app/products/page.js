@@ -35,7 +35,6 @@ function ProductCatalog() {
             try {
                 let query = supabase.from('products').select('*');
                 
-                // If the Supabase database actually has rows, we use them, applying Server Side filtering:
                 if (categoryQuery) query = query.ilike('category', `%${categoryQuery}%`);
                 if (searchQuery) query = query.ilike('title', `%${searchQuery}%`);
                 
@@ -44,25 +43,31 @@ function ProductCatalog() {
                 if (data && data.length > 0) {
                     setProducts(data);
                 } else {
-                    // Client-side filtering fallback for Mock Data if Supabase is empty
-                    let filtered = fallbackProducts;
-                    if (categoryQuery) {
-                        filtered = filtered.filter(p => p.category.toLowerCase().includes(categoryQuery.toLowerCase()));
-                    }
-                    if (searchQuery) {
-                        filtered = filtered.filter(p => 
-                            p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            p.category.toLowerCase().includes(searchQuery.toLowerCase())
-                        );
-                    }
-                    setProducts(filtered);
+                    // Client-side filtering of mock data
+                    applyLocalFilters();
                 }
             } catch (err) {
-                console.error("Fetch warning, relying on mock data.", err);
+                // Supabase unavailable — use local mock data with filters
+                applyLocalFilters();
             } finally {
                 setLoading(false);
             }
+        }
+
+        function applyLocalFilters() {
+            let filtered = fallbackProducts;
+            if (categoryQuery) {
+                filtered = filtered.filter(p => p.category.toLowerCase() === categoryQuery.toLowerCase());
+            }
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(p => 
+                    p.title.toLowerCase().includes(q) || 
+                    p.brand.toLowerCase().includes(q) ||
+                    p.category.toLowerCase().includes(q)
+                );
+            }
+            setProducts(filtered);
         }
         
         fetchProducts();
