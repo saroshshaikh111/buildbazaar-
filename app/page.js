@@ -92,13 +92,13 @@ export default function BuildBazaar() {
                 const cityName = data[0].PostOffice[0].District || data[0].PostOffice[0].State;
                 setCity(cityName);
                 localStorage.setItem('bb-city', cityName);
+                return true;
             } else {
-                setCity('Invalid Pincode');
-                localStorage.setItem('bb-city', 'Invalid Pincode');
+                return false;
             }
         } catch (err) {
             console.error("Pincode API failed:", err);
-            setCity('Network Error');
+            return false;
         } finally {
             setIsUpdatingPin(false);
         }
@@ -192,9 +192,13 @@ export default function BuildBazaar() {
                     <div onClick={async () => { 
                         const pin = prompt('Enter your delivery pincode:', pincode); 
                         if (pin && pin.length === 6) {
-                            setPincode(pin);
-                            localStorage.setItem('bb-pincode', pin);
-                            await fetchCity(pin); 
+                            const success = await fetchCity(pin); 
+                            if (success) {
+                                setPincode(pin);
+                                localStorage.setItem('bb-pincode', pin);
+                            } else {
+                                alert(`Oops! Pincode ${pin} not found in our database. Reverting to last valid location.`);
+                            }
                         } else if (pin) {
                             alert('Please enter a valid 6-digit pincode.'); 
                         }
