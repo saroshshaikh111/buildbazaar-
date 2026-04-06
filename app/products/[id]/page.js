@@ -29,9 +29,6 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
 
-    // ROOT CAUSE FIX: Data URI ensures the image is part of the code and cannot be blocked/cached incorrectly.
-    const CEMENT_BAG_DATA_URI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDYwMCA2MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNmOGZhZmMiLz48cGF0aCBkPSJNNDI1IDE1MEgxNzVMMTUwIDQ1MEg0NTBMNDI1IDE1MFoiIGZpbGw9IiNlMmU4ZjAiIHN0cm9rZT0iIzA0MDkwYSIgc3Ryb2tlLXdpZHRoPSI4Ii8+PHJlY3QgeD0iMTg1IiB5PSIxODAiIHdpZHRoPSIyMzAiIGhlaWdodD0iMjQwIiByeD0iOCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC41Ii8+PHRleHQgeD0iMzAwIiB5PSIyNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMwZjE3MmEiIHN0eWxlPSJmb250LWZhbWlseTogSW50ZXIsIHNhbnMtc2VyaWY7IGZvbnQtd2lnaHQ6IDkwMDsgZm9udC1zaXplOiAzMnB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC4xZW07Ij5VTFRSQVRFQ0g8L3RleHQ+PHRleHQgeD0iMzAwIiB5PSIzMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmOTczMTYiIHN0eWxlPSJmb250LWZhbWlseTogSW50ZXIsIHNhbnMtc2VyaWY7IGZvbnQtd2lnaHQ6IDkwMDsgZm9udC1zaXplOiAyNHB4OyI+T1BDIDUzIEdSQURVPC90ZXh0Pjx0ZXh0IHg9IjMwMCIgeT0iMzQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTRhM2I4IiBzdHlsZT0iZm9udC1mYW1pbHk6IEludGVyLCBzYW5zLXNlcmlmOyBmb250LXdlaWdodDogODAwOyBmb250LXNpemU6IDEycHg7IGxldHRlci1zcGFjaW5nOiAwLjFlbTsiPklORFVTVFJJQUwgUFJPIFBST0NVUkVNRU5UPC90ZXh0Pjwvc3ZnPg==';
-
     useEffect(() => {
         async function fetchProduct() {
             setLoading(true);
@@ -47,13 +44,14 @@ export default function ProductDetailPage() {
                 // STAGING OVERRIDE: Ensuring the demo data is always high-fidelity
                 let updatedProduct = data;
                 if (data.id === 'p1') {
+                    // Using a stable, high-fidelity cement stack image
                     updatedProduct.images = [
-                        'https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&q=80&w=800', 
-                        CEMENT_BAG_DATA_URI
+                        'https://images.unsplash.com/photo-1544161513-0179fe746fd5?q=80&w=1200&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1589934301540-3b0277bd2228?q=80&w=1200&auto=format&fit=crop'
                     ];
                     updatedProduct.priceCurrent = 450;
                 } else if (data.id === 'p2') {
-                    updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800'];
+                    updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop'];
                     updatedProduct.priceCurrent = 65500;
                 }
 
@@ -142,7 +140,7 @@ export default function ProductDetailPage() {
                                     <span style={{fontWeight: 900, color: '#0f172a'}}>{product.rating}</span>
                                 </div>
                                 <span style={{color: '#e2e8f0'}}>|</span>
-                                <span style={{fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase'}}>{product.reviews.toLocaleString()} Verification Reports</span>
+                                <span style={{fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase'}}>{product.reviews?.toLocaleString()} Verification Reports</span>
                             </div>
                         </div>
 
