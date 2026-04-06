@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from '../context/CartContext';
-import { ShoppingCart, X, Trash2 } from 'lucide-react';
+import { ShoppingCart, X, Trash2, Building2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CartDrawer() {

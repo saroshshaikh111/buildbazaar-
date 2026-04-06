@@ -14,7 +14,8 @@ import {
     AlertCircle,
     ArrowRight,
     Calendar,
-    Briefcase
+    Briefcase,
+    ShoppingBag
 } from 'lucide-react';
 import Link from 'next/link';
 import CheckoutSummary from '@/app/components/CheckoutSummary';
