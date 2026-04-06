@@ -324,35 +324,54 @@ export default function BuildBazaar() {
                         </div>
                         <div className="grid products-grid">
                             {products.map(prod => (
-                                <div className="product-card" key={prod.id}>
-                                    <div className="card-header">
-                                        <span className="tag-verified"><ShieldCheck style={{width: 12, height: 12, marginRight: 4, display: 'inline'}} /> Verified</span>
-                                        {prod.tag && (
-                                            <span className="tag-status" style={{
-                                                backgroundColor: prod.tag === 'Best Seller' ? '#fff7ed' : '#f0fdf4',
-                                                color: prod.tag === 'Best Seller' ? '#ea580c' : '#16a34a'
-                                            }}>{prod.tag}</span>
-                                        )}
-                                    </div>
-                                    <h3 className="product-title">{prod.title}</h3>
-                                    <div className="product-rating">
-                                        <Star className="star-icon" />
-                                        <span><strong style={{color: 'var(--slate-900)'}}>{prod.rating}</strong> ({prod.reviews} reviews)</span>
-                                    </div>
-                                    <div className="product-footer">
-                                        <div className="price-container">
-                                            <div className="price-current">
-                                                ₹{prod.priceCurrent.toLocaleString('en-IN')}
-                                                {prod.priceOld && <span className="price-old">₹{prod.priceOld.toLocaleString('en-IN')}</span>}
-                                                {prod.discount && <span className="price-discount">{prod.discount}</span>}
-                                            </div>
-                                            <span className="price-unit">{prod.unit}</span>
+                                <Link href={`/products/${prod.id}`} key={prod.id} style={{textDecoration: 'none', color: 'inherit'}}>
+                                    <div className="product-card" style={{cursor: 'pointer', height: '100%', display: 'flex', flexDirection: 'column'}}>
+                                        <div className="card-header" style={{padding: '1.5rem 1.5rem 0 1.5rem'}}>
+                                            <span className="tag-verified"><ShieldCheck style={{width: 12, height: 12, marginRight: 4, display: 'inline'}} /> Verified</span>
+                                            {prod.tag && (
+                                                <span className="tag-status" style={{
+                                                    backgroundColor: prod.tag === 'Best Seller' ? '#fff7ed' : '#f0fdf4',
+                                                    color: prod.tag === 'Best Seller' ? '#ea580c' : '#16a34a'
+                                                }}>{prod.tag}</span>
+                                            )}
                                         </div>
-                                        <button className="add-btn" onClick={() => addToCart(prod)}>
-                                            <ShoppingCart style={{width: 16, height: 16, display: 'inline-block', verticalAlign: 'middle'}} /> Add
-                                        </button>
+                                        
+                                        {/* New Product Image Container */}
+                                        <div style={{padding: '1rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '180px'}}>
+                                            {prod.images && prod.images[0] ? (
+                                                <img 
+                                                    src={prod.images[0]} 
+                                                    alt={prod.title} 
+                                                    style={{maxWidth: '100%', maxHeight: '160px', objectContain: 'contain', transition: 'transform 0.3s'}}
+                                                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                                                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                                                />
+                                            ) : (
+                                                <Building2 style={{width: 64, height: 64, color: 'var(--slate-100)'}} />
+                                            )}
+                                        </div>
+
+                                        <div style={{padding: '0 1.5rem 1.5rem 1.5rem'}}>
+                                            <h3 className="product-title" style={{fontSize: '1.1rem', marginBottom: '0.5rem', height: '2.4em', overflow: 'hidden'}}>{prod.title}</h3>
+                                            <div className="product-rating">
+                                                <Star className="star-icon" />
+                                                <span><strong style={{color: 'var(--slate-900)'}}>{prod.rating}</strong> ({prod.reviews} reviews)</span>
+                                            </div>
+                                            <div className="product-footer" style={{marginTop: '1rem'}}>
+                                                <div className="price-container">
+                                                    <div className="price-current">
+                                                        ₹{prod.priceCurrent.toLocaleString('en-IN')}
+                                                        {prod.priceOld && <span className="price-old">₹{prod.priceOld.toLocaleString('en-IN')}</span>}
+                                                    </div>
+                                                    <span className="price-unit">{prod.unit}</span>
+                                                </div>
+                                                <button className="add-btn" onClick={(e) => { e.preventDefault(); addToCart(prod); }}>
+                                                    <ShoppingCart style={{width: 16, height: 16, display: 'inline-block', verticalAlign: 'middle'}} /> Add
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </Link>
                             ))}
                         </div>
                     </div>

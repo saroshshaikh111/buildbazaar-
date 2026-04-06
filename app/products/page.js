@@ -141,7 +141,21 @@ function ProductCatalog() {
                                 </div>
                                 
                                 <Link href={`/products/${prod.id}`} style={{textDecoration: 'none', color: 'inherit'}}>
-                                    <h3 style={{fontSize: '1.125rem', marginBottom: '0.5rem', lineHeight: '1.4', flex: 1, cursor: 'pointer', transition: 'color 0.2s'}} className="hover:text-orange-600">
+                                    {/* New Product Image Container */}
+                                    <div style={{padding: '1rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '160px', backgroundColor: '#f9fafb', borderRadius: '0.75rem', marginBottom: '1rem', overflow: 'hidden'}}>
+                                        {prod.images && prod.images[0] ? (
+                                            <img 
+                                                src={prod.images[0]} 
+                                                alt={prod.title} 
+                                                style={{maxWidth: '100%', maxHeight: '140px', objectFit: 'contain', transition: 'transform 0.3s'}}
+                                                className="hover:scale-105"
+                                            />
+                                        ) : (
+                                            <Building2 style={{width: 48, height: 48, color: 'var(--slate-200)'}} />
+                                        )}
+                                    </div>
+                                    
+                                    <h3 style={{fontSize: '1.125rem', marginBottom: '0.5rem', lineHeight: '1.4', flex: 1, cursor: 'pointer', fontWeight: 800, height: '2.4em', overflow: 'hidden'}} className="hover:text-orange-600">
                                         {prod.title}
                                     </h3>
                                 </Link>

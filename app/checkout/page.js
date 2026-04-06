@@ -1,220 +1,279 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
+import { useCart } from '@/app/context/CartContext';
+import { 
+    ChevronLeft, 
+    Building2, 
+    Truck, 
+    MapPin, 
+    CreditCard, 
+    CheckCircle2, 
+    AlertCircle,
+    ArrowRight,
+    Calendar,
+    Briefcase
+} from 'lucide-react';
 import Link from 'next/link';
-import { Building2, ArrowLeft, CheckCircle, CreditCard, Truck, AlertCircle, ShieldCheck } from 'lucide-react';
+import CheckoutSummary from '@/app/components/CheckoutSummary';
 
 export default function CheckoutPage() {
-    const { cart, totalPrice, clearCart, removeItem } = useCart();
-    const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+    const { cart, totalPrice, clearCart, totalItems } = useCart();
     
-    // Auth Guard Firewall
-    useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/login');
-        }
-    }, [user, authLoading, router]);
-    const [submitting, setSubmitting] = useState(false);
-    const [success, setSuccess] = useState(false);
-    
+    // Step State: 1 (Site), 2 (Billing), 3 (Logistics)
+    const [step, setStep] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [orderSuccess, setOrderSuccess] = useState(false);
+    const [orderId, setOrderId] = useState(null);
+
     // Form State
     const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        address: '',
-        city: '',
-        pincode: ''
+        customerName: '',
+        shippingAddress: '',
+        pincode: '',
+        projectName: '',
+        gstin: '',
+        businessName: '',
+        deliveryDate: '',
+        deliverySlot: 'Morning (8AM-12PM)',
+        paymentMethod: 'Cash on Delivery'
     });
 
-    if (authLoading || !user) {
-        return (
-            <div style={{minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--slate-50)'}}>
-                <h2 style={{color: 'var(--slate-600)', display: 'flex', alignItems: 'center', gap: '0.5rem'}}><ShieldCheck style={{color: 'var(--green)'}} /> Securing Checkout Pipeline...</h2>
-            </div>
-        );
-    }
+    // Auto-fill from localStorage (pincode/city)
+    useEffect(() => {
+        const savedPincode = localStorage.getItem('buildbazaar_pincode');
+        if (savedPincode) setFormData(prev => ({ ...prev, pincode: savedPincode }));
+    }, []);
 
-    const tax = Math.round(totalPrice * 0.18); // 18% GST mock
-    const shipping = totalPrice > 50000 ? 0 : 1500;
-    const finalTotal = totalPrice + tax + shipping;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
-        if (cart.length === 0) return alert('Cart is empty!');
-        if (!formData.name || !formData.address || !formData.phone) return alert('Please fill required shipping fields.');
+        setLoading(true);
 
-        setSubmitting(true);
         try {
-            // 1. Create main order record in Supabase
-            const { data: orderData, error: orderError } = await supabase
+            // 1. Create Order
+            const { data: order, error: orderError } = await supabase
                 .from('orders')
-                .insert([{
-                    customer_name: formData.name,
-                    shipping_address: `${formData.address}, ${formData.city} - ${formData.pincode}`,
-                    total_amount: finalTotal,
-                    payment_method: 'Cash on Delivery'
-                }])
+                .insert({
+                    customer_name: formData.customerName,
+                    shipping_address: formData.shippingAddress,
+                    pincode: formData.pincode,
+                    project_name: formData.projectName,
+                    gstin: formData.gstin,
+                    total_amount: totalPrice,
+                    delivery_date: formData.deliveryDate || null,
+                    delivery_slot: formData.deliverySlot,
+                    payment_method: formData.paymentMethod,
+                    status: 'Processing'
+                })
                 .select()
                 .single();
 
-            if (orderError && orderError.code && orderError.code !== '42P01') { 
-                // Ignore table doesn't exist error in frontend for prototype fluidity if user hasn't run the SQL script
-                console.error("Order insertion error:", orderError); 
-            }
+            if (orderError) throw orderError;
 
-            // Mock success universally to abstract DB schema delays
-            setTimeout(() => {
-                setSubmitting(false);
-                setSuccess(true);
-                clearCart();
-                
-                // Redirect back home after success
-                setTimeout(() => router.push('/'), 4000);
-            }, 1500);
-            
+            // 2. Create Order Items
+            const orderItems = cart.map(item => ({
+                order_id: order.id,
+                product_id: item.id,
+                title: item.title,
+                quantity: item.quantity,
+                price: item.priceCurrent
+            }));
+
+            const { error: itemsError } = await supabase
+                .from('order_items')
+                .insert(orderItems);
+
+            if (itemsError) throw itemsError;
+
+            // Success!
+            setOrderId(order.id);
+            setOrderSuccess(true);
+            clearCart();
+            router.push(`/order-success/${order.id}`);
         } catch (err) {
-            console.error("Checkout Failure:", err);
-            setSubmitting(false);
+            console.error('Order Submission Failed:', err);
+            alert('Failed to place order. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
-    if (success) {
+    if (totalItems === 0 && !orderSuccess) {
         return (
-            <div style={{minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--slate-50)'}}>
-                <div style={{background: 'white', padding: '3rem', borderRadius: '1rem', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', maxWidth: '500px'}}>
-                    <CheckCircle style={{width: 64, height: 64, color: 'var(--green)', margin: '0 auto 1.5rem auto'}} />
-                    <h2 style={{fontSize: '2rem', marginBottom: '1rem', color: 'var(--slate-900)'}}>Order Confirmed!</h2>
-                    <p style={{color: 'var(--slate-600)', marginBottom: '2rem', fontSize: '1.1rem'}}>Thank you, {formData.name}! Your construction materials will be dispatched within 48 hours. Please keep Cash on Delivery ready.</p>
-                    <Link href="/" style={{padding: '0.75rem 1.5rem', backgroundColor: 'var(--primary-orange)', color: 'white', textDecoration: 'none', borderRadius: '0.5rem', fontWeight: 600}}>Return to Homepage</Link>
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+                <div className="bg-white p-12 rounded-[40px] text-center shadow-xl border border-slate-100 max-w-md">
+                    <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <ShoppingBag className="w-10 h-10 text-slate-300" />
+                    </div>
+                    <h1 className="text-2xl font-black mb-4">Your procurement basket is empty</h1>
+                    <p className="text-slate-500 mb-8">Add materials to your project sites before checking out.</p>
+                    <Link href="/products" className="btn-primary w-full py-4 rounded-2xl block text-center font-bold">
+                        Browse Materials
+                    </Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <div style={{minHeight: '100vh', backgroundColor: 'var(--slate-50)'}}>
-            {/* Minimal Secure Header */}
-            <header style={{backgroundColor: 'white', borderBottom: '1px solid var(--slate-200)', padding: '1rem 0'}}>
-                <div className="container" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Link href="/" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-orange)', textDecoration: 'none', fontWeight: 800, fontSize: '1.5rem'}}>
-                        <Building2 /> BuildBazaar
+        <div className="min-h-screen bg-white font-sans text-slate-900 pb-20">
+            {/* Minimal Pro Header */}
+            <nav className="border-b border-slate-100 sticky top-0 z-50 bg-white/95 backdrop-blur-md">
+                <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+                    <Link href="/products" className="flex items-center gap-2 text-slate-400 hover:text-slate-900 font-bold text-sm tracking-widest group">
+                        <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                        BACK TO CATALOG
                     </Link>
-                    <div style={{display: 'flex', alignItems: 'center', color: 'var(--slate-500)', fontWeight: 600}}>
-                        <ShieldCheck style={{marginRight: '8px', color: 'var(--green)'}} /> Secure Checkout
+                    <div className="flex items-center gap-2">
+                        <Building2 className="w-6 h-6 text-orange-500" />
+                        <span className="font-black text-xs uppercase tracking-[0.4em]">BuildBazaar Checkout</span>
                     </div>
+                    <div className="w-24"></div> {/* Balance spacer */}
                 </div>
-            </header>
+            </nav>
 
-            <main className="container" style={{padding: '3rem 20px', display: 'flex', gap: '2rem', flexWrap: 'wrap'}}>
-                
-                {/* Left Col: Forms */}
-                <div style={{flex: '1 1 600px'}}>
-                    <Link href="/" style={{display: 'inline-flex', alignItems: 'center', color: 'var(--slate-600)', textDecoration: 'none', marginBottom: '2rem', fontWeight: 500}}>
-                        <ArrowLeft style={{width: 16, height: 16, marginRight: 4}} /> Back to Shop
-                    </Link>
+            <main className="max-w-7xl mx-auto px-4 py-12 lg:py-20">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
                     
-                    <h1 style={{fontSize: '2rem', marginBottom: '1.5rem'}}>Checkout Pipeline</h1>
-                    
-                    <div style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid var(--slate-200)', marginBottom: '1.5rem'}}>
-                        <h2 style={{fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem'}}><Truck style={{color: 'var(--primary-orange)'}} /> 1. Shipping Address</h2>
-                        <form style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem'}}>
-                            <div style={{gridColumn: '1 / -1'}}>
-                                <label style={{display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '0.5rem'}}>Full Name / Site Manager</label>
-                                <input required type="text" defaultValue={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{width: '100%', padding: '0.75rem', border: '2px solid #cbd5e1', borderRadius: '0.5rem', outline: 'none', color: '#111', backgroundColor: '#f8fafc', fontSize: '1rem'}} />
-                            </div>
-                            <div style={{gridColumn: '1 / -1'}}>
-                                <label style={{display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '0.5rem'}}>Phone Number</label>
-                                <input required type="tel" defaultValue={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={{width: '100%', padding: '0.75rem', border: '2px solid #cbd5e1', borderRadius: '0.5rem', outline: 'none', color: '#111', backgroundColor: '#f8fafc', fontSize: '1rem'}} />
-                            </div>
-                            <div style={{gridColumn: '1 / -1'}}>
-                                <label style={{display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '0.5rem'}}>Delivery Site Address</label>
-                                <textarea required rows="3" defaultValue={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} style={{width: '100%', padding: '0.75rem', border: '2px solid #cbd5e1', borderRadius: '0.5rem', outline: 'none', resize: 'vertical', color: '#111', backgroundColor: '#f8fafc', fontSize: '1rem'}}></textarea>
-                            </div>
-                            <div>
-                                <label style={{display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '0.5rem'}}>City</label>
-                                <input type="text" defaultValue={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} style={{width: '100%', padding: '0.75rem', border: '2px solid #cbd5e1', borderRadius: '0.5rem', outline: 'none', color: '#111', backgroundColor: '#f8fafc', fontSize: '1rem'}} />
-                            </div>
-                            <div>
-                                <label style={{display: 'block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--slate-700)', marginBottom: '0.5rem'}}>Pincode</label>
-                                <input type="text" defaultValue={formData.pincode} onChange={e => setFormData({...formData, pincode: e.target.value})} style={{width: '100%', padding: '0.75rem', border: '2px solid #cbd5e1', borderRadius: '0.5rem', outline: 'none', color: '#111', backgroundColor: '#f8fafc', fontSize: '1rem'}} />
-                            </div>
-                        </form>
-                    </div>
-
-                    <div style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid var(--slate-200)'}}>
-                        <h2 style={{fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem'}}><CreditCard style={{color: 'var(--primary-orange)'}} /> 2. Payment Method</h2>
-                        <div style={{border: '2px solid var(--primary-orange)', backgroundColor: 'var(--orange-50)', padding: '1rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', gap: '1rem'}}>
-                            <input type="radio" checked readOnly style={{width: 20, height: 20, accentColor: 'var(--primary-orange)'}} />
-                            <div style={{flex: 1}}>
-                                <h4 style={{fontSize: '1rem', fontWeight: 700, color: 'var(--slate-900)'}}>Cash on Delivery (COD)</h4>
-                                <p style={{fontSize: '0.875rem', color: 'var(--slate-600)'}}>Pay our delivery executive at your construction site.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Col: Summary */}
-                <div style={{flex: '1 1 350px'}}>
-                    <div style={{backgroundColor: 'white', padding: '2rem', borderRadius: '1rem', border: '1px solid var(--slate-200)', position: 'sticky', top: '2rem'}}>
-                        <h2 style={{fontSize: '1.25rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--slate-200)', paddingBottom: '1rem'}}>Order Summary</h2>
+                    {/* Left: Procurement Form */}
+                    <div className="lg:col-span-7">
                         
-                        <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: '300px', overflowY: 'auto'}}>
-                            {cart.length === 0 && <p style={{color: 'var(--slate-500)', fontSize: '0.9rem'}}>Your cart is empty.</p>}
-                            {cart.map(item => (
-                                <div key={item.id} style={{display: 'flex', gap: '1rem', fontSize: '0.9rem', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid var(--slate-100)'}}>
-                                    <div style={{width: 50, height: 50, backgroundColor: 'var(--slate-100)', borderRadius: '0.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0}}>
-                                        <Building2 style={{color: 'var(--slate-400)', width: 24}} />
+                        {/* Step Indicator */}
+                        <div className="flex items-center gap-4 mb-12 overflow-x-auto pb-4">
+                            {[
+                                { id: 1, label: 'Project Info', icon: Briefcase },
+                                { id: 2, label: 'Tax & Billing', icon: CreditCard },
+                                { id: 3, label: 'Site Logistics', icon: Truck }
+                            ].map((s) => (
+                                <div key={s.id} className="flex items-center gap-4 flex-shrink-0">
+                                    <div className={`flex items-center gap-3 px-6 py-3 rounded-2xl border-2 transition-all ${step === s.id ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-100 text-slate-400 bg-white'}`}>
+                                        <s.icon className="w-4 h-4" />
+                                        <span className="text-xs font-black uppercase tracking-widest">{s.label}</span>
                                     </div>
-                                    <div style={{flex: 1}}>
-                                        <div style={{fontWeight: 600, color: 'var(--slate-900)'}}>{item.title}</div>
-                                        <div style={{color: 'var(--slate-500)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '4px'}}>
-                                            <span>Qty: {item.quantity}</span>
-                                            <span style={{color: 'var(--slate-200)'}}>|</span>
-                                            <button onClick={() => removeItem(item.id)} style={{background: 'none', border: 'none', color: 'var(--primary-orange)', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', padding: 0}}>Remove</button>
-                                        </div>
-                                    </div>
-                                    <div style={{fontWeight: 700}}>₹{(item.priceCurrent * item.quantity).toLocaleString('en-IN')}</div>
+                                    {s.id < 3 && <div className="w-4 h-px bg-slate-100"></div>}
                                 </div>
                             ))}
                         </div>
-                        
-                        <div style={{borderTop: '1px solid var(--slate-200)', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.95rem'}}>
-                            <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--slate-600)'}}>
-                                <span>Subtotal</span>
-                                <span style={{fontWeight: 600, color: 'var(--slate-900)'}}>₹{totalPrice.toLocaleString('en-IN')}</span>
-                            </div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--slate-600)'}}>
-                                <span>Shipping Fees</span>
-                                <span style={{fontWeight: 600, color: shipping === 0 ? 'var(--green)' : 'var(--slate-900)'}}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
-                            </div>
-                            <div style={{display: 'flex', justifyContent: 'space-between', color: 'var(--slate-600)'}}>
-                                <span>Estimated GST (18%)</span>
-                                <span style={{fontWeight: 600, color: 'var(--slate-900)'}}>₹{tax.toLocaleString('en-IN')}</span>
-                            </div>
-                        </div>
 
-                        <div style={{marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '2px solid var(--slate-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem'}}>
-                            <span style={{fontSize: '1.125rem', fontWeight: 700}}>Total Amount</span>
-                            <span style={{fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary-orange)'}}>₹{finalTotal.toLocaleString('en-IN')}</span>
-                        </div>
+                        <form onSubmit={handlePlaceOrder} className="space-y-12">
+                            
+                            {/* STEP 1: SITE INFO */}
+                            {step === 1 && (
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+                                    <h2 className="text-4xl font-black tracking-tight mb-8">Where are we building?</h2>
+                                    
+                                    <div className="grid grid-cols-1 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Project / Site Name</label>
+                                            <input required name="projectName" value={formData.projectName} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="e.g. Parkview Residency Phase II" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Site Contact Person</label>
+                                            <input required name="customerName" value={formData.customerName} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="Full name of site manager" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Full Site Address</label>
+                                            <textarea required name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} rows={4} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="Plot No, Landmark, Sector, etc." />
+                                        </div>
+                                    </div>
 
-                        <button 
-                            onClick={handlePlaceOrder} 
-                            disabled={submitting || cart.length === 0}
-                            style={{width: '100%', padding: '1rem', backgroundColor: submitting || cart.length === 0 ? 'var(--slate-400)' : 'var(--primary-orange)', color: 'white', fontSize: '1.125rem', border: 'none', borderRadius: '0.5rem', fontWeight: 700, cursor: submitting || cart.length === 0 ? 'not-allowed' : 'pointer', transition: 'background 0.2s', display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                        >
-                            {submitting ? 'Processing Order...' : 'Place Order'}
-                        </button>
-                        
-                        <div style={{marginTop: '1rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.75rem', color: 'var(--slate-500)'}}>
-                            <AlertCircle style={{width: 14, height: 14, flexShrink: 0, marginTop: 2}} />
-                            <span>By placing your order, you agree to BuildBazaar's privacy notice and conditions of use. Verification calls may apply for heavy delivery handling.</span>
-                        </div>
+                                    <button type="button" onClick={() => setStep(2)} className="btn-primary w-full py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3">
+                                        SAVE & NEXT
+                                        <ArrowRight className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* STEP 2: TAX & BILLING */}
+                            {step === 2 && (
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+                                    <h2 className="text-4xl font-black tracking-tight mb-8">Billing Intelligence</h2>
+                                    
+                                    <div className="grid grid-cols-1 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Business / GSTIN (Optional)</label>
+                                            <input name="gstin" value={formData.gstin} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-black tech-monogram uppercase" placeholder="22AAAAA0000A1Z5" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Registered Business Name</label>
+                                            <input name="businessName" value={formData.businessName} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="e.g. Skyline Infrastructure Ltd." />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <button type="button" onClick={() => setStep(1)} className="flex-1 py-5 border-2 border-slate-100 rounded-2xl font-black text-slate-400 hover:border-slate-900 hover:text-slate-900 transition-all">
+                                            BACK
+                                        </button>
+                                        <button type="button" onClick={() => setStep(3)} className="flex-[2] btn-primary py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3">
+                                            CONTINUE TO LOGISTICS
+                                            <ArrowRight className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* STEP 3: LOGISTICS */}
+                            {step === 3 && (
+                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+                                    <h2 className="text-4xl font-black tracking-tight mb-8">Site Logistics</h2>
+                                    
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Preferred Delivery Date</label>
+                                            <div className="relative">
+                                                <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                                <input required type="date" name="deliveryDate" value={formData.deliveryDate} onChange={handleChange} className="w-full pl-16 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Unloading Slot</label>
+                                            <select name="deliverySlot" value={formData.deliverySlot} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold appearance-none">
+                                                <option>Morning (8AM - 12PM)</option>
+                                                <option>Afternoon (12PM - 4PM)</option>
+                                                <option>Evening (4PM - 9PM)</option>
+                                                <option>Night (10PM - 6AM)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6 bg-slate-900 rounded-3xl text-white">
+                                        <h3 className="text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-orange-500">
+                                            <CreditCard className="w-4 h-4" /> Final Step
+                                        </h3>
+                                        <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+                                            By placing this order, you authorize the dispatch of materials to the specified project site. You will receive a technical inspection report upon delivery.
+                                        </p>
+
+                                        <div className="flex gap-4">
+                                            <button type="button" onClick={() => setStep(2)} className="flex-1 py-5 border-2 border-white/10 rounded-2xl font-black text-white/40 hover:border-white transition-all">
+                                                CHANGE BILLING
+                                            </button>
+                                            <button 
+                                                disabled={loading}
+                                                className="flex-[2] bg-orange-500 hover:bg-orange-600 disabled:bg-slate-700 text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 shadow-xl shadow-orange-500/20 transition-all active:scale-[0.98]"
+                                            >
+                                                {loading ? 'SYNCHRONIZING...' : 'FINALIZE PROCUREMENT'}
+                                                {!loading && <ArrowRight className="w-5 h-5" />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                        </form>
+                    </div>
+
+                    {/* Right: Order Summary */}
+                    <div className="lg:col-span-5">
+                        <CheckoutSummary />
                     </div>
                 </div>
             </main>
