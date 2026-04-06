@@ -109,10 +109,13 @@ export default function BuildBazaar() {
         const savedPin = localStorage.getItem('bb-pincode');
         const savedCity = localStorage.getItem('bb-city');
         
-        if (savedPin) {
+        // Sanitize: If the saved data is the "Invalid" string from the previous bug, clear it
+        if (savedPin && savedPin.length === 6 && savedCity && savedCity !== 'Invalid Pincode' && savedCity !== 'Network Error') {
             setPincode(savedPin);
-            if (savedCity) setCity(savedCity);
-            else fetchCity(savedPin);
+            setCity(savedCity);
+        } else if (savedPin && savedPin.length === 6) {
+            setPincode(savedPin);
+            fetchCity(savedPin);
         }
 
         // Fetch real data from Supabase if configured (silently falls back if tables don't exist yet)
