@@ -316,14 +316,15 @@ export default function BuildBazaar() {
                         <div className="steps-container">
                             <div className="step-connecting-line"></div>
                             {[
-                                { num: 1, icon: Search, title: 'Browse & Compare', desc: 'Search materials, compare prices from multiple verified suppliers in your area.' },
-                                { num: 2, icon: ShoppingCart, title: 'Place Your Order', desc: 'Add to cart, apply bulk discounts, and checkout with secure digital payments.' },
-                                { num: 3, icon: Truck, title: 'Track Delivery', desc: 'Real-time tracking from warehouse to your construction site with estimated ETAs.' },
-                                { num: 4, icon: ThumbsUp, title: 'Build with Confidence', desc: 'Quality-checked materials, hassle-free returns, and dedicated support.' }
+                                { num: 1, icon: Search, title: 'Browse & Compare', desc: 'Search materials, compare prices from multiple verified suppliers in your area.', link: '/products' },
+                                { num: 2, icon: ShoppingCart, title: 'Place Your Order', desc: 'Add to cart, apply bulk discounts, and checkout with secure digital payments.', link: '#products' },
+                                { num: 3, icon: Truck, title: 'Track Delivery', desc: 'Real-time tracking from warehouse to your construction site with estimated ETAs.', link: '/auth' },
+                                { num: 4, icon: ThumbsUp, title: 'Build with Confidence', desc: 'Quality-checked materials, hassle-free returns, and dedicated support.', link: '/products' }
                             ].map(step => {
                                 const StepIcon = step.icon;
                                 return (
-                                <div className="step-card" key={step.num}>
+                                <Link href={step.link} key={step.num} style={{textDecoration: 'none'}}>
+                                <div className="step-card" style={{cursor: 'pointer'}}>
                                     <div className="step-icon-wrapper">
                                         <StepIcon className="step-icon" />
                                         <span className="step-number">{step.num}</span>
@@ -331,6 +332,7 @@ export default function BuildBazaar() {
                                     <h3 style={{color:'white', marginBottom:'0.75rem', fontSize:'1.25rem'}}>{step.title}</h3>
                                     <p style={{color:'var(--slate-300)', fontSize:'0.95rem'}}>{step.desc}</p>
                                 </div>
+                                </Link>
                             )})}
                         </div>
                     </div>
