@@ -45,8 +45,8 @@ export default function ProductDetailPage() {
                 // DEMO FIX: Hardcode the correct high-fidelity images if DB is stale
                 let updatedProduct = data;
                 if (data.id === 'p1') {
-                    // Guaranteed-load High-Fidelity material image (Cemento)
-                    updatedProduct.images = ['https://images.unsplash.com/photo-1544928147-79a2dbc1f389?q=80&w=1000'];
+                    // Guaranteed-load High-Fidelity material image
+                    updatedProduct.images = ['https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&q=80&w=1000'];
                     updatedProduct.priceCurrent = data.priceCurrent === 99 ? 450 : data.priceCurrent;
                 } else if (data.id === 'p2') {
                     updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800'];
