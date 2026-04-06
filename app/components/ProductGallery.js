@@ -6,47 +6,75 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 export default function ProductGallery({ images }) {
     const [activeIndex, setActiveIndex] = useState(0);
 
-    if (!images || images.length === 0) return null;
+    if (!images || images.length === 0) return (
+        <div style={{aspectRatio: '1/1', backgroundColor: '#f8fafc', borderRadius: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1', fontWeight: 900}}>
+            NO MEDIA
+        </div>
+    );
 
     return (
-        <div className="flex flex-col gap-4">
-            {/* Main High-Res View */}
-            <div className="relative aspect-square bg-[#f9f9f9] border border-slate-200 rounded-xl overflow-hidden group">
+        <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+            {/* Main Stage */}
+            <div style={{
+                position: 'relative', 
+                aspectRatio: '1/1', 
+                backgroundColor: '#fff', 
+                border: '1px solid #f1f5f9', 
+                borderRadius: '1.5rem', 
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2rem'
+            }}>
                 <img 
                     src={images[activeIndex]} 
-                    alt="Product main view"
-                    className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
+                    alt="Product view"
+                    style={{
+                        maxWidth: '100%', 
+                        maxHeight: '100%', 
+                        objectFit: 'contain',
+                        transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}
                 />
                 
-                {/* Navigation Arrows (Only if multiple images) */}
+                {/* Navigation Pips (Overlay) */}
                 {images.length > 1 && (
-                    <>
-                        <button 
-                            onClick={() => setActiveIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
-                            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
-                        <button 
-                            onClick={() => setActiveIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                    </>
+                    <div style={{position: 'absolute', bottom: '1.5rem', display: 'flex', gap: '8px'}}>
+                        {images.map((_, i) => (
+                            <div key={i} style={{
+                                width: '6px', 
+                                height: '6px', 
+                                borderRadius: 'full', 
+                                backgroundColor: i === activeIndex ? '#f97316' : '#e2e8f0',
+                                transition: 'all 0.3s'
+                            }} />
+                        ))}
+                    </div>
                 )}
             </div>
 
-            {/* Thumbnail Navigation */}
+            {/* Thumbnail Strip */}
             {images.length > 1 && (
-                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                <div style={{display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px'}}>
                     {images.map((img, idx) => (
                         <button 
                             key={idx}
                             onClick={() => setActiveIndex(idx)}
-                            className={`w-20 h-20 flex-shrink-0 border-2 rounded-lg overflow-hidden transition-all ${idx === activeIndex ? 'border-orange-500 bg-orange-50' : 'border-slate-100 hover:border-slate-300'}`}
+                            style={{
+                                width: '72px', 
+                                height: '72px', 
+                                flexShrink: 0,
+                                borderRadius: '12px', 
+                                border: idx === activeIndex ? '2px solid #f97316' : '2px solid transparent',
+                                backgroundColor: '#fff',
+                                overflow: 'hidden',
+                                cursor: 'pointer',
+                                padding: '4px',
+                                transition: 'all 0.2s'
+                            }}
                         >
-                            <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                            <img src={img} style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px'}} />
                         </button>
                     ))}
                 </div>

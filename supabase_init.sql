@@ -54,14 +54,14 @@ INSERT INTO categories (id, title, count) VALUES
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO products (id, title, brand, category, verified, tag, rating, reviews, "priceCurrent", "priceOld", discount, unit, description, images, product_specs, features) VALUES
-('p1', 'UltraTech Cement OPC 53', 'UltraTech', 'Cement', true, 'Best Seller', 4.6, 2340, 380, 420, '10% OFF', 'per bag (50kg)', 'Premium quality Ordinary Portland Cement (OPC) of 53 Grade. Ideal for high-strength concrete applications in residential and commercial buildings. Manufactured using high-quality raw materials for superior durability.', 
-'{"https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=800", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800", "https://images.unsplash.com/photo-1590069230005-db3937107792?q=80&w=800"}', 
+('p1', 'UltraTech Cement OPC 53', 'UltraTech', 'Cement', true, 'Best Seller', 4.8, 2340, 450, 480, '6% OFF', 'per bag (50kg)', 'Premium quality Ordinary Portland Cement (OPC) of 53 Grade. Ideal for high-strength concrete applications in residential and commercial buildings. Manufactured using high-quality raw materials for superior durability.', 
+'{"https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&q=80&w=800", "https://images.unsplash.com/photo-1590060417673-42846eaae8ee?auto=format&fit=crop&q=80&w=800"}', 
 '{"grade": "53 Grade", "type": "OPC", "setting_time_initial": "30 mins", "setting_time_final": "600 mins", "compressive_strength_28d": "53 MPa", "standard": "IS 12269"}', 
 '{"High compressive strength", "Fast setting", "Durable structures", "Low heat of hydration"}'),
 
-('p2', 'Tata Tiscon TMT Bar Fe500D', 'Tata Steel', 'Steel & TMT', true, 'Top Rated', 4.8, 1890, 62500, 68000, '8% OFF', 'per tonne', 'India''s first Fe500D grade TMT rebar. Known for high ductility and superior earthquake resistance. Produced using high-quality virgin iron ore.', 
-'{"https://images.unsplash.com/photo-1533044309907-0fa3413da946?q=80&w=800", "https://images.unsplash.com/photo-1511210352317-00965d1d603a?q=80&w=800", "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800"}', 
-'{"grade": "Fe 500D", "material": "High-strength steel", "elongation": "16%+", "yield_strength": "500 MPa", "ductility": "High"}', 
+('p2', 'Tata Tiscon TMT Bars 12mm', 'Tata Steel', 'Steel & TMT', true, 'Top Rated', 4.9, 1120, 65500, 68000, '4% OFF', 'per tonne', 'High-ductility TMT rebars with superior earthquake resistance and bonding strength. Produced using Virgin Steel through the primary route for maximum purity.', 
+'{"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800", "https://images.unsplash.com/photo-1533044113278-df0962ae3496?auto=format&fit=crop&q=80&w=800"}', 
+'{"grade": "Fe 550D", "diameter": "12mm", "length": "12m", "standard": "IS 1786", "elongation": "16% min", "weldability": "Superior"}', 
 '{"Superior earthquake resistance", "Excellent bendability", "Corrosion resistant", "Consistent rib pattern"}'),
 
 ('p3', 'First Class Red Bricks', 'Local Supplier', 'Bricks & Blocks', true, 'Bulk Deal', 4.3, 870, 8, 10, '20% OFF', 'per piece', 'Naturally burnt red clay bricks. High thermal insulation and durability for traditional masonry. Traditional frog-indent for better mortar bonding.', 
