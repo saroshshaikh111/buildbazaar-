@@ -46,7 +46,7 @@ export default function ProductDetailPage() {
                 let updatedProduct = data;
                 if (data.id === 'p1') {
                     // Hardcoded High-Fidelity Material Image (Staging Override)
-                    updatedProduct.images = ['https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800'];
+                    updatedProduct.images = ['https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Blue_and_gray_cement_bags.jpg/640px-Blue_and_gray_cement_bags.jpg'];
                     updatedProduct.priceCurrent = data.priceCurrent === 99 ? 450 : data.priceCurrent;
                 } else if (data.id === 'p2') {
                     updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800'];
