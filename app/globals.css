@@ -569,7 +569,7 @@ button {
 /* How It Works Section */
 .steps-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     position: relative;
     margin-top: 3rem;
@@ -592,8 +592,8 @@ button {
 .step-connecting-line {
     position: absolute;
     top: 40px;
-    left: 12.5%;
-    right: 12.5%;
+    left: 16.6%;
+    right: 16.6%;
     height: 2px;
     background-color: rgba(249, 115, 22, 0.3);
     z-index: 0;

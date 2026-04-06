@@ -318,8 +318,7 @@ export default function BuildBazaar() {
                             {[
                                 { num: 1, icon: Search, title: 'Browse & Compare', desc: 'Search materials, compare prices from multiple verified suppliers in your area.', link: '/products' },
                                 { num: 2, icon: ShoppingCart, title: 'Place Your Order', desc: 'Add to cart, apply bulk discounts, and checkout with secure digital payments.', link: '#products' },
-                                { num: 3, icon: Truck, title: 'Track Delivery', desc: 'Real-time tracking from warehouse to your construction site with estimated ETAs.', link: '/auth' },
-                                { num: 4, icon: ThumbsUp, title: 'Build with Confidence', desc: 'Quality-checked materials, hassle-free returns, and dedicated support.', link: '/products' }
+                                { num: 3, icon: Truck, title: 'Track Delivery', desc: 'Real-time tracking from warehouse to your construction site with estimated ETAs.', link: '/auth' }
                             ].map(step => {
                                 const StepIcon = step.icon;
                                 return (
