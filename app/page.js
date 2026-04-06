@@ -516,7 +516,7 @@ export default function BuildBazaar() {
                     <div style={{padding: '15px 0', borderBottom: '1px solid #d5d9d9'}}>
                         <h4 style={{padding: '0 35px 5px 35px', fontSize: '16px', color: '#111', fontWeight: 700, marginBottom: '5px'}}>Shop by Category</h4>
                         {categories.map(cat => (
-                            <Link key={cat.id} href="/products" onClick={() => setMenuDrawerOpen(false)} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '13px 35px', color: '#111', textDecoration: 'none', fontSize: '14px'}}>
+                            <Link key={cat.id} href={`/products?category=${encodeURIComponent(cat.title)}`} onClick={() => setMenuDrawerOpen(false)} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '13px 35px', color: '#111', textDecoration: 'none', fontSize: '14px'}}>
                                 {cat.title}
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><path d="M9 18l6-6-6-6"></path></svg>
                             </Link>
