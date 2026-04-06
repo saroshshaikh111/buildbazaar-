@@ -29,9 +29,6 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
 
-    // ROOT CAUSE FIX: High-Fideltiy Generic Data URI ensures visual integrity across all brands (ACC, Ambuja, UltraTech)
-    const MATERIAL_HERO_DATA_URI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDYwMCA2MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNmOGZhZmMiLz48cGF0aCBkPSJNNDI1IDE1MEgxNzVMMTUwIDQ1MEg0NTBMNDI1IDE1MFoiIGZpbGw9IiNlMmU4ZjAiIHN0cm9rZT0iIzA0MDkwYSIgc3Ryb2tlLXdpZHRoPSI4Ii8+PHJlY3QgeD0iMTg1IiB5PSIxODAiIHdpZHRoPSIyMzAiIGhlaWdodD0iMjQwIiByeD0iOCIgZmlsbD0id2hpdGUiIGZpbGwtb3BhY2l0eT0iMC41Ii8+PHRleHQgeD0iMzAwIiB5PSIyNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM0NzU1NjkiIHN0eWxlPSJmb250LWZhbWlseTogSW50ZXIsIHNhbnMtc2VyaWY7IGZvbnQtd2lnaHQ6IDkwMDsgZm9udC1zaXplOiAzMnB4OyB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzogMC4xZW07Ij5QUkVNSVVNPC90ZXh0Pjx0ZXh0IHg9IjMwMCIgeT0iMzAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZjA3MzE2IiBzdHlsZT0iZm9udC1mYW1pbHk6IEludGVyLCBzYW5zLXNlcmlmOyBmb250LXdlaWdodDogOTAwOyBmb250LXNpemU6IDI0cHg7Ij5NQVRFUklBTDwvdGV4dD48dGV4dIHg9IjMwMCIgeT0iMzQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTRhM2I4IiBzdHlsZT0iZm9udC1mYW1pbHk6IEludGVyLCBzYW5zLXNlcmlmOyBmb250LXdlaWdodDogODAwOyBmb250LXNpemU6IDEycHg7IGxldHRlci1zcGFjaW5nOiAwLjFlbTsiPklORFVTVFJJQUwgUFJPIFBST0NVUkVNRU5UPC90ZXh0Pjwvc3ZnPg==';
-
     useEffect(() => {
         async function fetchProduct() {
             setLoading(true);
@@ -47,10 +44,10 @@ export default function ProductDetailPage() {
                 // FINAL RESTORATION: Data-driven price & visual integrity
                 let updatedProduct = data;
                 if (data.id === 'p1') {
-                    // Start with high-fidelity generic photo, then fallback to Data URI
+                    // VERIFIED Industrial Assets: Professional material stacks & bags (No more city/nature photos)
                     updatedProduct.images = [
-                        'https://images.unsplash.com/photo-1544161513-0179fe746fd5?q=80&w=1200&auto=format&fit=crop',
-                        MATERIAL_HERO_DATA_URI
+                        'https://images.unsplash.com/photo-1589934301540-3b0277bd2228?q=80&w=1200&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200&auto=format&fit=crop'
                     ];
                     updatedProduct.priceCurrent = 450;
                 } else if (data.id === 'p2') {
@@ -185,9 +182,9 @@ export default function ProductDetailPage() {
                                 <div>
                                     <label style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px', display: 'block'}}>Order Quantity</label>
                                     <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '6px'}}>
-                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14}} /></button>
+                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14, height: 14}} /></button>
                                         <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} style={{flex: 1, border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem'}} />
-                                        <button onClick={() => setQuantity(quantity + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14}} /></button>
+                                        <button onClick={() => setQuantity(quantity + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14, height: 14}} /></button>
                                     </div>
                                 </div>
 
