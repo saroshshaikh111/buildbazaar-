@@ -45,7 +45,8 @@ export default function ProductDetailPage() {
                 // DEMO FIX: Hardcode the correct high-fidelity images if DB is stale
                 let updatedProduct = data;
                 if (data.id === 'p1') {
-                    updatedProduct.images = ['https://5.imimg.com/data5/ANDROID/Default/2021/3/XW/QD/TM/121853401/product-500x500.jpg'];
+                    // Hardcoded High-Fidelity Material Image (Staging Override)
+                    updatedProduct.images = ['https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800'];
                     updatedProduct.priceCurrent = data.priceCurrent === 99 ? 450 : data.priceCurrent;
                 } else if (data.id === 'p2') {
                     updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800'];
