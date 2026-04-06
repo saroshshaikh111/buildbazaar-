@@ -82,183 +82,121 @@ export default function ProductDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white font-sans text-slate-900">
-            {/* Simple Utility Navigation */}
-            <nav className="border-b border-slate-200 sticky top-0 z-50 bg-white/95 backdrop-blur-sm">
-                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button 
-                            onClick={() => router.back()}
-                            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                            aria-label="Go back"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
+        <div style={{minHeight: '100vh', backgroundColor: '#fff', color: '#0f172a', fontFamily: 'Inter, sans-serif'}}>
+            {/* Minimal Header */}
+            <nav style={{borderBottom: '1px solid #e2e8f0', sticky: 'top', backgroundColor: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', zIndex: 100}}>
+                <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                        <button onClick={() => router.back()} style={{padding: '0.5rem', border: 'none', background: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
+                            <ChevronLeft style={{width: '20px', height: '20px'}} />
                         </button>
-                        <div className="text-sm font-medium breadcrumbs text-slate-500">
-                            <Link href="/" className="hover:text-slate-900">Home</Link>
-                            <span className="mx-2">/</span>
-                            <Link href="/products" className="hover:text-slate-900">Products</Link>
-                            <span className="mx-2">/</span>
-                            <span className="text-slate-900 font-semibold">{product.category}</span>
+                        <div style={{fontSize: '0.875rem', fontWeight: 500, color: '#64748b'}}>
+                            <Link href="/products" style={{textDecoration: 'none', color: 'inherit'}}>Products</Link> / <span style={{color: '#0f172a', fontWeight: 700}}>{product.category}</span>
                         </div>
-                    </div>
-                    <div className="hidden sm:flex items-center gap-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                        SKU: {product.id.toUpperCase()}-BB
                     </div>
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 py-8 lg:py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <main style={{maxWidth: '1280px', margin: '0 auto', padding: '3rem 1.5rem'}}>
+                <div style={{display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '3rem'}}>
                     
-                    {/* Left Column: Media Gallery (Col 4) */}
-                    <div className="lg:col-span-5">
-                        <ProductGallery images={product.images} />
-                        
-                        <div className="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-100">
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-orange-500" />
-                                Material intelligence
-                            </h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                {product.description || "Synthesizing high-performance structural integrity with modern construction requirements."}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Middle Column: Technical Specifications (Col 4) */}
-                    <div className="lg:col-span-4">
-                        <div className="mb-6">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold uppercase tracking-wider">
-                                    {product.brand}
-                                </span>
-                                {product.verified && (
-                                    <span className="flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold uppercase tracking-wider">
-                                        <ShieldCheck className="w-3 h-3" /> BIS Verified
-                                    </span>
-                                )}
-                            </div>
-                            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-2">
-                                {product.title}
-                            </h1>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center">
-                                    <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                                    <span className="ml-1 font-bold text-slate-900">{product.rating}</span>
-                                </div>
-                                <span className="text-slate-400 text-sm">|</span>
-                                <span className="text-slate-500 text-sm">{product.reviews.toLocaleString()} Reviews</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div className="border border-slate-200 rounded-xl overflow-hidden">
-                                <h2 className="bg-slate-50 px-4 py-3 border-b border-slate-200 text-sm font-bold uppercase tracking-wider flex items-center gap-2">
-                                    <div className="w-1 h-4 bg-orange-500 rounded-full"></div>
-                                    Technical Specifications
-                                </h2>
-                                <div className="divide-y divide-slate-100">
-                                    {Object.entries(product.product_specs || {}).map(([key, value]) => (
-                                        <div key={key} className="grid grid-cols-2 px-4 py-3 hover:bg-slate-50 transition-colors">
-                                            <span className="text-xs text-slate-500 uppercase font-medium">{key.replace(/_/g, ' ')}</span>
-                                            <span className="text-sm font-bold text-slate-900 text-right">{value}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-3">
-                                <h3 className="text-sm font-bold text-slate-900">Key Features</h3>
-                                <ul className="grid grid-cols-1 gap-2">
-                                    {product.features?.map((feature, i) => (
-                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
-                                            {feature}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Column: Buy Box (Col 3) */}
-                    <div className="lg:col-span-3">
-                        <div className="sticky top-24 space-y-6">
-                            <div className="p-6 bg-white border-2 border-slate-900 rounded-2xl shadow-xl">
-                                <div className="mb-6">
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-4xl font-black text-slate-900">₹{product.priceCurrent.toLocaleString()}</span>
-                                        {product.priceOld && (
-                                            <span className="text-lg text-slate-300 line-through">₹{product.priceOld.toLocaleString()}</span>
-                                        )}
-                                    </div>
-                                    <span className="text-orange-600 font-bold text-xs uppercase tracking-widest">{product.unit}</span>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Quantity</label>
-                                        <div className="flex items-center border border-slate-200 rounded-xl p-1 bg-slate-50">
-                                            <button 
-                                                className="w-10 h-10 flex items-center justify-center hover:bg-white rounded-lg transition-all"
-                                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                            >
-                                                <Minus className="w-4 h-4" />
-                                            </button>
-                                            <span className="flex-1 text-center font-bold text-lg">{quantity}</span>
-                                            <button 
-                                                className="w-10 h-10 flex items-center justify-center hover:bg-white rounded-lg transition-all"
-                                                onClick={() => setQuantity(quantity + 1)}
-                                            >
-                                                <Plus className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <button 
-                                        onClick={handleAddToCart}
-                                        className="w-full bg-orange-500 hover:bg-orange-600 text-white h-14 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-orange-500/20"
-                                    >
-                                        <ShoppingCart className="w-5 h-5" />
-                                        ADD TO CART
-                                    </button>
-
-                                    <Link 
-                                        href="/checkout"
-                                        className="w-full bg-slate-900 hover:bg-slate-800 text-white h-14 rounded-xl font-bold flex items-center justify-center gap-2 transition-all no-underline"
-                                    >
-                                        PROCURE BULK QUOTE
-                                        <ArrowRight className="w-4 h-4" />
-                                    </Link>
-                                </div>
-
-                                <div className="mt-6 pt-6 border-t border-slate-100 space-y-4">
-                                    <div className="flex gap-3">
-                                        <Truck className="w-5 h-5 text-slate-400" />
-                                        <div>
-                                            <p className="text-xs font-bold text-slate-900">Standard Delivery</p>
-                                            <p className="text-[10px] text-slate-500">Delivered in 2-4 working days</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-3">
-                                        <Clock className="w-5 h-5 text-slate-400" />
-                                        <div>
-                                            <p className="text-xs font-bold text-slate-900">Secure Procurement</p>
-                                            <p className="text-[10px] text-slate-500">100% Quality Inspected</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Sticky Calculator Sidebar */}
-                            <div className="p-4 bg-slate-900 rounded-2xl text-white shadow-xl">
-                                <h3 className="text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <Building2 className="w-4 h-4 text-orange-400" />
-                                    Estimate Consumption
+                    {/* COLUMN 1: MATERIAL GALLERY (SPAN 5) */}
+                    <div style={{gridColumn: 'span 5'}}>
+                        <div style={{position: 'sticky', top: '100px'}}>
+                            <ProductGallery images={product.images} />
+                            
+                            <div style={{marginTop: '2rem', padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #f1f5f9'}}>
+                                <h3 style={{fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                                    <FileText style={{width: 14, height: 14}} />
+                                    Material intelligence
                                 </h3>
-                                <div className="transform scale-90 -origin-top-left -mr-4">
-                                    <MaterialCalculator category={product.category} unit={product.unit} />
+                                <p style={{fontSize: '0.875rem', color: '#475569', lineHeight: 1.6}}>
+                                    {product.description || "High-performance construction material engineered for industrial-grade durability and structural integrity."}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* COLUMN 2: TECHNICAL SPECIFICATIONS (SPAN 4) */}
+                    <div style={{gridColumn: 'span 4'}}>
+                        <div style={{marginBottom: '2rem'}}>
+                            <div style={{display: 'flex', gap: '0.5rem', marginBottom: '1rem'}}>
+                                <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '2px 8px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '4px'}}>{product.brand}</span>
+                                {product.verified && <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '2px 8px', backgroundColor: '#f0fdf4', color: '#16a34a', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px'}}><ShieldCheck style={{width: 10, height: 10}} /> BIS Verified</span>}
+                            </div>
+                            <h1 style={{fontSize: '2.5rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.1, marginBottom: '0.75rem'}}>{product.title}</h1>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                                <div style={{display: 'flex', color: '#fbbf24'}}>
+                                    <Star style={{width: 16, height: 16, fill: 'currentColor'}} />
+                                    <span style={{marginLeft: '0.25rem', fontWeight: 800, color: '#0f172a'}}>{product.rating}</span>
+                                </div>
+                                <span style={{color: '#94a3b8'}}>|</span>
+                                <span style={{fontSize: '0.875rem', fontWeight: 600, color: '#64748b'}}>{product.reviews.toLocaleString()} Verification Reports</span>
+                            </div>
+                        </div>
+
+                        <div style={{border: '1px solid #e2e8f0', borderRadius: '1rem', overflow: 'hidden'}}>
+                            <div style={{backgroundColor: '#f8fafc', padding: '1rem', borderBottom: '1px solid #e2e8f0', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: '#64748b'}}>
+                                Technical Datasheet
+                            </div>
+                            {Object.entries(product.product_specs || {}).map(([key, value], idx) => (
+                                <div key={key} style={{display: 'flex', justifyContent: 'space-between', padding: '1rem', borderBottom: idx === Object.entries(product.product_specs).length - 1 ? 'none' : '1px solid #f1f5f9'}}>
+                                    <span style={{fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#94a3b8'}}>{key.replace(/_/g, ' ')}</span>
+                                    <span style={{fontSize: '0.875rem', fontWeight: 800, color: '#0f172a'}}>{value}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Estimator Integration */}
+                        <div style={{marginTop: '2rem', padding: '1.5rem', backgroundColor: '#0f172a', borderRadius: '1.5rem', color: '#fff'}}>
+                             <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem'}}>
+                                <Building2 style={{width: '16px', height: '16px', color: '#f97316'}} />
+                                <span style={{fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em'}}>Consumption Estimator</span>
+                             </div>
+                             <div style={{transform: 'scale(0.9)', transformOrigin: 'top left'}}>
+                                <MaterialCalculator category={product.category} unit={product.unit} />
+                             </div>
+                        </div>
+                    </div>
+
+                    {/* COLUMN 3: PROCUREMENT HUB (SPAN 3) */}
+                    <div style={{gridColumn: 'span 3'}}>
+                        <div style={{position: 'sticky', top: '100px', backgroundColor: '#fff', border: '2px solid #0f172a', borderRadius: '2rem', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'}}>
+                            <div style={{marginBottom: '2rem'}}>
+                                <div style={{display: 'flex', alignItems: 'baseline', gap: '0.5rem'}}>
+                                    <span style={{fontSize: '2.5rem', fontWeight: 900, color: '#0f172a'}}>₹{product.priceCurrent.toLocaleString()}</span>
+                                    <span style={{fontSize: '0.75rem', fontWeight: 800, color: '#f97316', textTransform: 'uppercase'}}>{product.unit}</span>
+                                </div>
+                                {product.priceOld && <span style={{fontSize: '1rem', color: '#94a3b8', textDecoration: 'line-through'}}>₹{product.priceOld.toLocaleString()}</span>}
+                            </div>
+
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>
+                                <div>
+                                    <label style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '0.5rem', display: 'block'}}>Order Quantity</label>
+                                    <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '4px'}}>
+                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14, height: 14}} /></button>
+                                        <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} style={{flex: 1, border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem'}} />
+                                        <button onClick={() => setQuantity(quantity + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14, height: 14}} /></button>
+                                    </div>
+                                </div>
+
+                                <button onClick={handleAddToCart} style={{height: '56px', backgroundColor: '#f97316', color: '#fff', borderRadius: '1rem', border: 'none', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', boxShadow: '0 10px 15px -3px rgba(249, 115, 22, 0.3)'}}>
+                                    <ShoppingCart style={{width: 20, height: 20}} /> ADD TO CART
+                                </button>
+                                
+                                <Link href="/checkout" style={{height: '56px', backgroundColor: '#0f172a', color: '#fff', borderRadius: '1rem', textDecoration: 'none', fontWeight: 900, fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem'}}>
+                                    PROCURE BULK <ArrowRight style={{width: 16, height: 16}} />
+                                </Link>
+                            </div>
+
+                            <div style={{marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+                                    <Truck style={{width: 18, height: 18, color: '#94a3b8'}} />
+                                    <span style={{fontSize: '0.75rem', fontWeight: 700, color: '#64748b'}}>Ships to site in 48-72 hours</span>
+                                </div>
+                                <div style={{padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '1rem'}}>
+                                    <p style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '0.25rem'}}>Logistics Note</p>
+                                    <p style={{fontSize: '0.75rem', lineHeight: 1.4, color: '#64748b'}}>Site access must be heavy-vehicle ready. High unloading volume.</p>
                                 </div>
                             </div>
                         </div>
@@ -268,4 +206,3 @@ export default function ProductDetailPage() {
         </div>
     );
 }
-
