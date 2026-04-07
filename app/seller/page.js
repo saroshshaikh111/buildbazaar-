@@ -17,6 +17,7 @@ export default function SellerDashboard() {
 
     // Modal State
     const [showModal, setShowModal] = useState(false);
+    const [editingProductId, setEditingProductId] = useState(null);
     const [newProduct, setNewProduct] = useState({
         title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null
     });
@@ -90,27 +91,42 @@ export default function SellerDashboard() {
                 imageUrl = publicUrlData.publicUrl;
             }
 
-            // Generate mock p_id if none exists (in a real app, let PG sequences handle or insert custom)
-            const generatedId = 'v_' + Math.random().toString(36).substring(2, 9);
-            
-            const { data: insertedData, error: dbError } = await supabase.from('products').insert([{
-                id: generatedId,
+            const payload = {
                 title: newProduct.title,
                 brand: newProduct.brand,
                 category: newProduct.category,
                 "priceCurrent": Number(newProduct.priceCurrent),
                 "priceOld": newProduct.priceOld ? Number(newProduct.priceOld) : null,
                 unit: newProduct.unit,
-                images: imageUrl ? [imageUrl] : [],
                 verified: true
-            }]).select();
-
-            if (dbError) throw dbError;
-
-            if (insertedData) {
-                setProducts([insertedData[0], ...products]);
+            };
+            
+            // Only update images array if a newly uploaded image URL was generated
+            if (imageUrl) {
+                payload.images = [imageUrl];
+            } else if (!editingProductId) {
+                payload.images = [];
             }
+
+            if (editingProductId) {
+                // Update Existing
+                const { data: updatedData, error: dbError } = await supabase.from('products').update(payload).eq('id', editingProductId).select();
+                if (dbError) throw dbError;
+                if (updatedData) {
+                    setProducts(products.map(p => p.id === editingProductId ? updatedData[0] : p));
+                }
+            } else {
+                // Insert New
+                payload.id = 'v_' + Math.random().toString(36).substring(2, 9);
+                const { data: insertedData, error: dbError } = await supabase.from('products').insert([payload]).select();
+                if (dbError) throw dbError;
+                if (insertedData) {
+                    setProducts([insertedData[0], ...products]);
+                }
+            }
+            
             setShowModal(false);
+            setEditingProductId(null);
             setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null });
 
         } catch (err) {
@@ -270,7 +286,7 @@ export default function SellerDashboard() {
                                     <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a' }}>Inventory Catalog</h1>
                                     <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Manage your storefront products and pricing.</p>
                                 </div>
-                                <button onClick={() => setShowModal(true)} style={{ background: '#f97316', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.2)' }}>
+                                <button onClick={() => { setEditingProductId(null); setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null }); setShowModal(true); }} style={{ background: '#f97316', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.2)' }}>
                                     <Plus style={{ width: 20, height: 20 }} /> Add New Product
                                 </button>
                             </div>
@@ -283,6 +299,7 @@ export default function SellerDashboard() {
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Category</th>
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Current Price</th>
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Unit</th>
+                                            <th style={{ padding: '1rem', textAlign: 'right', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -304,6 +321,26 @@ export default function SellerDashboard() {
                                                 <td style={{ padding: '1rem', fontWeight: 600, color: '#64748b' }}>{prod.category}</td>
                                                 <td style={{ padding: '1rem', fontWeight: 900, color: '#0f172a' }}>₹{Number(prod.priceCurrent).toLocaleString()}</td>
                                                 <td style={{ padding: '1rem', fontWeight: 600, color: '#64748b' }}>{prod.unit}</td>
+                                                <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                                    <button 
+                                                        onClick={() => {
+                                                            setEditingProductId(prod.id);
+                                                            setNewProduct({
+                                                                title: prod.title,
+                                                                brand: prod.brand,
+                                                                category: prod.category || 'Cement',
+                                                                priceCurrent: prod.priceCurrent,
+                                                                priceOld: prod.priceOld || '',
+                                                                unit: prod.unit,
+                                                                file: null
+                                                            });
+                                                            setShowModal(true);
+                                                        }}
+                                                        style={{ background: 'white', color: '#0f172a', border: '1px solid #cbd5e1', padding: '0.4rem 1rem', borderRadius: '0.5rem', fontWeight: 700, cursor: 'pointer', fontSize: '0.8rem' }}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -319,8 +356,8 @@ export default function SellerDashboard() {
                 <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
                     <div style={{ background: 'white', width: '100%', maxWidth: '600px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}>
                         <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc' }}>
-                            <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>List New Material</h2>
-                            <button onClick={() => setShowModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', borderRadius: '50%' }}><X style={{ color: '#64748b' }} /></button>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{editingProductId ? 'Edit Material' : 'List New Material'}</h2>
+                            <button onClick={() => { setShowModal(false); setEditingProductId(null); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', borderRadius: '50%' }}><X style={{ color: '#64748b' }} /></button>
                         </div>
                         <form onSubmit={handleAddProduct} style={{ padding: '2rem' }}>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
@@ -352,14 +389,14 @@ export default function SellerDashboard() {
                                     <input required value={newProduct.unit} onChange={e => setNewProduct({...newProduct, unit: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. per bag (50kg)" />
                                 </div>
                                 <div style={{ gridColumn: 'span 2' }}>
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Product Default Image</label>
-                                    <input required type="file" accept="image/*" onChange={handleFileUpload} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px dashed #cbd5e1', background: '#f8fafc', outline: 'none' }} />
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Product Default Image {editingProductId && <span style={{color: '#94a3b8', fontWeight: 500}}>(Leave empty to keep existing image)</span>}</label>
+                                    <input required={!editingProductId} type="file" accept="image/*" onChange={handleFileUpload} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px dashed #cbd5e1', background: '#f8fafc', outline: 'none' }} />
                                 </div>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                                <button type="button" onClick={() => setShowModal(false)} style={{ flex: 1, padding: '1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', background: 'white', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                                <button type="button" onClick={() => { setShowModal(false); setEditingProductId(null); }} style={{ flex: 1, padding: '1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', background: 'white', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
                                 <button type="submit" disabled={uploading} style={{ flex: 2, padding: '1rem', borderRadius: '0.75rem', border: 'none', background: '#f97316', color: 'white', fontWeight: 800, cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.7 : 1 }}>
-                                    {uploading ? 'Publishing to Network...' : 'Publish Material'}
+                                    {uploading ? 'Processing...' : (editingProductId ? 'Save Changes' : 'Publish Material')}
                                 </button>
                             </div>
                         </form>
