@@ -52,55 +52,52 @@ export default function MaterialCalculator({ category, unit }) {
     };
 
     return (
-        <div className="bg-orange-50 rounded-3xl border-2 border-orange-100 p-6 sm:p-8">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="bg-orange-600 p-2 rounded-xl text-white">
-                    <Calculator className="w-5 h-5" />
+        <div style={{ backgroundColor: '#fff7ed', borderRadius: '1.5rem', border: '2px solid #ffedd5', padding: '1.5rem 2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <div style={{ backgroundColor: '#ea580c', padding: '0.5rem', borderRadius: '0.75rem', color: 'white', display: 'flex' }}>
+                    <Calculator style={{ width: 20, height: 20 }} />
                 </div>
-                <h3 className="text-xl font-bold text-orange-900 leading-tight">
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#7c2d12', margin: 0, lineHeight: 1.2 }}>
                     {category} Quantity Estimator
                 </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-orange-700 uppercase tracking-wider ml-1">Length (ft)</label>
-                    <div className="relative">
+            <div style={{ display: 'grid', gridTemplateColumns: category !== 'Paint & Finishes' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c2410c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Length (ft)</label>
+                    <div style={{ position: 'relative' }}>
                         <input 
                             type="number" 
                             value={length}
                             onChange={(e) => setLength(e.target.value)}
                             placeholder="0"
-                            className="w-full bg-white border-2 border-orange-200 rounded-2xl h-12 px-4 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none font-bold"
+                            style={{ width: '100%', backgroundColor: 'white', border: '2px solid #fed7aa', borderRadius: '1rem', height: '3rem', padding: '0 1rem', outline: 'none', fontWeight: 800, fontSize: '1rem', boxSizing: 'border-box' }}
                         />
-                        <Ruler className="absolute right-4 top-3.5 w-5 h-5 text-orange-200" />
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <label className="text-xs font-bold text-orange-700 uppercase tracking-wider ml-1">Width (ft)</label>
-                    <div className="relative">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c2410c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Width (ft)</label>
+                    <div style={{ position: 'relative' }}>
                         <input 
                             type="number" 
                             value={width}
                             onChange={(e) => setWidth(e.target.value)}
                             placeholder="0"
-                            className="w-full bg-white border-2 border-orange-200 rounded-2xl h-12 px-4 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none font-bold"
+                            style={{ width: '100%', backgroundColor: 'white', border: '2px solid #fed7aa', borderRadius: '1rem', height: '3rem', padding: '0 1rem', outline: 'none', fontWeight: 800, fontSize: '1rem', boxSizing: 'border-box' }}
                         />
-                        <Ruler className="absolute right-4 top-3.5 w-5 h-5 text-orange-200" />
                     </div>
                 </div>
                 {category !== 'Paint & Finishes' && (
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-orange-700 uppercase tracking-wider ml-1">Thickness (in)</label>
-                        <div className="relative">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c2410c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Thickness (in)</label>
+                        <div style={{ position: 'relative' }}>
                             <input 
                                 type="number" 
                                 value={thickness}
                                 onChange={(e) => setThickness(e.target.value)}
                                 placeholder="0"
-                                className="w-full bg-white border-2 border-orange-200 rounded-2xl h-12 px-4 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none font-bold"
+                                style={{ width: '100%', backgroundColor: 'white', border: '2px solid #fed7aa', borderRadius: '1rem', height: '3rem', padding: '0 1rem', outline: 'none', fontWeight: 800, fontSize: '1rem', boxSizing: 'border-box' }}
                             />
-                            <Hash className="absolute right-4 top-3.5 w-5 h-5 text-orange-200" />
                         </div>
                     </div>
                 )}
@@ -109,33 +106,33 @@ export default function MaterialCalculator({ category, unit }) {
             {!result ? (
                 <button 
                     onClick={calculate}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white h-12 rounded-2xl font-bold transition-all shadow-md shadow-orange-200 active:scale-[0.98]"
+                    style={{ width: '100%', backgroundColor: '#ea580c', color: 'white', height: '3.5rem', borderRadius: '1rem', fontWeight: 800, fontSize: '1rem', cursor: 'pointer', border: 'none', transition: '0.2s', boxShadow: '0 4px 6px -1px rgba(234, 88, 12, 0.2)' }}
                 >
                     Calculate Needed Amount
                 </button>
             ) : (
-                <div className="bg-white rounded-2xl p-6 border-2 border-orange-200 animate-in fade-in slide-in-from-bottom-2">
-                    <div className="flex justify-between items-start mb-4">
+                <div style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', border: '2px solid #fed7aa', animation: 'fade-in 0.3s ease-out' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                         <div>
-                            <p className="text-slate-500 text-sm font-bold uppercase mb-1">Recommended Order</p>
-                            <div className="text-3xl font-black text-slate-900">
-                                {result.total} <span className="text-lg font-bold text-slate-400 font-sans italic">{unit.split(' ')[1] || 'Units'}</span>
+                            <p style={{ color: '#64748b', fontSize: '0.875rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.25rem', margin: 0 }}>Recommended Order</p>
+                            <div style={{ fontSize: '2.25rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.1 }}>
+                                {result.total} <span style={{ fontSize: '1.125rem', color: '#94a3b8', fontStyle: 'italic' }}>{unit.split(' ')[1] || 'Units'}</span>
                             </div>
                         </div>
                         <button 
                             onClick={reset}
-                            className="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-orange-600 transition-colors"
+                            style={{ padding: '0.5rem', backgroundColor: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
                             title="Reset Calculator"
                         >
-                            <RefreshCw className="w-5 h-5" />
+                            <RefreshCw style={{ width: 20, height: 20 }} />
                         </button>
                     </div>
                     
-                    <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <Info className="w-5 h-5 text-orange-400 flex-shrink-0" />
-                        <p className="text-xs text-slate-600 font-medium">
+                    <div style={{ display: 'flex', gap: '0.75rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '0.75rem', border: '1px solid #f1f5f9' }}>
+                        <Info style={{ width: 20, height: 20, color: '#fb923c', flexShrink: 0 }} />
+                        <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 600, margin: 0, lineHeight: 1.5 }}>
                             {result.explanation} <br/>
-                            <span className="text-slate-400 italic">Values are estimates; consult your contractor for precision.</span>
+                            <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Values are estimates; consult your contractor for precision.</span>
                         </p>
                     </div>
                 </div>

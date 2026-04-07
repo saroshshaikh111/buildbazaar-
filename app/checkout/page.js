@@ -125,97 +125,91 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white font-sans text-slate-900 pb-20">
+        <div style={{minHeight: '100vh', backgroundColor: '#fff', fontFamily: '"Outfit", sans-serif', color: '#0f172a'}}>
             {/* Minimal Pro Header */}
-            <nav className="border-b border-slate-100 sticky top-0 z-50 bg-white/95 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-                    <Link href="/products" className="flex items-center gap-2 text-slate-400 hover:text-slate-900 font-bold text-sm tracking-widest group">
-                        <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-                        BACK TO CATALOG
+            <nav style={{borderBottom: '1px solid #f1f5f9', position: 'sticky', top: 0, backgroundColor: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(12px)', zIndex: 100}}>
+                <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Link href="/products" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: '#64748b', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.1em'}}>
+                        <ChevronLeft style={{width: 18, height: 18}} /> BACK TO CATALOG
                     </Link>
-                    <div className="flex items-center gap-2">
-                        <Building2 className="w-6 h-6 text-orange-500" />
-                        <span className="font-black text-xs uppercase tracking-[0.4em]">BuildBazaar Checkout</span>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                        <Building2 style={{width: 24, height: 24, color: '#f97316'}} />
+                        <span style={{fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.4em', color: '#0f172a'}}>BuildBazaar Checkout</span>
                     </div>
-                    <div className="w-24"></div> {/* Balance spacer */}
+                    <div style={{width: '100px'}}></div>
                 </div>
             </nav>
 
-            <main className="max-w-7xl mx-auto px-4 py-12 lg:py-20">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+            <main style={{maxWidth: '1280px', margin: '0 auto', padding: '4rem 1.5rem'}}>
+                <div style={{display: 'flex', gap: '5rem', alignItems: 'flex-start', flexWrap: 'wrap'}}>
                     
                     {/* Left: Procurement Form */}
-                    <div className="lg:col-span-7">
+                    <div style={{flex: '1 1 60%', minWidth: '350px'}}>
                         
                         {/* Step Indicator */}
-                        <div className="flex items-center gap-4 mb-12 overflow-x-auto pb-4">
+                        <div style={{display: 'flex', gap: '1rem', marginBottom: '3rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1.5rem', overflowX: 'auto'}}>
                             {[
                                 { id: 1, label: 'Project Info', icon: Briefcase },
                                 { id: 2, label: 'Tax & Billing', icon: CreditCard },
                                 { id: 3, label: 'Site Logistics', icon: Truck }
                             ].map((s) => (
-                                <div key={s.id} className="flex items-center gap-4 flex-shrink-0">
-                                    <div className={`flex items-center gap-3 px-6 py-3 rounded-2xl border-2 transition-all ${step === s.id ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-100 text-slate-400 bg-white'}`}>
-                                        <s.icon className="w-4 h-4" />
-                                        <span className="text-xs font-black uppercase tracking-widest">{s.label}</span>
-                                    </div>
-                                    {s.id < 3 && <div className="w-4 h-px bg-slate-100"></div>}
+                                <div key={s.id} style={{display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1.25rem', borderRadius: '1rem', border: '2px solid transparent', backgroundColor: step === s.id ? '#0f172a' : '#fff', borderColor: step === s.id ? '#0f172a' : '#f1f5f9', color: step === s.id ? '#fff' : '#64748b', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', transition: '0.2s', flexShrink: 0}} onClick={() => setStep(s.id)}>
+                                    <s.icon style={{width: 16, height: 16}} />
+                                    <span>{s.label}</span>
                                 </div>
                             ))}
                         </div>
 
-                        <form onSubmit={handlePlaceOrder} className="space-y-12">
+                        <form onSubmit={handlePlaceOrder}>
                             
                             {/* STEP 1: SITE INFO */}
                             {step === 1 && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
-                                    <h2 className="text-4xl font-black tracking-tight mb-8">Where are we building?</h2>
+                                <div style={{animation: 'fade-in 0.3s ease-out'}}>
+                                    <h2 style={{fontSize: '2.5rem', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Where are we building?</h2>
                                     
-                                    <div className="grid grid-cols-1 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Project / Site Name</label>
-                                            <input required name="projectName" value={formData.projectName} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="e.g. Parkview Residency Phase II" />
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem'}}>
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Project / Site Name</label>
+                                            <input required name="projectName" value={formData.projectName} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="e.g. Parkview Residency Phase II" />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Site Contact Person</label>
-                                            <input required name="customerName" value={formData.customerName} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="Full name of site manager" />
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Site Contact Person</label>
+                                            <input required name="customerName" value={formData.customerName} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="Full name of site manager" />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Full Site Address</label>
-                                            <textarea required name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} rows={4} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="Plot No, Landmark, Sector, etc." />
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Full Site Address</label>
+                                            <textarea required name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} rows={4} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box', resize: 'vertical'}} placeholder="Plot No, Landmark, Sector, etc." />
                                         </div>
                                     </div>
 
-                                    <button type="button" onClick={() => setStep(2)} className="btn-primary w-full py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3">
-                                        SAVE & NEXT
-                                        <ArrowRight className="w-5 h-5" />
+                                    <button type="button" onClick={() => setStep(2)} style={{width: '100%', padding: '1.25rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
+                                        SAVE & NEXT <ArrowRight style={{width: 20, height: 20}} />
                                     </button>
                                 </div>
                             )}
 
                             {/* STEP 2: TAX & BILLING */}
                             {step === 2 && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
-                                    <h2 className="text-4xl font-black tracking-tight mb-8">Billing Intelligence</h2>
+                                <div style={{animation: 'fade-in 0.3s ease-out'}}>
+                                    <h2 style={{fontSize: '2.5rem', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Billing Intelligence</h2>
                                     
-                                    <div className="grid grid-cols-1 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Business / GSTIN (Optional)</label>
-                                            <input name="gstin" value={formData.gstin} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-black tech-monogram uppercase" placeholder="22AAAAA0000A1Z5" />
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem'}}>
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Business / GSTIN (Optional)</label>
+                                            <input name="gstin" value={formData.gstin} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'monospace', outline: 'none', boxSizing: 'border-box'}} placeholder="22AAAAA0000A1Z5" />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Registered Business Name</label>
-                                            <input name="businessName" value={formData.businessName} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" placeholder="e.g. Skyline Infrastructure Ltd." />
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Registered Business Name</label>
+                                            <input name="businessName" value={formData.businessName} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="e.g. Skyline Infrastructure Ltd." />
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-4">
-                                        <button type="button" onClick={() => setStep(1)} className="flex-1 py-5 border-2 border-slate-100 rounded-2xl font-black text-slate-400 hover:border-slate-900 hover:text-slate-900 transition-all">
+                                    <div style={{display: 'flex', gap: '1rem'}}>
+                                        <button type="button" onClick={() => setStep(1)} style={{flex: 1, padding: '1.25rem', backgroundColor: 'transparent', color: '#94a3b8', border: '2px solid #e2e8f0', borderRadius: '1rem', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', transition: '0.2s'}}>
                                             BACK
                                         </button>
-                                        <button type="button" onClick={() => setStep(3)} className="flex-[2] btn-primary py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3">
-                                            CONTINUE TO LOGISTICS
-                                            <ArrowRight className="w-5 h-5" />
+                                        <button type="button" onClick={() => setStep(3)} style={{flex: 2, padding: '1.25rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
+                                            CONTINUE TO LOGISTICS <ArrowRight style={{width: 20, height: 20}} />
                                         </button>
                                     </div>
                                 </div>
@@ -223,20 +217,20 @@ export default function CheckoutPage() {
 
                             {/* STEP 3: LOGISTICS */}
                             {step === 3 && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
-                                    <h2 className="text-4xl font-black tracking-tight mb-8">Site Logistics</h2>
+                                <div style={{animation: 'fade-in 0.3s ease-out'}}>
+                                    <h2 style={{fontSize: '2.5rem', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Site Logistics</h2>
                                     
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Preferred Delivery Date</label>
-                                            <div className="relative">
-                                                <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                                <input required type="date" name="deliveryDate" value={formData.deliveryDate} onChange={handleChange} className="w-full pl-16 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold" />
+                                    <div style={{display: 'flex', gap: '1.5rem', marginBottom: '2.5rem', flexWrap: 'wrap'}}>
+                                        <div style={{flex: '1 1 calc(50% - 0.75rem)', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Preferred Delivery Date</label>
+                                            <div style={{position: 'relative'}}>
+                                                <Calendar style={{position: 'absolute', left: '1.5rem', top: '50%', transform: 'translateY(-50%)', width: 20, height: 20, color: '#94a3b8'}} />
+                                                <input required type="date" name="deliveryDate" value={formData.deliveryDate} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem 1.25rem 3.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} />
                                             </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[11px] font-black uppercase text-slate-400 tracking-widest">Unloading Slot</label>
-                                            <select name="deliverySlot" value={formData.deliverySlot} onChange={handleChange} className="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-bold appearance-none">
+                                        <div style={{flex: '1 1 calc(50% - 0.75rem)', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Unloading Slot</label>
+                                            <select name="deliverySlot" value={formData.deliverySlot} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', appearance: 'none', boxSizing: 'border-box'}}>
                                                 <option>Morning (8AM - 12PM)</option>
                                                 <option>Afternoon (12PM - 4PM)</option>
                                                 <option>Evening (4PM - 9PM)</option>
@@ -245,24 +239,24 @@ export default function CheckoutPage() {
                                         </div>
                                     </div>
 
-                                    <div className="p-6 bg-slate-900 rounded-3xl text-white">
-                                        <h3 className="text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2 text-orange-500">
-                                            <CreditCard className="w-4 h-4" /> Final Step
+                                    <div style={{padding: '2rem', backgroundColor: '#0f172a', borderRadius: '1.5rem', color: '#fff'}}>
+                                        <h3 style={{fontSize: '0.875rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f97316'}}>
+                                            <CreditCard style={{width: 16, height: 16}} /> Final Step
                                         </h3>
-                                        <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+                                        <p style={{color: '#94a3b8', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.6, fontWeight: 500}}>
                                             By placing this order, you authorize the dispatch of materials to the specified project site. You will receive a technical inspection report upon delivery.
                                         </p>
 
-                                        <div className="flex gap-4">
-                                            <button type="button" onClick={() => setStep(2)} className="flex-1 py-5 border-2 border-white/10 rounded-2xl font-black text-white/40 hover:border-white transition-all">
+                                        <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
+                                            <button type="button" onClick={() => setStep(2)} style={{flex: '1 1 30%', padding: '1.25rem', backgroundColor: 'transparent', color: '#94a3b8', border: '2px solid rgba(255,255,255,0.1)', borderRadius: '1rem', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', transition: '0.2s'}}>
                                                 CHANGE BILLING
                                             </button>
                                             <button 
                                                 disabled={loading}
-                                                className="flex-[2] bg-orange-500 hover:bg-orange-600 disabled:bg-slate-700 text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 shadow-xl shadow-orange-500/20 transition-all active:scale-[0.98]"
+                                                style={{flex: '2 1 60%', padding: '1.25rem', backgroundColor: loading ? '#334155' : '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: loading ? 'none' : '0 10px 20px -5px rgba(249, 115, 22, 0.4)'}}
                                             >
                                                 {loading ? 'SYNCHRONIZING...' : 'FINALIZE PROCUREMENT'}
-                                                {!loading && <ArrowRight className="w-5 h-5" />}
+                                                {!loading && <ArrowRight style={{width: 20, height: 20}} />}
                                             </button>
                                         </div>
                                     </div>
@@ -273,7 +267,7 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Right: Order Summary */}
-                    <div className="lg:col-span-5">
+                    <div style={{flex: '1 1 35%', minWidth: '350px'}}>
                         <CheckoutSummary />
                     </div>
                 </div>

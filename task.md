@@ -20,8 +20,8 @@
 - [x] Verify public accessibility via `https://buildbazaar-two.vercel.app/`.
 
 ## Phase 7: Product Detail Page (PDP) & Rich Content
-- [ ] Create dynamic route `app/products/[id]/page.js`.
-- [ ] Implement `ProductGallery.js` for high-resolution material inspection.
-- [ ] Build `MaterialCalculator.js` for quantity estimation (Cement/Bricks/Paint).
-- [ ] Expand SQL schema to support `product_specs`, `description`, and `images`.
-- [ ] Link `Add to Cart` functionality to the global `CartContext`.
+- [x] Create dynamic route `app/products/[id]/page.js`.
+- [x] Implement `ProductGallery.js` for high-resolution material inspection.
+- [x] Build `MaterialCalculator.js` for quantity estimation (Cement/Bricks/Paint).
+- [x] Expand SQL schema to support `product_specs`, `description`, and `images`.
+- [x] Link `Add to Cart` functionality to the global `CartContext`.
