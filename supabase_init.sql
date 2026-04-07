@@ -115,3 +115,20 @@ CREATE TABLE IF NOT EXISTS order_items (
     quantity INTEGER NOT NULL,
     price NUMERIC NOT NULL
 );
+
+-- ==========================================
+-- STORAGE SETUP (For Vendor Image Uploads)
+-- ==========================================
+
+-- 1. Create a public bucket for product images
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('product-images', 'product-images', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. Allow public access to view the images
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = 'product-images');
+
+-- 3. Allow authenticated users to upload images
+CREATE POLICY "Auth Uploads" ON storage.objects FOR INSERT WITH CHECK (
+  bucket_id = 'product-images' AND auth.role() = 'authenticated'
+);

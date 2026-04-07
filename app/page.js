@@ -124,7 +124,7 @@ export default function BuildBazaar() {
                 const { data: catData } = await supabase.from('categories').select('*');
                 if (catData && catData.length > 0) setCategories(catData.map(c => ({...c, icon: Package }))); // Simplification for mapped dynamic icons
                 
-                const { data: prodData } = await supabase.from('products').select('*');
+                const { data: prodData } = await supabase.from('products').select('*').order('created_at', { ascending: false });
                 if (prodData && prodData.length > 0) setProducts(prodData);
             } catch (err) {
                 // Ignore, meaning we fall back to mock data

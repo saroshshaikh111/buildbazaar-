@@ -33,7 +33,7 @@ function ProductCatalog() {
         async function fetchProducts() {
             setLoading(true);
             try {
-                let query = supabase.from('products').select('*');
+                let query = supabase.from('products').select('*').order('created_at', { ascending: false });
                 
                 if (categoryQuery) query = query.ilike('category', `%${categoryQuery}%`);
                 if (searchQuery) query = query.ilike('title', `%${searchQuery}%`);

@@ -18,7 +18,7 @@ export default function SellerDashboard() {
     // Modal State
     const [showModal, setShowModal] = useState(false);
     const [newProduct, setNewProduct] = useState({
-        title: '', brand: '', category: 'General', priceCurrent: '', priceOld: '', unit: '', file: null
+        title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null
     });
     const [uploading, setUploading] = useState(false);
 
@@ -111,7 +111,7 @@ export default function SellerDashboard() {
                 setProducts([insertedData[0], ...products]);
             }
             setShowModal(false);
-            setNewProduct({ title: '', brand: '', category: 'General', priceCurrent: '', priceOld: '', unit: '', file: null });
+            setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null });
 
         } catch (err) {
             alert(err.message || 'Error uploading product.');
