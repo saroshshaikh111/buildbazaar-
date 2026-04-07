@@ -102,13 +102,13 @@ function ProductCatalog() {
 
             <main className="container" style={{padding: '3rem 20px'}}>
                 
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', borderBottom: '2px solid var(--slate-200)', paddingBottom: '1rem'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem', borderBottom: '2px solid var(--slate-200)', paddingBottom: '1rem'}}>
                     <div>
                         <h1 style={{fontSize: '2rem', color: 'var(--slate-900)', marginBottom: '0.5rem'}}>{pageTitle}</h1>
                         <p style={{color: 'var(--slate-500)', fontWeight: 500}}>{products.length} products found matching your criteria</p>
                     </div>
                     {/* Mock Filtering Engine */}
-                    <button style={{display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', backgroundColor: 'white', border: '1px solid var(--slate-300)', borderRadius: '0.5rem', fontWeight: 600, color: 'var(--slate-700)', cursor: 'pointer'}}>
+                    <button onClick={() => alert('Advanced filtering options are coming soon in the next update!')} style={{display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', backgroundColor: 'white', border: '1px solid var(--slate-300)', borderRadius: '0.5rem', fontWeight: 600, color: 'var(--slate-700)', cursor: 'pointer', flexShrink: 0}}>
                         <Filter style={{width: 16, height: 16}} /> Filter & Sort
                     </button>
                 </div>

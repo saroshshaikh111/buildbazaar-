@@ -324,11 +324,13 @@ export default function SellerDashboard() {
                                                 <td style={{ padding: '1rem', textAlign: 'right' }}>
                                                     <button 
                                                         onClick={() => {
+                                                            const validCats = ['Cement', 'Steel & TMT', 'Bricks & Blocks', 'Plumbing', 'Electricals', 'Paint & Finishes'];
+                                                            const safeCat = validCats.includes(prod.category) ? prod.category : 'Cement';
                                                             setEditingProductId(prod.id);
                                                             setNewProduct({
                                                                 title: prod.title,
                                                                 brand: prod.brand,
-                                                                category: prod.category || 'Cement',
+                                                                category: safeCat,
                                                                 priceCurrent: prod.priceCurrent,
                                                                 priceOld: prod.priceOld || '',
                                                                 unit: prod.unit,
