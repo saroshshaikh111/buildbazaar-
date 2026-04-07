@@ -162,8 +162,28 @@ export default function SellerDashboard() {
 
     return (
         <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: '"Outfit", sans-serif', color: '#0f172a' }}>
+            <style>{`
+                .seller-main { display: flex; flex-direction: column; padding: 1rem; gap: 1rem; max-width: 1280px; margin: 0 auto; }
+                .vendor-desktop-nav { background-color: #0f172a; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+                .seller-sidebar { width: 100%; flex-shrink: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+                .seller-sidebar-nav { display: flex; flex-direction: row; gap: 0.5rem; position: relative; top: 0; padding-bottom: 0.5rem; }
+                .seller-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
+                .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+                
+                @media (min-width: 768px) {
+                    .seller-main { flex-direction: row; padding: 2rem; gap: 2rem; }
+                    .seller-sidebar { width: 240px; overflow-x: visible; }
+                    .seller-sidebar-nav { flex-direction: column; position: sticky; top: 100px; padding-bottom: 0; }
+                    .seller-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+                }
+                
+                @media (max-width: 767px) {
+                    .vendor-desktop-nav { display: none !important; }
+                    .sidebar-btn { padding: 0.75rem 1rem !important; font-size: 0.85rem !important; white-space: nowrap; flex: 0 0 auto; }
+                }
+            `}</style>
             {/* Vendor Navbar */}
-            <nav style={{ backgroundColor: '#0f172a', color: 'white', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
+            <nav className="vendor-desktop-nav">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <div style={{width: '24px', height: '24px', backgroundColor: '#f97316', borderRadius: '6px'}}></div>
@@ -175,17 +195,17 @@ export default function SellerDashboard() {
                 </div>
             </nav>
 
-            <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem', display: 'flex', gap: '2rem' }}>
+            <main className="seller-main">
                 {/* Sidebar Navigation */}
-                <div style={{ width: '240px', flexShrink: 0 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'sticky', top: '100px' }}>
-                        <button onClick={() => setActiveTab('overview')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', borderRadius: '12px', border: 'none', background: activeTab === 'overview' ? '#e2e8f0' : 'transparent', color: activeTab === 'overview' ? '#0f172a' : '#64748b', fontWeight: 700, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontSize: '1rem' }}>
+                <div className="seller-sidebar">
+                    <div className="seller-sidebar-nav">
+                        <button className="sidebar-btn" onClick={() => setActiveTab('overview')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', borderRadius: '12px', border: 'none', background: activeTab === 'overview' ? '#e2e8f0' : 'transparent', color: activeTab === 'overview' ? '#0f172a' : '#64748b', fontWeight: 700, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontSize: '1rem' }}>
                             <TrendingUp style={{ width: 20, height: 20 }} /> Business Overview
                         </button>
-                        <button onClick={() => setActiveTab('orders')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', borderRadius: '12px', border: 'none', background: activeTab === 'orders' ? '#e2e8f0' : 'transparent', color: activeTab === 'orders' ? '#0f172a' : '#64748b', fontWeight: 700, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontSize: '1rem' }}>
+                        <button className="sidebar-btn" onClick={() => setActiveTab('orders')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', borderRadius: '12px', border: 'none', background: activeTab === 'orders' ? '#e2e8f0' : 'transparent', color: activeTab === 'orders' ? '#0f172a' : '#64748b', fontWeight: 700, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontSize: '1rem' }}>
                             <PackageOpen style={{ width: 20, height: 20 }} /> Order Fulfillment {pendingCount > 0 && <span style={{ marginLeft: 'auto', background: '#ef4444', color: 'white', fontSize: '0.7rem', padding: '0.1rem 0.5rem', borderRadius: '1rem' }}>{pendingCount}</span>}
                         </button>
-                        <button onClick={() => setActiveTab('inventory')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', borderRadius: '12px', border: 'none', background: activeTab === 'inventory' ? '#e2e8f0' : 'transparent', color: activeTab === 'inventory' ? '#0f172a' : '#64748b', fontWeight: 700, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontSize: '1rem' }}>
+                        <button className="sidebar-btn" onClick={() => setActiveTab('inventory')} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', borderRadius: '12px', border: 'none', background: activeTab === 'inventory' ? '#e2e8f0' : 'transparent', color: activeTab === 'inventory' ? '#0f172a' : '#64748b', fontWeight: 700, cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontSize: '1rem' }}>
                             <Package style={{ width: 20, height: 20 }} /> Manage Inventory
                         </button>
                     </div>
@@ -200,7 +220,7 @@ export default function SellerDashboard() {
                                 <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Live breakdown of platform metrics and incoming orders.</p>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+                            <div className="seller-grid">
                                 <StatCard title="Total Platform Revenue" value={`₹${revenue.toLocaleString('en-IN')}`} icon={DollarSign} trend="Real-time gross metric" colorCode="#10b981" />
                                 <StatCard title="Total Active Products" value={products.length} icon={Package} trend="Live catalog size" colorCode="#3b82f6" />
                                 <StatCard title="Pending Fulfillment" value={pendingCount} icon={Clock} trend={pendingCount > 0 ? "Requires attention" : "All orders fulfilled"} colorCode="#f59e0b" />
@@ -291,8 +311,8 @@ export default function SellerDashboard() {
                                 </button>
                             </div>
 
-                            <div style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <div className="table-wrapper" style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+                                <table style={{ width: '100%', minWidth: '700px', borderCollapse: 'collapse' }}>
                                     <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                                         <tr>
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Product Details</th>
