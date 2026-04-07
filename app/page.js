@@ -29,32 +29,32 @@ const mockProducts = [
     {
         id: 'p1', title: 'UltraTech Cement OPC 53', brand: 'UltraTech', verified: true,
         tag: 'Best Seller', rating: 4.6, reviews: 2340, priceCurrent: 380, priceOld: 420,
-        discount: '10% OFF', unit: 'per bag (50kg)'
+        discount: '10% OFF', unit: 'per bag (50kg)', images: ['/products/cement.png']
     },
     {
         id: 'p2', title: 'Tata Tiscon TMT Bar Fe500D', brand: 'Tata Steel', verified: true,
         tag: 'Top Rated', rating: 4.8, reviews: 1890, priceCurrent: 62500, priceOld: 68000,
-        discount: '8% OFF', unit: 'per tonne'
+        discount: '8% OFF', unit: 'per tonne', images: ['/products/tmt_bars.png']
     },
     {
         id: 'p3', title: 'First Class Red Bricks', brand: 'Local Supplier', verified: true,
         tag: 'Bulk Deal', rating: 4.3, reviews: 870, priceCurrent: 8, priceOld: 10,
-        discount: '20% OFF', unit: 'per piece'
+        discount: '20% OFF', unit: 'per piece', images: ['/products/red_bricks.png']
     },
     {
         id: 'p4', title: 'Finolex CPVC Pipes 1"', brand: 'Finolex', verified: true,
         tag: '', rating: 4.5, reviews: 560, priceCurrent: 245, priceOld: 280,
-        discount: '12% OFF', unit: 'per 3m length'
+        discount: '12% OFF', unit: 'per 3m length', images: ['/products/cpvc_pipes.png']
     },
     {
         id: 'p5', title: 'Havells LifeLine Wire 1.5mm', brand: 'Havells', verified: true,
         tag: 'Popular', rating: 4.7, reviews: 1230, priceCurrent: 1450, priceOld: 1650,
-        discount: '12% OFF', unit: 'per 90m coil'
+        discount: '12% OFF', unit: 'per 90m coil', images: ['/products/electrical_wire.png']
     },
     {
         id: 'p6', title: 'Asian Paints Ace Exterior', brand: 'Asian Paints', verified: true,
         tag: '', rating: 4.4, reviews: 980, priceCurrent: 2150, priceOld: 2500,
-        discount: '14% OFF', unit: 'per 20 L'
+        discount: '14% OFF', unit: 'per 20 L', images: ['/products/paint_bucket.png']
     }
 ];
 
