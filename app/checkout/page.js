@@ -147,33 +147,33 @@ export default function CheckoutPage() {
         <div style={{minHeight: '100vh', backgroundColor: '#fff', fontFamily: '"Outfit", sans-serif', color: '#0f172a'}}>
             {/* Minimal Pro Header */}
             <nav style={{borderBottom: '1px solid #f1f5f9', position: 'sticky', top: 0, backgroundColor: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(12px)', zIndex: 100}}>
-                <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <Link href="/products" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: '#64748b', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.1em'}}>
-                        <ChevronLeft style={{width: 18, height: 18}} /> BACK TO CATALOG
+                <div style={{maxWidth: '1280px', margin: '0 auto', padding: '0 1rem', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <Link href="/products" style={{display: 'flex', alignItems: 'center', gap: '0.25rem', textDecoration: 'none', color: '#64748b', fontSize: 'clamp(0.65rem, 2vw, 0.85rem)', fontWeight: 800, letterSpacing: '0.05em'}}>
+                        <ChevronLeft style={{width: 16, height: 16}} /> BACK
                     </Link>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-                        <Building2 style={{width: 24, height: 24, color: '#f97316'}} />
-                        <span style={{fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.4em', color: '#0f172a'}}>BuildBazaar Checkout</span>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 1, textAlign: 'center'}}>
+                        <Building2 style={{width: 20, height: 20, color: '#f97316'}} />
+                        <span style={{fontWeight: 900, fontSize: 'clamp(0.65rem, 2vw, 0.75rem)', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0f172a'}}>BuildBazaar Checkout</span>
                     </div>
-                    <div style={{width: '100px'}}></div>
+                    <div style={{width: '60px'}}></div>
                 </div>
             </nav>
 
-            <main style={{maxWidth: '1280px', margin: '0 auto', padding: '4rem 1.5rem'}}>
-                <div style={{display: 'flex', gap: '5rem', alignItems: 'flex-start', flexWrap: 'wrap'}}>
+            <main style={{maxWidth: '1280px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) 1rem'}}>
+                <div style={{display: 'flex', gap: 'clamp(2rem, 5vw, 5rem)', alignItems: 'flex-start', flexWrap: 'wrap'}}>
                     
                     {/* Left: Procurement Form */}
-                    <div style={{flex: '1 1 60%', minWidth: '350px'}}>
+                    <div style={{flex: '1 1 60%', minWidth: '300px'}}>
                         
                         {/* Step Indicator */}
-                        <div style={{display: 'flex', gap: '1rem', marginBottom: '3rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1.5rem', overflowX: 'auto'}}>
+                        <div style={{display: 'flex', gap: '0.5rem', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'}}>
                             {[
                                 { id: 1, label: 'Project Info', icon: Briefcase },
                                 { id: 2, label: 'Tax & Billing', icon: CreditCard },
                                 { id: 3, label: 'Site Logistics', icon: Truck }
                             ].map((s) => (
-                                <div key={s.id} style={{display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1.25rem', borderRadius: '1rem', border: '2px solid transparent', backgroundColor: step === s.id ? '#0f172a' : '#fff', borderColor: step === s.id ? '#0f172a' : '#f1f5f9', color: step === s.id ? '#fff' : '#64748b', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer', transition: '0.2s', flexShrink: 0}} onClick={() => setStep(s.id)}>
-                                    <s.icon style={{width: 16, height: 16}} />
+                                <div key={s.id} style={{display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '1rem', border: '2px solid transparent', backgroundColor: step === s.id ? '#0f172a' : '#fff', borderColor: step === s.id ? '#0f172a' : '#f1f5f9', color: step === s.id ? '#fff' : '#64748b', fontWeight: 900, fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', transition: '0.2s', flexShrink: 0}} onClick={() => setStep(s.id)}>
+                                    <s.icon style={{width: 14, height: 14}} />
                                     <span>{s.label}</span>
                                 </div>
                             ))}
@@ -184,24 +184,23 @@ export default function CheckoutPage() {
                             {/* STEP 1: SITE INFO */}
                             {step === 1 && (
                                 <div style={{animation: 'fade-in 0.3s ease-out'}}>
-                                    <h2 style={{fontSize: '2.5rem', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Where are we building?</h2>
+                                    <h2 style={{fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 900, marginBottom: '2rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Where are we building?</h2>
                                     
-                                    <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem'}}>
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2rem'}}>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Project / Site Name</label>
-                                            <input required name="projectName" value={formData.projectName} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="e.g. Parkview Residency Phase II" />
+                                            <input required name="projectName" value={formData.projectName} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="e.g. Parkview Phase II" />
                                         </div>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Site Contact Person</label>
-                                            <input required name="customerName" value={formData.customerName} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="Full name of site manager" />
+                                            <input required name="customerName" value={formData.customerName} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="Full name of manager" />
                                         </div>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Full Site Address</label>
-                                            <textarea required name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} rows={4} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box', resize: 'vertical'}} placeholder="Plot No, Landmark, Sector, etc." />
+                                            <textarea required name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} rows={3} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box', resize: 'vertical'}} placeholder="Plot No, Landmark, Sector, etc." />
                                         </div>
                                     </div>
-
-                                    <button type="button" onClick={() => setStep(2)} style={{width: '100%', padding: '1.25rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
+                                    <button type="button" onClick={() => setStep(2)} style={{width: '100%', padding: '1rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
                                         SAVE & NEXT <ArrowRight style={{width: 20, height: 20}} />
                                     </button>
                                 </div>
@@ -210,25 +209,24 @@ export default function CheckoutPage() {
                             {/* STEP 2: TAX & BILLING */}
                             {step === 2 && (
                                 <div style={{animation: 'fade-in 0.3s ease-out'}}>
-                                    <h2 style={{fontSize: '2.5rem', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Billing Intelligence</h2>
+                                    <h2 style={{fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 900, marginBottom: '2rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Billing Intelligence</h2>
                                     
-                                    <div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem'}}>
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2rem'}}>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Business / GSTIN (Optional)</label>
-                                            <input name="gstin" value={formData.gstin} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'monospace', outline: 'none', boxSizing: 'border-box'}} placeholder="22AAAAA0000A1Z5" />
+                                            <input name="gstin" value={formData.gstin} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'monospace', outline: 'none', boxSizing: 'border-box'}} placeholder="22AAAAA0000A1Z5" />
                                         </div>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Registered Business Name</label>
-                                            <input name="businessName" value={formData.businessName} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="e.g. Skyline Infrastructure Ltd." />
+                                            <input name="businessName" value={formData.businessName} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="e.g. Skyline Ltd." />
                                         </div>
                                     </div>
-
-                                    <div style={{display: 'flex', gap: '1rem'}}>
-                                        <button type="button" onClick={() => setStep(1)} style={{flex: 1, padding: '1.25rem', backgroundColor: 'transparent', color: '#94a3b8', border: '2px solid #e2e8f0', borderRadius: '1rem', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', transition: '0.2s'}}>
+                                    <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
+                                        <button type="button" onClick={() => setStep(1)} style={{flex: '1 1 30%', padding: '1rem', backgroundColor: 'transparent', color: '#94a3b8', border: '2px solid #e2e8f0', borderRadius: '1rem', fontWeight: 900, fontSize: '0.9rem', cursor: 'pointer', transition: '0.2s'}}>
                                             BACK
                                         </button>
-                                        <button type="button" onClick={() => setStep(3)} style={{flex: 2, padding: '1.25rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
-                                            CONTINUE TO LOGISTICS <ArrowRight style={{width: 20, height: 20}} />
+                                        <button type="button" onClick={() => setStep(3)} style={{flex: '2 1 60%', padding: '1rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
+                                            NEXT STEP <ArrowRight style={{width: 18, height: 18}} />
                                         </button>
                                     </div>
                                 </div>
