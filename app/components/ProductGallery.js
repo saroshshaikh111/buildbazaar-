@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-// Foolproof Dynamic Fallback for Industrial Pro materials
+// Elite Dynamic Fallback for Industrial Pro materials
 const IndustrialFallback = ({ brand, text }) => (
     <div style={{
         width: '100%', 
@@ -58,6 +58,7 @@ export default function ProductGallery({ images, brand, productTitle }) {
                         src={images[activeIndex]} 
                         alt="Product view"
                         onError={() => setError(true)}
+                        onLoad={() => setError(false)}
                         style={{
                             maxWidth: '100%', 
                             maxHeight: '100%', 
