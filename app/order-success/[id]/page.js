@@ -68,7 +68,13 @@ export default function OrderSuccessPage() {
 
     return (
         <div style={{minHeight: '100vh', backgroundColor: '#f8fafc', paddingBottom: '6rem', fontFamily: '"Outfit", sans-serif', color: '#0f172a'}}>
-            <nav style={{backgroundColor: '#fff', borderBottom: '1px solid #f1f5f9', height: '80px', display: 'flex', alignItems: 'center', marginBottom: '2rem'}}>
+            <style>{`
+                @media print {
+                    .no-print { display: none !important; }
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #fff; }
+                }
+            `}</style>
+            <nav className="no-print" style={{backgroundColor: '#fff', borderBottom: '1px solid #f1f5f9', height: '80px', display: 'flex', alignItems: 'center', marginBottom: '2rem'}}>
                 <div style={{maxWidth: '896px', margin: '0 auto', padding: '0 1rem', width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                     <Link href="/products" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', textDecoration: 'none'}}>
                         <ChevronLeft style={{width: '16px', height: '16px'}} /> BROWSE MORE
@@ -159,11 +165,11 @@ export default function OrderSuccessPage() {
                         </div>
 
                         {/* Next Steps */}
-                        <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', paddingTop: '2rem'}}>
-                            <button style={{flex: '1 1 100%', backgroundColor: '#0f172a', color: '#fff', padding: '1rem', borderRadius: '1rem', fontWeight: 900, fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap'}}>
-                                <Download style={{width: '16px', height: '16px'}} /> DOWNLOAD INVOICE
+                        <div className="no-print" style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', paddingTop: '3rem'}}>
+                            <button onClick={() => window.print()} style={{flex: 1, minWidth: '250px', backgroundColor: '#0f172a', color: '#fff', padding: '1.25rem', borderRadius: '1rem', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', border: 'none', cursor: 'pointer'}}>
+                                <Download style={{width: '16px', height: '16px'}} /> DOWNLOAD PROFORMA INVOICE
                             </button>
-                            <Link href="/" style={{flex: '1 1 100%', backgroundColor: '#fff', color: '#0f172a', border: '2px solid #e2e8f0', padding: '1rem', outline: 'none', textDecoration: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', boxSizing: 'border-box', whiteSpace: 'nowrap'}}>
+                            <Link href="/" style={{flex: 1, minWidth: '250px', backgroundColor: '#fff', color: '#0f172a', border: '2px solid #e2e8f0', padding: '1.25rem', outline: 'none', textDecoration: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', cursor: 'pointer', boxSizing: 'border-box'}}>
                                 SITE DASHBOARD <ArrowRight style={{width: '16px', height: '16px'}} />
                             </Link>
                         </div>
