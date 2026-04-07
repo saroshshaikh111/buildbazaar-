@@ -159,11 +159,11 @@ export default function OrderSuccessPage() {
                         </div>
 
                         {/* Next Steps */}
-                        <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', paddingTop: '3rem'}}>
-                            <button style={{flex: 1, minWidth: '250px', backgroundColor: '#0f172a', color: '#fff', padding: '1.25rem', borderRadius: '1rem', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', border: 'none', cursor: 'pointer'}}>
-                                <Download style={{width: '16px', height: '16px'}} /> DOWNLOAD PROFORMA INVOICE
+                        <div style={{display: 'flex', flexWrap: 'wrap', gap: '1rem', paddingTop: '2rem'}}>
+                            <button style={{flex: '1 1 100%', backgroundColor: '#0f172a', color: '#fff', padding: '1rem', borderRadius: '1rem', fontWeight: 900, fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap'}}>
+                                <Download style={{width: '16px', height: '16px'}} /> DOWNLOAD INVOICE
                             </button>
-                            <Link href="/" style={{flex: 1, minWidth: '250px', backgroundColor: '#fff', color: '#0f172a', border: '2px solid #e2e8f0', padding: '1.25rem', outline: 'none', textDecoration: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', cursor: 'pointer', boxSizing: 'border-box'}}>
+                            <Link href="/" style={{flex: '1 1 100%', backgroundColor: '#fff', color: '#0f172a', border: '2px solid #e2e8f0', padding: '1rem', outline: 'none', textDecoration: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: 'clamp(0.65rem, 2.5vw, 0.75rem)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', boxSizing: 'border-box', whiteSpace: 'nowrap'}}>
                                 SITE DASHBOARD <ArrowRight style={{width: '16px', height: '16px'}} />
                             </Link>
                         </div>
