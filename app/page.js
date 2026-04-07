@@ -279,7 +279,7 @@ export default function BuildBazaar() {
                     )}
 
                     {/* Orders */}
-                    <Link href={user ? "#" : "/auth"} style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
+                    <Link href={user ? "/orders" : "/auth"} style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
                         <span style={{fontSize: '12px', lineHeight: '14px'}}>Returns</span>
                         <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>& Orders</span>
                     </Link>
