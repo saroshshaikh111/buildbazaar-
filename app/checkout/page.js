@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { useCart } from '@/app/context/CartContext';
+import { useAuth } from '@/app/context/AuthContext';
 import { 
     ChevronLeft, 
     Building2, 
@@ -23,6 +24,7 @@ import CheckoutSummary from '@/app/components/CheckoutSummary';
 export default function CheckoutPage() {
     const router = useRouter();
     const { cart, totalPrice, clearCart, totalItems } = useCart();
+    const { user, loading: authLoading } = useAuth();
     
     // Step State: 1 (Site), 2 (Billing), 3 (Logistics)
     const [step, setStep] = useState(1);
@@ -42,6 +44,13 @@ export default function CheckoutPage() {
         deliverySlot: 'Morning (8AM-12PM)',
         paymentMethod: 'Cash on Delivery'
     });
+
+    // Auth Interceptor
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login?redirect=/checkout');
+        }
+    }, [user, authLoading, router]);
 
     // Auto-fill from localStorage (pincode/city)
     useEffect(() => {
@@ -63,6 +72,7 @@ export default function CheckoutPage() {
             const { data: order, error: orderError } = await supabase
                 .from('orders')
                 .insert({
+                    user_id: user.id,
                     customer_name: formData.customerName,
                     shipping_address: formData.shippingAddress,
                     pincode: formData.pincode,
@@ -101,11 +111,20 @@ export default function CheckoutPage() {
             router.push(`/order-success/${order.id}`);
         } catch (err) {
             console.error('Order Submission Failed:', err);
-            alert('Failed to place order. Please try again.');
+            alert(`Failed to place order. Error: ${err.message || 'Unknown database exception.'}`);
         } finally {
             setLoading(false);
         }
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div style={{width: '40px', height: '40px', border: '4px solid #f97316', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite'}}></div>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+        );
+    }
 
     if (totalItems === 0 && !orderSuccess) {
         return (
