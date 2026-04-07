@@ -158,15 +158,6 @@ export default function ProductDetailPage() {
                             ))}
                         </div>
 
-                        <div style={{marginTop: '2rem', padding: '2rem', backgroundColor: '#0f172a', borderRadius: '1.75rem', color: '#fff'}}>
-                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem'}}>
-                                <Building2 style={{width: 18, height: 18, color: '#f97316'}} />
-                                <span style={{fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em'}}>Project Estimator</span>
-                             </div>
-                             <div style={{transform: 'scale(0.95)', transformOrigin: 'top left'}}>
-                                <MaterialCalculator category={product.category} unit={product.unit} />
-                             </div>
-                        </div>
                     </div>
 
                     {/* Transactional Hub (Span 3) */}
@@ -184,9 +175,15 @@ export default function ProductDetailPage() {
                                 <div>
                                     <label style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px', display: 'block'}}>Order Quantity</label>
                                     <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '6px'}}>
-                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14}} /></button>
-                                        <input type="number" value={quantity} onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} style={{flex: 1, border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem'}} />
-                                        <button onClick={() => setQuantity(quantity + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14}} /></button>
+                                        <button onClick={() => setQuantity(Math.max(1, Number(quantity) - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14}} /></button>
+                                        <input 
+                                            type="number" 
+                                            value={quantity} 
+                                            onChange={(e) => setQuantity(e.target.value === '' ? '' : Math.max(1, parseInt(e.target.value)))} 
+                                            onBlur={() => { if (quantity === '' || isNaN(quantity) || quantity < 1) setQuantity(1); }}
+                                            style={{flex: 1, border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem', appearance: 'textfield'}} 
+                                        />
+                                        <button onClick={() => setQuantity(Number(quantity) + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14}} /></button>
                                     </div>
                                 </div>
 
@@ -211,6 +208,17 @@ export default function ProductDetailPage() {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Project Estimator Full-Width Block */}
+                <div style={{marginTop: '4rem', padding: '3.5rem', backgroundColor: '#0f172a', borderRadius: '2.5rem', color: '#fff', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'}}>
+                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '2.5rem'}}>
+                        <Building2 style={{width: 24, height: 24, color: '#f97316'}} />
+                        <span style={{fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em'}}>Intelligent Project Estimator</span>
+                     </div>
+                     <div style={{maxWidth: '800px', margin: '0 auto'}}>
+                        <MaterialCalculator category={product.category} unit={product.unit} />
+                     </div>
                 </div>
             </main>
         </div>
