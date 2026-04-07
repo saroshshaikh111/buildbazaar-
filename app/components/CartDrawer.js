@@ -9,74 +9,90 @@ export default function CartDrawer() {
 
     return (
         <>
-            <div className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] transition-opacity duration-300 ${cartDrawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setCartDrawerOpen(false)}></div>
-            <div className={`fixed right-0 top-0 h-full w-full max-w-md bg-white z-[10000] shadow-2xl transition-transform duration-500 ease-out transform ${cartDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <div className="flex flex-col h-full">
-                    {/* Header */}
-                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
-                                <ShoppingCart className="w-5 h-5 text-white" />
-                            </div>
-                            <h3 className="text-xl font-black text-slate-900 tracking-tight">Procurement Basket</h3>
-                        </div>
-                        <button className="p-2 hover:bg-slate-100 rounded-full transition-colors" onClick={() => setCartDrawerOpen(false)}><X className="w-5 h-5 text-slate-400" /></button>
-                    </div>
+            <div 
+                style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+                    backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', 
+                    zIndex: 9999, transition: 'opacity 0.3s ease',
+                    opacity: cartDrawerOpen ? 1 : 0, 
+                    pointerEvents: cartDrawerOpen ? 'auto' : 'none'
+                }} 
+                onClick={() => setCartDrawerOpen(false)}
+            ></div>
 
-                    {/* Body */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                        {cart.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center">
-                                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
-                                    <ShoppingCart className="w-8 h-8 text-slate-200" />
-                                </div>
-                                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">No materials added yet</p>
-                            </div>
-                        ) : (
-                            cart.map(item => (
-                                <div className="flex gap-4 p-4 rounded-2xl border border-slate-100 hover:border-slate-300 transition-colors group" key={item.id}>
-                                    <div className="w-16 h-16 bg-slate-50 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                        {item.images && item.images[0] ? (
-                                            <img src={item.images[0]} alt={item.title} className="w-full h-full object-contain mix-blend-multiply" />
-                                        ) : (
-                                            <Building2 className="w-6 h-6 text-slate-200" />
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-black text-slate-900 line-clamp-1">{item.title}</p>
-                                        <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mb-2">₹{item.priceCurrent.toLocaleString()} / {item.unit ? item.unit.split(' ')[1] : 'unit'}</p>
-                                        
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center bg-slate-50 rounded-lg p-1">
-                                                <button className="w-7 h-7 flex items-center justify-center hover:bg-white rounded-md text-slate-400" onClick={() => updateQuantity(item.id, -1)}>-</button>
-                                                <span className="w-8 text-center text-xs font-black">{item.quantity}</span>
-                                                <button className="w-7 h-7 flex items-center justify-center hover:bg-white rounded-md text-slate-400" onClick={() => updateQuantity(item.id, 1)}>+</button>
-                                            </div>
-                                            <button className="p-2 text-slate-300 hover:text-red-500 transition-colors" onClick={() => removeItem(item.id)}>
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="p-6 bg-slate-50 space-y-4">
-                        <div className="flex justify-between items-baseline mb-4">
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Procurement Total</span>
-                            <span className="text-2xl font-black text-slate-900 tracking-tighter">₹{totalPrice.toLocaleString()}</span>
+            <div 
+                style={{
+                    position: 'fixed', right: 0, top: 0, height: '100%', width: '100%', maxWidth: '450px', 
+                    backgroundColor: '#fff', zIndex: 10000, boxShadow: '-25px 0 50px rgba(15, 23, 42, 0.15)', 
+                    transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                    transform: cartDrawerOpen ? 'translateX(0)' : 'translateX(100%)',
+                    display: 'flex', flexDirection: 'column'
+                }}
+            >
+                {/* Header */}
+                <div style={{padding: '1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1}}>
+                        <div style={{width: '2.5rem', height: '2.5rem', backgroundColor: '#0f172a', borderRadius: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                            <ShoppingCart style={{width: 20, height: 20, color: '#fff'}} />
                         </div>
-                        <Link 
-                            href="/checkout" 
-                            className="w-full bg-slate-900 hover:bg-slate-800 text-white h-14 rounded-xl font-bold flex items-center justify-center gap-3 transition-all no-underline shadow-xl shadow-slate-900/20 active:scale-[0.98]" 
-                            onClick={() => setCartDrawerOpen(false)}
-                        >
-                            FINALIZE PROCUREMENT
-                        </Link>
-                        <p className="text-[9px] text-center text-slate-400 uppercase font-bold tracking-widest">Ships to site in 48-72 hours</p>
+                        <h3 style={{fontSize: '1.25rem', fontWeight: 900, color: '#0f172a', margin: 0}}>Procurement Basket</h3>
                     </div>
+                    <button onClick={() => setCartDrawerOpen(false)} style={{padding: '0.5rem', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                        <X style={{width: 24, height: 24, color: '#94a3b8'}} />
+                    </button>
+                </div>
+
+                {/* Body */}
+                <div style={{flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                    {cart.length === 0 ? (
+                        <div style={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: 'auto'}}>
+                            <div style={{width: '4rem', height: '4rem', backgroundColor: '#f8fafc', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem'}}>
+                                <ShoppingCart style={{width: 32, height: 32, color: '#e2e8f0'}} />
+                            </div>
+                            <p style={{color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', fontSize: '0.75rem', margin: 0}}>No materials added yet</p>
+                        </div>
+                    ) : (
+                        cart.map(item => (
+                            <div key={item.id} style={{display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.25rem', borderRadius: '1.25rem', border: '2px solid #f1f5f9'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
+                                    <div style={{flex: 1, paddingRight: '1rem'}}>
+                                        <p style={{fontSize: '0.9rem', fontWeight: 900, color: '#0f172a', margin: '0 0 0.25rem 0'}}>{item.title}</p>
+                                        <p style={{fontSize: '0.65rem', fontWeight: 900, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0}}>
+                                            ₹{item.priceCurrent.toLocaleString()} / {item.unit ? item.unit.split(' ')[1] : 'unit'}
+                                        </p>
+                                    </div>
+                                    <button onClick={() => removeItem(item.id)} style={{background: 'transparent', border: 'none', color: '#cbd5e1', cursor: 'pointer', padding: '0.25rem'}}>
+                                        <Trash2 style={{width: 18, height: 18}} />
+                                    </button>
+                                </div>
+                                <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '0.5rem', padding: '0.25rem', alignSelf: 'flex-start'}}>
+                                    <button onClick={() => updateQuantity(item.id, -1)} style={{width: '32px', height: '32px', border: 'none', background: 'transparent', color: '#64748b', fontWeight: 900, cursor: 'pointer'}}>-</button>
+                                    <span style={{width: '40px', textAlign: 'center', fontSize: '1rem', fontWeight: 900, color: '#0f172a'}}>{item.quantity}</span>
+                                    <button onClick={() => updateQuantity(item.id, 1)} style={{width: '32px', height: '32px', border: 'none', background: 'transparent', color: '#64748b', fontWeight: 900, cursor: 'pointer'}}>+</button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Footer */}
+                <div style={{padding: '1.5rem', backgroundColor: '#f8fafc', borderTop: '1px solid #e2e8f0'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.5rem'}}>
+                        <span style={{fontSize: '0.65rem', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.2em'}}>Procurement Total</span>
+                        <span style={{fontSize: '2rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em'}}>₹{totalPrice.toLocaleString()}</span>
+                    </div>
+                    
+                    <Link 
+                        href="/checkout" 
+                        onClick={() => setCartDrawerOpen(false)}
+                        style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', width: '100%', height: '4rem', backgroundColor: '#0f172a', color: '#fff', borderRadius: '1rem', fontWeight: 900, letterSpacing: '0.05em', textDecoration: 'none', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(15, 23, 42, 0.4)'}}
+                    >
+                        FINALIZE PROCUREMENT
+                    </Link>
+                    
+                    <p style={{fontSize: '0.6rem', textAlign: 'center', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.15em', marginTop: '1rem', marginBottom: 0}}>
+                        Ships to site in 48-72 hours
+                    </p>
                 </div>
             </div>
         </>
