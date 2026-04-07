@@ -267,9 +267,9 @@ export default function BuildBazaar() {
 
                     {/* Accounts Hub */}
                     {user ? (
-                        <div style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', flexShrink: 0, marginLeft: '12px'}} onClick={logout}>
+                        <div style={{display: 'flex', flexDirection: 'column', color: 'white', flexShrink: 0, marginLeft: '12px'}}>
                             <span style={{fontSize: '12px', lineHeight: '14px', whiteSpace: 'nowrap'}}>Hello, {user.email.split('@')[0]}</span>
-                            <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Sign Out</span>
+                            <span onClick={logout} style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px', cursor: 'pointer', color: '#fca5a5'}}>Sign Out</span>
                         </div>
                     ) : (
                         <Link href="/auth" style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0, marginLeft: '12px'}}>

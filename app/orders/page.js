@@ -27,7 +27,7 @@ export default function OrdersPage() {
         }
 
         async function fetchOrders() {
-            if (!user) return;
+            if (!user?.id) return;
             
             try {
                 const { data, error } = await supabase
