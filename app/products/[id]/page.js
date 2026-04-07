@@ -174,16 +174,16 @@ export default function ProductDetailPage() {
                             <div style={{display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>
                                 <div>
                                     <label style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px', display: 'block'}}>Order Quantity</label>
-                                    <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '6px'}}>
-                                        <button onClick={() => setQuantity(Math.max(1, Number(quantity) - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Minus style={{width: 14}} /></button>
+                                    <div style={{display: 'flex', alignItems: 'center', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '6px', width: '100%', boxSizing: 'border-box'}}>
+                                        <button onClick={() => setQuantity(Math.max(1, Number(quantity) - 1))} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer', flexShrink: 0}}><Minus style={{width: 14}} /></button>
                                         <input 
                                             type="number" 
                                             value={quantity} 
                                             onChange={(e) => setQuantity(e.target.value === '' ? '' : Math.max(1, parseInt(e.target.value)))} 
                                             onBlur={() => { if (quantity === '' || isNaN(quantity) || quantity < 1) setQuantity(1); }}
-                                            style={{flex: 1, border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem', appearance: 'textfield'}} 
+                                            style={{flex: 1, minWidth: 0, width: '100%', border: 'none', background: 'none', textAlign: 'center', fontWeight: 900, fontSize: '1.125rem', appearance: 'textfield'}} 
                                         />
-                                        <button onClick={() => setQuantity(Number(quantity) + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer'}}><Plus style={{width: 14}} /></button>
+                                        <button onClick={() => setQuantity(Number(quantity) + 1)} style={{width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', background: 'none', cursor: 'pointer', flexShrink: 0}}><Plus style={{width: 14}} /></button>
                                     </div>
                                 </div>
 
