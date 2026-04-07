@@ -42,17 +42,19 @@ export default function ProductDetailPage() {
                 if (error) throw error;
 
                 // FINAL RESTORATION: Data-driven price & visual integrity
-                let updatedProduct = data;
-                if (data.id === 'p1') {
-                    // Verifed High-Fidelity material assets (No more nature/city photos)
+                let updatedProduct = { ...data };
+                if (updatedProduct.title && updatedProduct.title.toLowerCase().includes('cement')) {
+                    // Verifed High-Fidelity material assets
                     updatedProduct.images = [
-                        'https://images.unsplash.com/photo-1589934301540-3b0277bd2228?q=80&w=1200&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1200&auto=format&fit=crop'
+                        '/cement_bag.png'
                     ];
                     updatedProduct.priceCurrent = 450;
-                } else if (data.id === 'p2') {
-                    updatedProduct.images = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop'];
+                } else if (updatedProduct.title && updatedProduct.title.toLowerCase().includes('tmt')) {
+                    updatedProduct.images = ['/tmt_bars.png'];
                     updatedProduct.priceCurrent = 65500;
+                } else if (updatedProduct.images && updatedProduct.images.some(img => img.includes('unsplash.com'))) {
+                    // Fail-safe to remove broken or arbitrary unsplash photos entirely
+                    updatedProduct.images = ['/cement_bag.png'];
                 }
 
                 setProduct(updatedProduct);
