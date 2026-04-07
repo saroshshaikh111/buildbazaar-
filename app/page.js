@@ -214,44 +214,72 @@ export default function BuildBazaar() {
                     </div>
 
                     {/* Massive Search Bar */}
-                    <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.15)'}}>
-                        <select style={{background: 'var(--slate-50)', border: 'none', padding: '0 15px', fontSize: '13px', color: 'var(--slate-800)', borderRight: '1px solid var(--slate-200)', outline: 'none', fontWeight: 600}}>
-                            <option>All Categories</option>
-                            <option>Cement</option>
-                            <option>Steel</option>
-                            <option>Paint</option>
-                        </select>
-                        <input 
-                            type="text" 
-                            placeholder="Search materials, brands, suppliers..." 
-                            value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); }}
-                            style={{flex: 1, padding: '0 20px', border: 'none', outline: 'none', fontSize: '15px', color: '#111'}}
-                        />
-                        <button 
-                            onClick={() => { if (searchQuery.trim()) router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); }}
-                            style={{background: 'var(--primary-orange)', border: 'none', padding: '0 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s'}}
-                        >
-                            <Search style={{color: 'white', width: 22}} />
-                        </button>
+                    <div style={{flex: 1, display: 'flex', position: 'relative', height: '46px', borderRadius: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)'}}>
+                        <div style={{display: 'flex', width: '100%', height: '100%', overflow: 'hidden', borderRadius: '24px'}}>
+                            <select style={{background: 'var(--slate-50)', border: 'none', padding: '0 15px', fontSize: '13px', color: 'var(--slate-800)', borderRight: '1px solid var(--slate-200)', outline: 'none', fontWeight: 600}}>
+                                <option>All Categories</option>
+                                <option>Cement</option>
+                                <option>Steel</option>
+                                <option>Paint</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                placeholder="Search materials, brands, suppliers..." 
+                                value={searchQuery}
+                                onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                                onFocus={() => setSearchOpen(true)}
+                                onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setSearchOpen(false); router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); } }}
+                                style={{flex: 1, padding: '0 20px', border: 'none', outline: 'none', fontSize: '15px', color: '#111'}}
+                            />
+                            <button 
+                                onClick={() => { if (searchQuery.trim()) { setSearchOpen(false); router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); } }}
+                                style={{background: 'var(--primary-orange)', border: 'none', padding: '0 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', zIndex: 2}}
+                            >
+                                <Search style={{color: 'white', width: 22}} />
+                            </button>
+                        </div>
+                        
+                        {/* Intelligent Search Autocomplete Dropdown */}
+                        {searchOpen && searchQuery.length >= 2 && (
+                            <div style={{position: 'absolute', top: '56px', left: 0, right: 0, backgroundColor: 'white', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', overflow: 'hidden', zIndex: 1000, border: '1px solid var(--slate-200)'}}>
+                                {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5).map(prod => (
+                                    <div 
+                                        key={prod.id} 
+                                        onClick={() => { setSearchQuery(prod.title); setSearchOpen(false); router.push(`/products/${prod.id}`); }}
+                                        style={{padding: '12px 20px', display: 'flex', alignItems: 'center', cursor: 'pointer', borderBottom: '1px solid var(--slate-100)', color: 'var(--slate-900)'}}
+                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-50)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                                    >
+                                        <Search style={{width: 14, height: 14, color: 'var(--slate-400)', marginRight: '12px'}} />
+                                        <span style={{fontWeight: 700, fontSize: '14px'}}>{prod.title}</span>
+                                        <span style={{marginLeft: 'auto', fontSize: '12px', color: 'var(--slate-500)', fontWeight: 600}}>{prod.brand}</span>
+                                    </div>
+                                ))}
+                                {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                                    <div style={{padding: '16px 20px', color: 'var(--slate-500)', fontSize: '14px'}}>
+                                        No materials found matching "{searchQuery}"
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Accounts Hub */}
                     {user ? (
-                        <div style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', flexShrink: 0}} onClick={logout}>
-                            <span style={{fontSize: '12px', lineHeight: '14px'}}>Hello, {user.email.split('@')[0]}</span>
+                        <div style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', flexShrink: 0, marginLeft: '12px'}} onClick={logout}>
+                            <span style={{fontSize: '12px', lineHeight: '14px', whiteSpace: 'nowrap'}}>Hello, {user.email.split('@')[0]}</span>
                             <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Sign Out</span>
                         </div>
                     ) : (
-                        <Link href="/login" style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
+                        <Link href="/auth" style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0, marginLeft: '12px'}}>
                             <span style={{fontSize: '12px', lineHeight: '14px'}}>Hello, sign in</span>
                             <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Account & Lists</span>
                         </Link>
                     )}
 
                     {/* Orders */}
-                    <Link href="/auth" style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
+                    <Link href={user ? "#" : "/auth"} style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
                         <span style={{fontSize: '12px', lineHeight: '14px'}}>Returns</span>
                         <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>& Orders</span>
                     </Link>

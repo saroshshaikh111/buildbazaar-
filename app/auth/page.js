@@ -15,6 +15,8 @@ export default function AuthPage() {
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
 
+    const router = require('next/navigation').useRouter();
+
     const handleGoogleAuth = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -24,8 +26,27 @@ export default function AuthPage() {
 
     const handleCredAuth = async (e) => {
         e.preventDefault();
-        alert('Supabase Auth connection ready! Backend users tables will catch this.');
-        // Backend implementation pending table creation in dashboard
+        
+        try {
+            if (isLogin) {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email: email.trim(),
+                    password: password
+                });
+                if (error) throw error;
+                router.push('/');
+            } else {
+                const { error } = await supabase.auth.signUp({
+                    email: email.trim(),
+                    password: password
+                });
+                if (error) throw error;
+                alert('Success! Check your email to verify your account, or just sign in if confirmations are off.');
+                setIsLogin(true);
+            }
+        } catch (err) {
+            alert(err.message || "Authentication failed. Please try again.");
+        }
     };
 
     return (

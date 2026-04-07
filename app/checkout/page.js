@@ -128,14 +128,14 @@ export default function CheckoutPage() {
 
     if (totalItems === 0 && !orderSuccess) {
         return (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-                <div className="bg-white p-12 rounded-[40px] text-center shadow-xl border border-slate-100 max-w-md">
-                    <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                        <ShoppingBag className="w-10 h-10 text-slate-300" />
+            <div style={{minHeight: '100vh', backgroundColor: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem', fontFamily: '"Outfit", sans-serif'}}>
+                <div style={{backgroundColor: '#fff', padding: '3rem', borderRadius: '40px', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', border: '1px solid #f1f5f9', maxWidth: '448px', width: '100%'}}>
+                    <div style={{width: '80px', height: '80px', backgroundColor: '#f1f5f9', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem'}}>
+                        <ShoppingBag style={{width: '40px', height: '40px', color: '#cbd5e1'}} />
                     </div>
-                    <h1 className="text-2xl font-black mb-4">Your procurement basket is empty</h1>
-                    <p className="text-slate-500 mb-8">Add materials to your project sites before checking out.</p>
-                    <Link href="/products" className="btn-primary w-full py-4 rounded-2xl block text-center font-bold">
+                    <h1 style={{fontSize: '1.5rem', fontWeight: 900, marginBottom: '1rem', color: '#0f172a'}}>Your procurement basket is empty</h1>
+                    <p style={{color: '#64748b', marginBottom: '2rem'}}>Add materials to your project sites before checking out.</p>
+                    <Link href="/products" style={{backgroundColor: '#f97316', color: '#fff', padding: '1rem', borderRadius: '1rem', display: 'block', textAlign: 'center', fontWeight: 700, textDecoration: 'none'}}>
                         Browse Materials
                     </Link>
                 </div>
