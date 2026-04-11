@@ -56,6 +56,19 @@ export default function SellerDashboard() {
         const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
         if (!error) {
             setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+            // Fire notify hooks
+            const order = orders.find(o => o.id === orderId);
+            const notifyType = newStatus === 'Dispatched' ? 'ORDER_DISPATCHED' : newStatus === 'Delivered' ? 'ESCROW_RELEASED' : null;
+            if (notifyType && order) {
+                fetch('/api/notify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: notifyType,
+                        order: { id: order.id, customerName: order.customer_name, buyerEmail: '', projectName: order.project_name, deliveryDate: order.delivery_date, deliverySlot: order.delivery_slot, totalAmount: order.total_amount, vendorPayout: order.vendor_payout }
+                    })
+                }).catch(err => console.warn('Notify hook failed:', err));
+            }
         } else {
             alert("Error updating status: " + error.message);
         }
