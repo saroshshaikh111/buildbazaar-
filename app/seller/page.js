@@ -198,10 +198,10 @@ export default function SellerDashboard() {
             {/* Vendor Navbar */}
             <nav className="vendor-desktop-nav">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Link href="/" style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'white' }}>
                         <div style={{width: '24px', height: '24px', backgroundColor: '#f97316', borderRadius: '6px'}}></div>
                         BuildBazaar <span style={{ color: '#94a3b8', fontWeight: 500 }}>| Vendor Hub</span>
-                    </div>
+                    </Link>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <Link href="/" style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', color: 'white', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.1)' }}>View Storefront</Link>
