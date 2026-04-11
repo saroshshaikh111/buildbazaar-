@@ -48,8 +48,8 @@ export default function SellerDashboard() {
         if (user) fetchData();
     }, [user, authLoading, router]);
 
-    // Derived Metrics
-    const revenue = orders.filter(o => o.status !== 'Cancelled').reduce((sum, order) => sum + Number(order.total_amount || 0), 0);
+    // Derived Metrics (Monetization Engine: Tracking Net Payout mathematically)
+    const revenue = orders.filter(o => o.status !== 'Cancelled').reduce((sum, order) => sum + Number(order.vendor_payout || order.total_amount || 0), 0);
     const pendingCount = orders.filter(o => o.status === 'Processing').length;
 
     const handleStatusUpdate = async (orderId, newStatus) => {
@@ -221,7 +221,7 @@ export default function SellerDashboard() {
                             </div>
 
                             <div className="seller-grid">
-                                <StatCard title="Total Platform Revenue" value={`₹${revenue.toLocaleString('en-IN')}`} icon={DollarSign} trend="Real-time gross metric" colorCode="#10b981" />
+                                <StatCard title="Your Net Revenue Payout" value={`₹${revenue.toLocaleString('en-IN')}`} icon={DollarSign} trend="Deducted 3% Platform Fee" colorCode="#10b981" />
                                 <StatCard title="Total Active Products" value={products.length} icon={Package} trend="Live catalog size" colorCode="#3b82f6" />
                                 <StatCard title="Pending Fulfillment" value={pendingCount} icon={Clock} trend={pendingCount > 0 ? "Requires attention" : "All orders fulfilled"} colorCode="#f59e0b" />
                             </div>
@@ -261,8 +261,8 @@ export default function SellerDashboard() {
                                                     <div style={{ fontWeight: 700, fontFamily: 'monospace' }}>{order.id.split('-')[0].toUpperCase()}</div>
                                                 </div>
                                                 <div>
-                                                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Value</div>
-                                                    <div style={{ fontWeight: 800 }}>₹{Number(order.total_amount).toLocaleString('en-IN')}</div>
+                                                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Net Payout</div>
+                                                    <div style={{ fontWeight: 800 }}>₹{Number(order.vendor_payout || order.total_amount).toLocaleString('en-IN')}</div>
                                                 </div>
                                                 <div>
                                                     <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Delivery Site</div>

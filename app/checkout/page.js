@@ -68,50 +68,30 @@ export default function CheckoutPage() {
         setLoading(true);
 
         try {
-            // 1. Create Order
-            const { data: order, error: orderError } = await supabase
-                .from('orders')
-                .insert({
-                    user_id: user.id,
-                    customer_name: formData.customerName,
-                    shipping_address: formData.shippingAddress,
-                    pincode: formData.pincode,
-                    project_name: formData.projectName,
-                    gstin: formData.gstin,
-                    total_amount: totalPrice,
-                    delivery_date: formData.deliveryDate || null,
-                    delivery_slot: formData.deliverySlot,
-                    payment_method: formData.paymentMethod,
-                    status: 'Processing'
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cart: cart,
+                    formData: formData,
+                    userId: user.id
                 })
-                .select()
-                .single();
+            });
 
-            if (orderError) throw orderError;
+            const data = await response.json();
 
-            // 2. Create Order Items
-            const orderItems = cart.map(item => ({
-                order_id: order.id,
-                product_id: item.id,
-                title: item.title,
-                quantity: item.quantity,
-                price: item.priceCurrent
-            }));
-
-            const { error: itemsError } = await supabase
-                .from('order_items')
-                .insert(orderItems);
-
-            if (itemsError) throw itemsError;
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to sync with secure payment gateway.');
+            }
 
             // Success!
-            setOrderId(order.id);
+            setOrderId(data.orderId);
             setOrderSuccess(true);
             clearCart();
-            router.push(`/order-success/${order.id}`);
+            router.push(`/order-success/${data.orderId}`);
         } catch (err) {
             console.error('Order Submission Failed:', err);
-            alert(`Failed to place order. Error: ${err.message || 'Unknown database exception.'}`);
+            alert(`Failed to place order. Error: ${err.message}`);
         } finally {
             setLoading(false);
         }
