@@ -227,7 +227,7 @@ export default function CheckoutPage() {
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Preferred Delivery Date</label>
                                             <div style={{position: 'relative'}}>
                                                 <Calendar style={{position: 'absolute', left: '1.5rem', top: '50%', transform: 'translateY(-50%)', width: 20, height: 20, color: '#94a3b8'}} />
-                                                <input required type="date" name="deliveryDate" value={formData.deliveryDate} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem 1.25rem 3.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} />
+                                                <input required type="date" name="deliveryDate" min={new Date().toISOString().split('T')[0]} value={formData.deliveryDate} onChange={handleChange} style={{width: '100%', padding: '1.25rem 1.5rem 1.25rem 3.5rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} />
                                             </div>
                                         </div>
                                         <div style={{flex: '1 1 calc(50% - 0.75rem)', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>

@@ -164,11 +164,13 @@ export default function ProductDetailPage() {
                     <div style={{gridColumn: 'span 3'}}>
                         <div style={{position: 'sticky', top: '100px', backgroundColor: '#fff', border: '2px solid #0f172a', borderRadius: '2.5rem', padding: '2.5rem', boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.15)'}}>
                             <div style={{marginBottom: '2.5rem'}}>
-                                <div style={{display: 'flex', alignItems: 'baseline', gap: '8px'}}>
-                                    <span style={{fontSize: '2.75rem', fontWeight: 900, color: '#0f172a'}}>₹{product.priceCurrent.toLocaleString()}</span>
-                                    <span style={{fontSize: '0.75rem', fontWeight: 900, color: '#f97316', textTransform: 'uppercase'}}>{product.unit}</span>
+                                <div style={{display: 'flex', flexDirection: 'column', gap: '2px'}}>
+                                    <div style={{display: 'flex', alignItems: 'baseline', gap: '8px', flexWrap: 'wrap'}}>
+                                        <span style={{fontSize: 'clamp(2rem, 5vw, 2.75rem)', fontWeight: 900, color: '#0f172a'}}>₹{product.priceCurrent.toLocaleString()}</span>
+                                        <span style={{fontSize: '0.7rem', fontWeight: 900, color: '#f97316', textTransform: 'uppercase', whiteSpace: 'nowrap'}}>{product.unit}</span>
+                                    </div>
+                                    {product.priceOld && <span style={{fontSize: '1.125rem', color: '#cbd5e1', textDecoration: 'line-through', fontWeight: 700}}>₹{product.priceOld.toLocaleString()}</span>}
                                 </div>
-                                {product.priceOld && <span style={{fontSize: '1.125rem', color: '#cbd5e1', textDecoration: 'line-through', fontWeight: 700}}>₹{product.priceOld.toLocaleString()}</span>}
                             </div>
 
                             <div style={{display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>
