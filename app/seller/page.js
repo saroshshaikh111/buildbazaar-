@@ -24,9 +24,19 @@ export default function SellerDashboard() {
     const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/auth');
-            return;
+        if (!authLoading) {
+            if (!user) {
+                router.push('/auth');
+                return;
+            }
+
+            // Security Gate: Locked to specific Admin Email
+            const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+            if (adminEmail && user.email !== adminEmail) {
+                console.error("Access Denied: Unauthorized email attempt to Seller Dashboard");
+                router.push('/');
+                return;
+            }
         }
 
         async function fetchData() {
