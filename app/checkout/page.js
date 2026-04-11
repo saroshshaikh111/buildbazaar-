@@ -35,6 +35,7 @@ export default function CheckoutPage() {
     // Form State
     const [formData, setFormData] = useState({
         customerName: '',
+        email: '',
         shippingAddress: '',
         pincode: '',
         projectName: '',
@@ -174,6 +175,10 @@ export default function CheckoutPage() {
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Site Contact Person</label>
                                             <input required name="customerName" value={formData.customerName} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="Full name of manager" />
+                                        </div>
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Email (for order confirmation)</label>
+                                            <input required type="email" name="email" value={formData.email} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="you@company.com" />
                                         </div>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Full Site Address</label>
