@@ -58,6 +58,28 @@ export default function OrdersPage() {
         const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
         if (!error) {
             setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+
+            // Fire escrow release email when buyer confirms delivery
+            if (newStatus === 'Delivered') {
+                const order = orders.find(o => o.id === orderId);
+                if (order) {
+                    fetch('/api/notify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type: 'ESCROW_RELEASED',
+                            order: {
+                                id: order.id,
+                                customerName: order.customer_name,
+                                buyerEmail: order.buyer_email || '',
+                                projectName: order.project_name,
+                                totalAmount: order.total_amount,
+                                vendorPayout: order.vendor_payout
+                            }
+                        })
+                    }).catch(err => console.warn('Notify failed:', err));
+                }
+            }
         } else {
             alert("Error updating order: " + error.message);
         }
