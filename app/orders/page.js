@@ -10,7 +10,8 @@ import {
     MapPin, 
     Clock, 
     Building2,
-    ArrowRight
+    ArrowRight,
+    CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -50,6 +51,17 @@ export default function OrdersPage() {
 
         fetchOrders();
     }, [user, authLoading, router]);
+
+    const handleUpdateStatus = async (orderId, newStatus) => {
+        if (!confirm(`Are you sure you want to mark this order as ${newStatus}?`)) return;
+        
+        const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+        if (!error) {
+            setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+        } else {
+            alert("Error updating order: " + error.message);
+        }
+    };
 
     if (authLoading || loading) {
         return (
@@ -120,11 +132,53 @@ export default function OrdersPage() {
                                 </div>
                                 
                                 {/* Order Status & Items */}
+                                {/* Order Status Timeline & Escrow Engine */}
+                                <div style={{padding: '1.5rem', borderBottom: '1px solid #f1f5f9'}}>
+                                    <div style={{padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0'}}>
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: order.status === 'Dispatched' || order.status === 'Delivered' || order.status === 'Disputed' ? '1.5rem' : '0'}}>
+                                            {['Processing', 'Dispatched', 'Delivered'].map((step, idx) => {
+                                                const steps = ['Processing', 'Dispatched', 'Delivered'];
+                                                const currentIdx = order.status === 'Disputed' ? 1 : (steps.indexOf(order.status) !== -1 ? steps.indexOf(order.status) : 0);
+                                                const isCompleted = idx <= currentIdx;
+                                                return (
+                                                    <div key={step} style={{display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative'}}>
+                                                        <div style={{width: '24px', height: '24px', borderRadius: '50%', backgroundColor: order.status === 'Disputed' && idx === 1 ? '#ef4444' : (isCompleted ? '#10b981' : '#cbd5e1'), zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                                                            {isCompleted && <div style={{width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#fff'}} />}
+                                                        </div>
+                                                        <div style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: order.status === 'Disputed' && idx === 1 ? '#ef4444' : (isCompleted ? '#0f172a' : '#94a3b8'), marginTop: '0.5rem', textAlign: 'center'}}>
+                                                            {order.status === 'Disputed' && idx === 1 ? 'Disputed' : step}
+                                                        </div>
+                                                        {idx < 2 && <div style={{position: 'absolute', top: '12px', left: '50%', width: '100%', height: '2px', backgroundColor: isCompleted && currentIdx > idx ? '#10b981' : '#e2e8f0', zIndex: 1}}></div>}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                        
+                                        {/* Escrow Release Actions */}
+                                        {order.status === 'Dispatched' && (
+                                            <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap', animation: 'fade-in 0.3s ease-out'}}>
+                                                <button onClick={() => handleUpdateStatus(order.id, 'Delivered')} style={{flex: '2 1 200px', padding: '1rem', backgroundColor: '#10b981', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 900, fontSize: '0.8rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', gap: '0.5rem', alignItems: 'center', boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.2)'}}>
+                                                    <CheckCircle2 style={{width: 16, height: 16}} /> CONFIRM DELIVERY (RELEASE FUNDS)
+                                                </button>
+                                                <button onClick={() => handleUpdateStatus(order.id, 'Disputed')} style={{flex: '1 1 100px', padding: '1rem', backgroundColor: '#fff', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '0.75rem', fontSize: '0.8rem', fontWeight: 800, cursor: 'pointer'}}>
+                                                    REPORT ISSUE
+                                                </button>
+                                            </div>
+                                        )}
+                                        {order.status === 'Delivered' && (
+                                            <div style={{padding: '0.75rem', backgroundColor: '#ecfdf5', color: '#065f46', borderRadius: '0.5rem', fontSize: '0.8rem', fontWeight: 700, textAlign: 'center'}}>
+                                                Delivery confirmed. Funds have been released to the vendor.
+                                            </div>
+                                        )}
+                                        {order.status === 'Disputed' && (
+                                            <div style={{padding: '0.75rem', backgroundColor: '#fef2f2', color: '#b91c1c', borderRadius: '0.5rem', fontSize: '0.8rem', fontWeight: 700, textAlign: 'center'}}>
+                                                Order disputed. Admin review in progress. Payment held in Escrow.
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                
                                 <div style={{padding: '1.5rem'}}>
-                                    <h3 style={{fontSize: '1.1rem', fontWeight: 900, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-                                        <span style={{width: '10px', height: '10px', borderRadius: '50%', backgroundColor: order.status === 'Processing' ? '#f59e0b' : '#10b981'}}></span>
-                                        {order.status === 'Processing' ? 'Preparing for Dispatch' : order.status || 'Processing'}
-                                    </h3>
                                     
                                     <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                                         {order.order_items?.map((item) => (
