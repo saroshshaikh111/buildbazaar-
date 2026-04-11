@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabaseClient';
+import { sendOrderPlaced } from '@/lib/emailService';
 
 export async function POST(request) {
     try {
@@ -77,25 +78,18 @@ export async function POST(request) {
 
         if (itemsError) throw itemsError;
 
-        // 5. Fire automated email notifications (non-blocking)
-        fetch('/api/notify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: 'ORDER_PLACED',
-                order: {
-                    id: order.id,
-                    customerName: formData.customerName,
-                    buyerEmail: formData.email || '',
-                    projectName: formData.projectName,
-                    deliveryDate: formData.deliveryDate,
-                    deliverySlot: formData.deliverySlot,
-                    totalAmount: secureTotal,
-                    vendorPayout: vendorPayout,
-                    items: finalOrderItems
-                }
-            })
-        }).catch(err => console.warn('Notify hook failed (non-critical):', err));
+        // 5. Fire automated email (directly imported, no relative fetch)
+        await sendOrderPlaced({
+            id: order.id,
+            customerName: formData.customerName,
+            buyerEmail: formData.email || '',
+            projectName: formData.projectName,
+            deliveryDate: formData.deliveryDate,
+            deliverySlot: formData.deliverySlot,
+            totalAmount: secureTotal,
+            vendorPayout: vendorPayout,
+            items: finalOrderItems
+        });
 
         return NextResponse.json({ success: true, orderId: order.id });
     } catch (error) {
