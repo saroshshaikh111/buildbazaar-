@@ -56,7 +56,7 @@ export default function SellerDashboard() {
         const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
         if (!error) {
             setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-            // Fire notify hooks
+            // Client-side fetch to notify API (relative URL works fine from browser)
             const order = orders.find(o => o.id === orderId);
             const notifyType = newStatus === 'Dispatched' ? 'ORDER_DISPATCHED' : newStatus === 'Delivered' ? 'ESCROW_RELEASED' : null;
             if (notifyType && order) {
@@ -65,7 +65,7 @@ export default function SellerDashboard() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         type: notifyType,
-                        order: { id: order.id, customerName: order.customer_name, buyerEmail: '', projectName: order.project_name, deliveryDate: order.delivery_date, deliverySlot: order.delivery_slot, totalAmount: order.total_amount, vendorPayout: order.vendor_payout }
+                        order: { id: order.id, customerName: order.customer_name, buyerEmail: order.buyer_email || '', projectName: order.project_name, deliveryDate: order.delivery_date, deliverySlot: order.delivery_slot, totalAmount: order.total_amount, vendorPayout: order.vendor_payout }
                     })
                 }).catch(err => console.warn('Notify hook failed:', err));
             }
