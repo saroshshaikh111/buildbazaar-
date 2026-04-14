@@ -129,6 +129,22 @@ export default function SellerDashboard() {
         }
     };
 
+    const handleRepairData = async () => {
+        setLoading(true);
+        try {
+            // Fix Dharwad items
+            await supabase.from('products').update({ origin_city: 'Dharwad' }).ilike('title', '%Dharwad%');
+            // Fix Delhi items
+            await supabase.from('products').update({ origin_city: 'Delhi' }).ilike('title', '%Delhi%');
+            alert("Success! Hubli and Delhi tags have been repaired.");
+            setLoading(true); // Trigger re-fetch
+        } catch (err) {
+            alert("Repair failed: " + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleFileUpload = (e) => {
         if (e.target.files && e.target.files[0]) {
             setNewProduct(prev => ({ ...prev, file: e.target.files[0] }));
@@ -168,7 +184,7 @@ export default function SellerDashboard() {
                 unit: newProduct.unit,
                 verified: true,
                 seller_id: user.id,
-                origin_city: user.user_metadata?.warehouse_city || 'National'
+                origin_city: newProduct.originCity || user.user_metadata?.warehouse_city || 'National'
             };
             
             // Only update images array if a newly uploaded image URL was generated
@@ -197,7 +213,7 @@ export default function SellerDashboard() {
             
             setShowModal(false);
             setEditingProductId(null);
-            setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null });
+            setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National' });
 
         } catch (err) {
             alert(err.message || 'Error uploading product.');
@@ -406,9 +422,16 @@ export default function SellerDashboard() {
                                     <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0f172a' }}>Inventory Catalog</h1>
                                     <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Manage your storefront products and pricing.</p>
                                 </div>
-                                <button onClick={() => { setEditingProductId(null); setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null }); setShowModal(true); }} style={{ background: '#f97316', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.2)' }}>
-                                    <Plus style={{ width: 20, height: 20 }} /> Add New Product
-                                </button>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    {user?.email.toLowerCase() === (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').toLowerCase() && (
+                                        <button onClick={handleRepairData} style={{ background: '#f8fafc', color: '#64748b', border: '1px solid #e2e8f0', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <ShieldCheck style={{ width: 20, height: 20 }} /> Repair Site Data
+                                        </button>
+                                    )}
+                                    <button onClick={() => { setEditingProductId(null); setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National' }); setShowModal(true); }} style={{ background: '#f97316', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.2)' }}>
+                                        <Plus style={{ width: 20, height: 20 }} /> Add New Product
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="table-wrapper" style={{ background: 'white', borderRadius: '24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
@@ -454,6 +477,7 @@ export default function SellerDashboard() {
                                                                 priceCurrent: prod.priceCurrent,
                                                                 priceOld: prod.priceOld || '',
                                                                 unit: prod.unit,
+                                                                originCity: prod.origin_city || 'National',
                                                                 file: null
                                                             });
                                                             setShowModal(true);
@@ -509,6 +533,10 @@ export default function SellerDashboard() {
                                 <div>
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Selling Unit</label>
                                     <input required value={newProduct.unit} onChange={e => setNewProduct({...newProduct, unit: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. per bag (50kg)" />
+                                </div>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Shipping Origin (City)</label>
+                                    <input required value={newProduct.originCity} onChange={e => setNewProduct({...newProduct, originCity: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. Hubli, Delhi, or National" />
                                 </div>
                                 <div style={{ gridColumn: 'span 2' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Product Default Image {editingProductId && <span style={{color: '#94a3b8', fontWeight: 500}}>(Leave empty to keep existing image)</span>}</label>
