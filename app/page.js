@@ -393,7 +393,13 @@ export default function BuildBazaar() {
                                             )}
                                         </div>
 
-                                        <div style={{padding: '0 1.5rem 1.5rem 1.5rem'}}>
+                                        <div style={{ padding: '1.25rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                                <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', backgroundColor: prod.origin_city === 'National' ? '#f1f5f9' : '#fff7ed', color: prod.origin_city === 'National' ? '#64748b' : '#f97316', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                                                    {prod.origin_city === 'National' ? 'Ships Nationwide' : `Ships from ${prod.origin_city}`}
+                                                </span>
+                                            </div>
+                                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-orange)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>{prod.brand}</div>
                                             <h3 className="product-title" style={{fontSize: '1.1rem', marginBottom: '0.5rem', height: '2.4em', overflow: 'hidden'}}>{prod.title}</h3>
                                             <div className="product-rating">
                                                 <Star className="star-icon" />
