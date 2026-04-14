@@ -122,9 +122,17 @@ export default function BuildBazaar() {
         async function loadSupabaseData() {
             try {
                 const { data: catData } = await supabase.from('categories').select('*');
-                if (catData && catData.length > 0) setCategories(catData.map(c => ({...c, icon: Package }))); // Simplification for mapped dynamic icons
+                if (catData && catData.length > 0) setCategories(catData.map(c => ({...c, icon: Package })));
                 
-                const { data: prodData } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+                // GEOfencing logic: Show local city products + National products
+                const currentCity = localStorage.getItem('bb-city') || 'National';
+                
+                const { data: prodData } = await supabase
+                    .from('products')
+                    .select('*')
+                    .or(`origin_city.eq.${currentCity},origin_city.eq.National`)
+                    .order('created_at', { ascending: false });
+
                 if (prodData && prodData.length > 0) setProducts(prodData);
             } catch (err) {
                 // Ignore, meaning we fall back to mock data
@@ -188,7 +196,7 @@ export default function BuildBazaar() {
                     <div style={{display: 'flex', alignItems: 'flex-start', cursor: 'pointer', flexShrink: 0}}>
                         <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
                         <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
-                        <span style={{fontSize: '14px', color: '#ccc', marginLeft: '4px', marginTop: '4px'}}>.in</span>
+                        <span style={{fontSize: '14px', color: '#ccc', marginLeft: '4px', marginTop: '4px'}}>.com</span>
                     </div>
 
                     {/* Location Pin */}

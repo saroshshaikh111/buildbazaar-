@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const PLATFORM_EMAIL = process.env.PLATFORM_EMAIL || 'noreply@buildbazaar.in';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@buildbazaar.in';
+const PLATFORM_EMAIL = process.env.PLATFORM_EMAIL || 'noreply@gobuildbazaar.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@gobuildbazaar.com';
 
 // ============================================================
 // HOOK 1: ORDER PLACED → Buyer gets invoice, Vendor gets alert

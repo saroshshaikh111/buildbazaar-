@@ -23,6 +23,9 @@ export default function SellerDashboard() {
     });
     const [uploading, setUploading] = useState(false);
 
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [onboardingData, setOnboardingData] = useState({ businessName: '', warehouseCity: '' });
+
     useEffect(() => {
         if (!authLoading) {
             if (!user) {
@@ -30,24 +33,41 @@ export default function SellerDashboard() {
                 return;
             }
 
-            // Security Gate: Locked to specific Admin Email
-            const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-            if (adminEmail && user.email !== adminEmail) {
-                console.error("Access Denied: Unauthorized email attempt to Seller Dashboard");
-                router.push('/');
-                return;
+            // Security Gate: Locked to specific Admin Email for "Owner Mode"
+            const adminEmail = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').toLowerCase();
+            const userEmail = (user?.email || '').toLowerCase();
+            const isAdmin = adminEmail && userEmail === adminEmail;
+
+            // Check if user has already onboarded as a seller
+            const warehouseCity = user.user_metadata?.warehouse_city;
+            if (isAdmin || warehouseCity) {
+                setIsAuthorized(true);
             }
         }
 
         async function fetchData() {
             try {
+                const adminEmail = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').toLowerCase();
+                const userEmail = (user?.email || '').toLowerCase();
+                const isAdmin = userEmail === adminEmail;
+
+                let ordersQuery = supabase.from('orders').select('*, order_items(*)');
+                let productsQuery = supabase.from('products').select('*');
+
+                // If not admin, only show their OWN items (Multi-Vendor Privacy)
+                if (!isAdmin) {
+                    ordersQuery = ordersQuery.eq('user_id', user.id);
+                    productsQuery = productsQuery.eq('seller_id', user.id);
+                }
+
                 const [ordersRes, productsRes] = await Promise.all([
-                    supabase.from('orders').select('*, order_items(*)').order('created_at', { ascending: false }),
-                    supabase.from('products').select('*').order('created_at', { ascending: false })
+                    ordersQuery.order('created_at', { ascending: false }),
+                    productsQuery.order('created_at', { ascending: false })
                 ]);
                 
                 if (ordersRes.data) setOrders(ordersRes.data);
                 if (productsRes.data) setProducts(productsRes.data);
+
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -55,12 +75,33 @@ export default function SellerDashboard() {
             }
         }
         
-        if (user) fetchData();
-    }, [user, authLoading, router]);
+        // Only fetch if authorized (Onboarded or Admin)
+        if (user && (isAuthorized || (user.email.toLowerCase() === (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').toLowerCase()))) {
+            fetchData();
+        } else if (user && !authLoading) {
+            setLoading(false); // Stop loading to show onboarding form
+        }
+    }, [user, authLoading, router, isAuthorized]);
 
-    // Derived Metrics (Monetization Engine: Tracking Net Payout mathematically)
-    const revenue = orders.filter(o => o.status !== 'Cancelled').reduce((sum, order) => sum + Number(order.vendor_payout || order.total_amount || 0), 0);
-    const pendingCount = orders.filter(o => o.status === 'Processing').length;
+    const handleOnboarding = async (e) => {
+        e.preventDefault();
+        setUploading(true);
+        try {
+            const { error } = await supabase.auth.updateUser({
+                data: { 
+                    business_name: onboardingData.businessName,
+                    warehouse_city: onboardingData.warehouseCity 
+                }
+            });
+            if (error) throw error;
+            setIsAuthorized(true);
+            setLoading(true); // Trigger re-fetch
+        } catch (err) {
+            alert("Onboarding failed: " + err.message);
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleStatusUpdate = async (orderId, newStatus) => {
         const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
@@ -121,7 +162,9 @@ export default function SellerDashboard() {
                 "priceCurrent": Number(newProduct.priceCurrent),
                 "priceOld": newProduct.priceOld ? Number(newProduct.priceOld) : null,
                 unit: newProduct.unit,
-                verified: true
+                verified: true,
+                seller_id: user.id,
+                origin_city: user.user_metadata?.warehouse_city || 'National'
             };
             
             // Only update images array if a newly uploaded image URL was generated
@@ -164,6 +207,36 @@ export default function SellerDashboard() {
             <div style={{minHeight: '100vh', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <div style={{width: '48px', height: '48px', border: '4px solid #0f172a', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite'}}></div>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+        );
+    }
+
+    // ONBOARDING UI (Only for new vendors)
+    if (!isAuthorized && user?.email.toLowerCase() !== (process.env.NEXT_PUBLIC_ADMIN_EMAIL || '').toLowerCase()) {
+        return (
+            <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+                <div style={{ background: 'white', padding: '3rem', borderRadius: '2rem', boxShadow: '0 20px 40px rgba(0,0,0,0.05)', width: '100%', maxWidth: '500px', textAlign: 'center' }}>
+                    <div style={{ width: '64px', height: '64px', background: '#fff7ed', borderRadius: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', color: '#f97316' }}>
+                        <Building2 style={{ width: 32, height: 32 }} />
+                    </div>
+                    <h1 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '0.5rem' }}>Open your Shop</h1>
+                    <p style={{ color: '#64748b', marginBottom: '2rem' }}>Verify your logistics location to start listing materials on BuildBazaar.</p>
+                    
+                    <form onSubmit={handleOnboarding} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'left' }}>
+                        <div>
+                            <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '0.5rem' }}>Business Name</label>
+                            <input required value={onboardingData.businessName} onChange={e => setOnboardingData({...onboardingData, businessName: e.target.value})} placeholder="e.g. Hubli Cements Ltd" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', outline: 'none' }} />
+                        </div>
+                        <div>
+                            <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '0.5rem' }}>Warehouse / Yard City</label>
+                            <input required value={onboardingData.warehouseCity} onChange={e => setOnboardingData({...onboardingData, warehouseCity: e.target.value})} placeholder="e.g. Hubli" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', outline: 'none' }} />
+                            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>This ensures we only show your products to nearby buyers.</p>
+                        </div>
+                        <button type="submit" disabled={uploading} style={{ background: '#f97316', color: 'white', padding: '1rem', borderRadius: '0.75rem', border: 'none', fontWeight: 800, cursor: 'pointer', marginTop: '1rem' }}>
+                            {uploading ? 'Setting up...' : 'Activate Seller Account'}
+                        </button>
+                    </form>
+                </div>
             </div>
         );
     }
