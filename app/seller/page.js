@@ -132,12 +132,18 @@ export default function SellerDashboard() {
     const handleRepairData = async () => {
         setLoading(true);
         try {
-            // Fix Dharwad items
-            await supabase.from('products').update({ origin_city: 'Dharwad' }).ilike('title', '%Dharwad%');
-            // Fix Delhi items
-            await supabase.from('products').update({ origin_city: 'Delhi' }).ilike('title', '%Delhi%');
-            alert("Success! Hubli and Delhi tags have been repaired.");
-            setLoading(true); // Trigger re-fetch
+            console.log("Starting data repair...");
+            // Force strict city tags based on keywords in titles
+            const { error: error1 } = await supabase.from('products').update({ origin_city: 'Dharwad' }).ilike('title', '%Dharwad%');
+            const { error: error2 } = await supabase.from('products').update({ origin_city: 'Delhi' }).ilike('title', '%Delhi%');
+            
+            if (error1 || error2) throw new Error("Database update failed.");
+
+            alert("🛡️ SUCCESS: Dharwad and Delhi materials have been digitally geofenced. Please refresh your homepage!");
+            
+            // Re-fetch local products list
+            const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            if (data) setProducts(data);
         } catch (err) {
             alert("Repair failed: " + err.message);
         } finally {
