@@ -9,6 +9,9 @@ export default function AuthPage() {
     const [authMode, setAuthMode] = useState('email'); // 'email' or 'phone'
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [otpSent, setOtpSent] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
+    const [loading, setLoading] = useState(false);
 
     // Form states
     const [email, setEmail] = useState('');
@@ -20,14 +23,45 @@ export default function AuthPage() {
     const handleGoogleAuth = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback`
+            }
         });
         if (error) alert(error.message);
     };
 
+    const handleOtpVerify = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.verifyOtp({
+                phone: phone.trim(),
+                token: verificationCode,
+                type: 'sms'
+            });
+            if (error) throw error;
+            router.push('/');
+        } catch (err) {
+            alert(err.message || "Invalid code. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleCredAuth = async (e) => {
         e.preventDefault();
+        setLoading(true);
         
         try {
+            if (authMode === 'phone') {
+                const { error } = await supabase.auth.signInWithOtp({
+                    phone: phone.trim(),
+                });
+                if (error) throw error;
+                setOtpSent(true);
+                return;
+            }
+
             if (isLogin) {
                 const { error } = await supabase.auth.signInWithPassword({
                     email: email.trim(),
@@ -41,11 +75,13 @@ export default function AuthPage() {
                     password: password
                 });
                 if (error) throw error;
-                alert('Success! Check your email to verify your account, or just sign in if confirmations are off.');
+                alert('Success! Check your email to verify your account.');
                 setIsLogin(true);
             }
         } catch (err) {
-            alert(err.message || "Authentication failed. Please try again.");
+            alert(err.message || "Authentication failed.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -121,16 +157,38 @@ export default function AuthPage() {
                         {/* Phone Mode */}
                         {authMode === 'phone' && (
                             <div className="input-group" style={{marginBottom: 0}}>
-                                <label style={{display: 'none'}}>Phone Number</label>
+                                <label style={{display: 'none'}}>{otpSent ? 'Verification Code' : 'Phone Number'}</label>
                                 <div style={{position: 'relative'}}>
-                                    <Phone style={{position: 'absolute', top: '14px', left: '14px', color: 'var(--slate-400)', width: 20, height: 20}} />
-                                    <input type="tel" placeholder="+91 98765 43210" className="form-input" required value={phone} onChange={e => setPhone(e.target.value)} style={{paddingLeft: '46px'}} />
+                                    {otpSent ? (
+                                        <>
+                                            <Lock style={{position: 'absolute', top: '14px', left: '14px', color: 'var(--slate-400)', width: 20, height: 20}} />
+                                            <input type="text" placeholder="Enter 6-digit OTP" className="form-input" required value={verificationCode} onChange={e => setVerificationCode(e.target.value)} style={{paddingLeft: '46px', letterSpacing: '4px', textAlign: 'center'}} maxLength={6} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Phone style={{position: 'absolute', top: '14px', left: '14px', color: 'var(--slate-400)', width: 20, height: 20}} />
+                                            <input type="tel" placeholder="+91 98765 43210" className="form-input" required value={phone} onChange={e => setPhone(e.target.value)} style={{paddingLeft: '46px'}} />
+                                        </>
+                                    )}
                                 </div>
-                                {!isLogin && <p style={{fontSize: '0.8rem', color: 'var(--slate-400)', marginTop: '0.5rem'}}>We will send a fast 6-digit OTP to verify your number.</p>}
+                                {!isLogin && !otpSent && <p style={{fontSize: '0.8rem', color: 'var(--slate-400)', marginTop: '0.5rem'}}>We will send a fast 6-digit OTP to verify your number.</p>}
+                                {otpSent && <p style={{fontSize: '0.8rem', color: 'var(--primary-orange)', marginTop: '0.5rem', fontWeight: 600, cursor: 'pointer'}} onClick={() => setOtpSent(false)}>Wrong number? Try again.</p>}
                             </div>
                         )}
 
-                        <button type="submit" className="btn-primary w-full" style={{padding: '1rem', fontSize: '1rem', marginTop: '1rem'}}>{isLogin ? 'Sign In' : 'Create Account'}</button>
+                        <button 
+                            type="submit" 
+                            className="btn-primary w-full" 
+                            disabled={loading}
+                            onClick={otpSent ? handleOtpVerify : handleCredAuth}
+                            style={{padding: '1rem', fontSize: '1rem', marginTop: '1rem', opacity: loading ? 0.7 : 1}}
+                        >
+                            {loading ? 'Processing...' : (
+                                authMode === 'phone' 
+                                    ? (otpSent ? 'Verify & Sign In' : 'Send Verification OTP') 
+                                    : (isLogin ? 'Sign In' : 'Create Account')
+                            )}
+                        </button>
                     </form>
 
                     <p style={{textAlign: 'center', marginTop: '2rem', color: 'var(--slate-500)'}}>
