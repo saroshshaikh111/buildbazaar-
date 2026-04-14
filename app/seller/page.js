@@ -83,6 +83,10 @@ export default function SellerDashboard() {
         }
     }, [user, authLoading, router, isAuthorized]);
 
+    // Derived Metrics (Monetization Engine: Tracking Net Payout mathematically)
+    const revenue = orders.filter(o => o.status !== 'Cancelled').reduce((sum, order) => sum + Number(order.vendor_payout || order.total_amount || 0), 0);
+    const pendingCount = orders.filter(o => o.status === 'Processing').length;
+
     const handleOnboarding = async (e) => {
         e.preventDefault();
         setUploading(true);
