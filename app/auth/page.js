@@ -48,6 +48,26 @@ export default function AuthPage() {
         }
     };
 
+    const handleForgotPassword = async (e) => {
+        if (e) e.preventDefault();
+        if (!email) {
+            alert("Please enter your email address first.");
+            return;
+        }
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                redirectTo: `${window.location.origin}/reset-password`,
+            });
+            if (error) throw error;
+            alert("Password reset link sent! Check your inbox.");
+        } catch (err) {
+            alert(err.message || "Failed to send reset email.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleCredAuth = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -150,7 +170,7 @@ export default function AuthPage() {
                                         </button>
                                     </div>
                                 </div>
-                                {isLogin && <a href="#" style={{color: 'var(--primary-orange)', fontSize: '0.875rem', textAlign: 'right', fontWeight: 500, textDecoration: 'none'}}>Forgot password?</a>}
+                                {isLogin && <button type="button" onClick={handleForgotPassword} style={{background: 'none', border: 'none', color: 'var(--primary-orange)', fontSize: '0.875rem', textAlign: 'right', fontWeight: 500, cursor: 'pointer'}}>Forgot password?</button>}
                             </>
                         )}
 
