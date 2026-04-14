@@ -134,6 +134,9 @@ export default function ProductDetailPage() {
                             <div style={{display: 'flex', gap: '8px', marginBottom: '1.25rem'}}>
                                 <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '6px'}}>{product.brand}</span>
                                 {product.verified && <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: '#f0fdf4', color: '#16a34a', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px'}}><ShieldCheck style={{width: 10, height: 10}} /> BIS CERTIFIED</span>}
+                                <span style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: (product.origin_city === 'National' || !product.origin_city) ? '#f1f5f9' : '#fff7ed', color: (product.origin_city === 'National' || !product.origin_city) ? '#475569' : '#f97316', borderRadius: '6px' }}>
+                                    {(product.origin_city === 'National' || !product.origin_city) ? 'Ships Nationwide' : `Ships from ${product.origin_city}`}
+                                </span>
                             </div>
                             <h1 style={{fontSize: '2.75rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.04em'}}>{product.title}</h1>
                             <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
