@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Package, TrendingUp, DollarSign, Clock, CheckCircle, Truck, PackageOpen, Plus, Image as ImageIcon, X, MapPin, Search } from 'lucide-react';
+import { Package, TrendingUp, DollarSign, Clock, CheckCircle, Truck, PackageOpen, Plus, Image as ImageIcon, X, MapPin, Search, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';

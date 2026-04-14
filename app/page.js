@@ -127,11 +127,17 @@ export default function BuildBazaar() {
                 // GEOfencing logic: Show local city products + National products
                 const currentCity = localStorage.getItem('bb-city') || 'National';
                 
-                const { data: prodData } = await supabase
-                    .from('products')
-                    .select('*')
-                    .or(`origin_city.eq.${currentCity},origin_city.eq.National`)
-                    .order('created_at', { ascending: false });
+                let query = supabase.from('products').select('*');
+                
+                if (currentCity !== 'National') {
+                    // Filter: This city OR National
+                    query = query.or(`origin_city.eq."${currentCity}",origin_city.eq.National`);
+                } else {
+                    // Just show National products (default)
+                    query = query.eq('origin_city', 'National');
+                }
+
+                const { data: prodData } = await query.order('created_at', { ascending: false });
 
                 if (prodData && prodData.length > 0) setProducts(prodData);
             } catch (err) {
