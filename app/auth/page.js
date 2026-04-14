@@ -57,7 +57,7 @@ export default function AuthPage() {
         setLoading(true);
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                redirectTo: `${window.location.origin}/reset-password`,
+                redirectTo: `https://www.gobuildbazaar.com/reset-password`,
             });
             if (error) throw error;
             alert("Password reset link sent! Check your inbox.");
