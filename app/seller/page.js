@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Package, TrendingUp, DollarSign, Clock, CheckCircle, Truck, PackageOpen, Plus, Image as ImageIcon, X, MapPin, Search, Building2 } from 'lucide-react';
+import { Package, TrendingUp, DollarSign, Clock, CheckCircle, Truck, PackageOpen, Plus, Image as ImageIcon, X, MapPin, Search, Building2, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -448,6 +448,7 @@ export default function SellerDashboard() {
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Category</th>
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Current Price</th>
                                             <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Unit</th>
+                                            <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Origin City</th>
                                             <th style={{ padding: '1rem', textAlign: 'right', fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>Actions</th>
                                         </tr>
                                     </thead>
@@ -470,6 +471,11 @@ export default function SellerDashboard() {
                                                 <td style={{ padding: '1rem', fontWeight: 600, color: '#64748b' }}>{prod.category}</td>
                                                 <td style={{ padding: '1rem', fontWeight: 900, color: '#0f172a' }}>₹{Number(prod.priceCurrent).toLocaleString()}</td>
                                                 <td style={{ padding: '1rem', fontWeight: 600, color: '#64748b' }}>{prod.unit}</td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', backgroundColor: (prod.origin_city === 'National' || !prod.origin_city) ? '#f1f5f9' : '#fff7ed', color: (prod.origin_city === 'National' || !prod.origin_city) ? '#64748b' : '#f97316', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
+                                                        {prod.origin_city || 'National'}
+                                                    </span>
+                                                </td>
                                                 <td style={{ padding: '1rem', textAlign: 'right' }}>
                                                     <button 
                                                         onClick={() => {
