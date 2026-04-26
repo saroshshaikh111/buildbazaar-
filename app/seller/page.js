@@ -19,7 +19,7 @@ export default function SellerDashboard() {
     const [showModal, setShowModal] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
     const [newProduct, setNewProduct] = useState({
-        title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null
+        title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National', deliverySpeed: 'Standard (3-5 Days)'
     });
     const [uploading, setUploading] = useState(false);
 
@@ -190,7 +190,8 @@ export default function SellerDashboard() {
                 unit: newProduct.unit,
                 verified: true,
                 seller_id: user.id,
-                origin_city: newProduct.originCity || user.user_metadata?.warehouse_city || 'National'
+                origin_city: newProduct.originCity || user.user_metadata?.warehouse_city || 'National',
+                delivery_speed: newProduct.deliverySpeed || 'Standard (3-5 Days)'
             };
             
             // Only update images array if a newly uploaded image URL was generated
@@ -219,7 +220,7 @@ export default function SellerDashboard() {
             
             setShowModal(false);
             setEditingProductId(null);
-            setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National' });
+            setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National', deliverySpeed: 'Standard (3-5 Days)' });
 
         } catch (err) {
             alert(err.message || 'Error uploading product.');
@@ -434,7 +435,7 @@ export default function SellerDashboard() {
                                             <ShieldCheck style={{ width: 20, height: 20 }} /> Repair Site Data
                                         </button>
                                     )}
-                                    <button onClick={() => { setEditingProductId(null); setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National' }); setShowModal(true); }} style={{ background: '#f97316', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.2)' }}>
+                                    <button onClick={() => { setEditingProductId(null); setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', file: null, originCity: 'National', deliverySpeed: 'Standard (3-5 Days)' }); setShowModal(true); }} style={{ background: '#f97316', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.2)' }}>
                                         <Plus style={{ width: 20, height: 20 }} /> Add New Product
                                     </button>
                                 </div>
@@ -490,6 +491,7 @@ export default function SellerDashboard() {
                                                                 priceOld: prod.priceOld || '',
                                                                 unit: prod.unit,
                                                                 originCity: prod.origin_city || 'National',
+                                                                deliverySpeed: prod.delivery_speed || 'Standard (3-5 Days)',
                                                                 file: null
                                                             });
                                                             setShowModal(true);
@@ -549,6 +551,13 @@ export default function SellerDashboard() {
                                 <div style={{ gridColumn: 'span 2' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Shipping Origin (City)</label>
                                     <input required value={newProduct.originCity} onChange={e => setNewProduct({...newProduct, originCity: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. Hubli, Delhi, or National" />
+                                </div>
+                                <div style={{ gridColumn: 'span 2' }}>
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Delivery Speed Option</label>
+                                    <select value={newProduct.deliverySpeed} onChange={e => setNewProduct({...newProduct, deliverySpeed: e.target.value})} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600, background: 'white' }}>
+                                        <option value="Express (24h)">Express (24h)</option>
+                                        <option value="Standard (3-5 Days)">Standard (3-5 Days)</option>
+                                    </select>
                                 </div>
                                 <div style={{ gridColumn: 'span 2' }}>
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Product Default Image {editingProductId && <span style={{color: '#94a3b8', fontWeight: 500}}>(Leave empty to keep existing image)</span>}</label>

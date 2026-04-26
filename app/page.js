@@ -229,7 +229,15 @@ export default function BuildBazaar() {
                 {/* Third Row: Delivery Location (Compact) */}
                 <div onClick={async () => {
                         const pin = prompt('Enter delivery pincode:', pincode);
-                        if (pin && pin.length === 6) await fetchCity(pin);
+                        if (pin && pin.length === 6) {
+                            const success = await fetchCity(pin);
+                            if (success) {
+                                setPincode(pin);
+                                localStorage.setItem('bb-pincode', pin);
+                            } else {
+                                alert(`Oops! Pincode ${pin} not found. Reverting to last location.`);
+                            }
+                        }
                     }} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '12px', color: '#cbd5e1', fontSize: '12px', cursor: 'pointer' }}>
                     <MapPin style={{ width: 14, height: 14, color: 'var(--primary-orange)' }} />
                     <span>Delivering to <strong>{city} {pincode}</strong></span>
@@ -362,6 +370,17 @@ export default function BuildBazaar() {
                                     </div>
                                     <div className="mpc-content">
                                         <div className="mpc-brand">{prod.brand}</div>
+                                        
+                                        {prod.delivery_speed === 'Express (24h)' ? (
+                                            <div style={{ fontSize: '10px', fontWeight: 800, color: '#16a34a', backgroundColor: '#f0fdf4', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '2px', marginBottom: '4px', width: 'max-content' }}>
+                                                <Zap style={{ width: 10, height: 10 }} /> Express 24h
+                                            </div>
+                                        ) : (
+                                            <div style={{ fontSize: '10px', fontWeight: 700, color: '#64748b', backgroundColor: '#f1f5f9', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '2px', marginBottom: '4px', width: 'max-content' }}>
+                                                <Truck style={{ width: 10, height: 10 }} /> Standard
+                                            </div>
+                                        )}
+
                                         <h3 className="mpc-title">{prod.title}</h3>
                                         <div className="mpc-price-box">
                                             <div className="mpc-price">₹{prod.priceCurrent.toLocaleString('en-IN')}</div>
@@ -615,7 +634,7 @@ export default function BuildBazaar() {
                     <div className="demo-modal" style={{background: '#fff', padding: '1rem', borderRadius: '1rem', width: '90%', maxWidth: '800px', position: 'relative'}} onClick={(e) => e.stopPropagation()}>
                         <button className="icon-btn" style={{position: 'absolute', top: -40, right: 0, color: 'white'}} onClick={() => setDemoModalOpen(false)}><X /></button>
                         <div style={{position: 'relative', paddingTop: '56.25%', background: '#000', borderRadius: '0.5rem', overflow: 'hidden'}}>
-                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0}} allow="autoplay; encrypted-media" allowFullScreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/n4PofcQ496k?autoplay=1&mute=1" style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0}} allow="autoplay; encrypted-media" allowFullScreen></iframe>
                         </div>
                     </div>
                 </div>
