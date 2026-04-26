@@ -256,26 +256,131 @@ export default function BuildBazaar() {
 
             {/* Desktop Fallback Header */}
             <div className="desktop-header">
-                <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
-                    <Link href="/" style={{display: 'flex', alignItems: 'center', cursor: 'pointer', flexShrink: 0, color: 'white', textDecoration: 'none'}}>
-                        <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
-                        <span style={{fontSize: '24px', fontWeight: 900, letterSpacing: '-0.5px'}}>BuildBazaar</span>
-                    </Link>
-                    <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', backgroundColor: 'white', padding: '0 15px', alignItems: 'center', maxWidth: '600px', margin: '0 auto'}}>
-                        <Search style={{width: 20, color: '#94a3b8', marginRight: '10px'}} />
-                        <input type="text" placeholder="Search Materials..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }} style={{border: 'none', outline: 'none', flex: 1, fontWeight: 500, color: 'black'}} />
-                    </div>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0}}>
-                        <Link href="/auth" style={{textDecoration: 'none'}}>
-                            <button style={{backgroundColor: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                                <ShieldCheck style={{width: 18, height: 18}} />
-                                Account / Login
-                            </button>
+                <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'Arial, sans-serif'}}>
+                    {/* Top Dark Tier */}
+                    <div style={{backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
+                        
+                        {/* Logo Box */}
+                        <div style={{display: 'flex', alignItems: 'flex-start', cursor: 'pointer', flexShrink: 0}}>
+                            <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
+                            <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
+                            <span style={{fontSize: '14px', color: '#ccc', marginLeft: '4px', marginTop: '4px'}}>.com</span>
+                        </div>
+
+                        {/* Location Pin */}
+                        <div onClick={async () => { 
+                            const pin = prompt('Enter your delivery pincode:', pincode); 
+                            if (pin && pin.length === 6) {
+                                const success = await fetchCity(pin); 
+                                if (success) {
+                                    setPincode(pin);
+                                    localStorage.setItem('bb-pincode', pin);
+                                } else {
+                                    alert(`Oops! Pincode ${pin} not found in our database. Reverting to last valid location.`);
+                                }
+                            } else if (pin) {
+                                alert('Please enter a valid 6-digit pincode.'); 
+                            }
+                        }} style={{display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '5px', flexShrink: 0, borderRadius: '4px', border: '1px solid transparent', transition: 'border 0.2s'}} onMouseEnter={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor='transparent'}>
+                            <div style={{marginRight: '2px', marginTop: '8px'}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <span style={{fontSize: '12px', color: '#ccc', lineHeight: '14px', marginLeft: '2px'}}>Delivering to {isUpdatingPin ? 'Finding...' : `${city} ${pincode}`}</span>
+                                <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Update location</span>
+                            </div>
+                        </div>
+
+                        {/* Massive Search Bar */}
+                        <div style={{flex: 1, display: 'flex', position: 'relative', height: '46px', borderRadius: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)'}}>
+                            <div style={{display: 'flex', width: '100%', height: '100%', overflow: 'hidden', borderRadius: '24px'}}>
+                                <select style={{background: 'var(--slate-50)', border: 'none', padding: '0 15px', fontSize: '13px', color: 'var(--slate-800)', borderRight: '1px solid var(--slate-200)', outline: 'none', fontWeight: 600}}>
+                                    <option>All Categories</option>
+                                    <option>Cement</option>
+                                    <option>Steel</option>
+                                    <option>Paint</option>
+                                </select>
+                                <input 
+                                    type="text" 
+                                    placeholder="Search materials, brands, suppliers..." 
+                                    value={searchQuery}
+                                    onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                                    onFocus={() => setSearchOpen(true)}
+                                    onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setSearchOpen(false); router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); } }}
+                                    style={{flex: 1, padding: '0 20px', border: 'none', outline: 'none', fontSize: '15px', color: '#111'}}
+                                />
+                                <button 
+                                    onClick={() => { if (searchQuery.trim()) { setSearchOpen(false); router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); } }}
+                                    style={{background: 'var(--primary-orange)', border: 'none', padding: '0 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', zIndex: 2}}
+                                >
+                                    <Search style={{color: 'white', width: 22}} />
+                                </button>
+                            </div>
+                            
+                            {/* Intelligent Search Autocomplete Dropdown */}
+                            {searchOpen && searchQuery.length >= 2 && (
+                                <div style={{position: 'absolute', top: '56px', left: 0, right: 0, backgroundColor: 'white', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', overflow: 'hidden', zIndex: 1000, border: '1px solid var(--slate-200)'}}>
+                                    {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5).map(prod => (
+                                        <div 
+                                            key={prod.id} 
+                                            onClick={() => { setSearchQuery(prod.title); setSearchOpen(false); router.push(`/products/${prod.id}`); }}
+                                            style={{padding: '12px 20px', display: 'flex', alignItems: 'center', cursor: 'pointer', borderBottom: '1px solid var(--slate-100)', color: 'var(--slate-900)'}}
+                                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-50)'}
+                                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                                        >
+                                            <Search style={{width: 14, height: 14, color: 'var(--slate-400)', marginRight: '12px'}} />
+                                            <span style={{fontWeight: 700, fontSize: '14px'}}>{prod.title}</span>
+                                            <span style={{marginLeft: 'auto', fontSize: '12px', color: 'var(--slate-500)', fontWeight: 600}}>{prod.brand}</span>
+                                        </div>
+                                    ))}
+                                    {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                                        <div style={{padding: '16px 20px', color: 'var(--slate-500)', fontSize: '14px'}}>
+                                            No materials found matching "{searchQuery}"
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Accounts Hub */}
+                        {user ? (
+                            <div style={{display: 'flex', flexDirection: 'column', color: 'white', flexShrink: 0, marginLeft: '12px'}}>
+                                <span style={{fontSize: '12px', lineHeight: '14px', whiteSpace: 'nowrap'}}>Hello, {user.email.split('@')[0]}</span>
+                                <span onClick={logout} style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px', cursor: 'pointer', color: '#fca5a5'}}>Sign Out</span>
+                            </div>
+                        ) : (
+                            <Link href="/auth" style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0, marginLeft: '12px'}}>
+                                <span style={{fontSize: '12px', lineHeight: '14px'}}>Hello, sign in</span>
+                                <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Account & Lists</span>
+                            </Link>
+                        )}
+
+                        {/* Orders */}
+                        <Link href={user ? "/orders" : "/auth"} style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
+                            <span style={{fontSize: '12px', lineHeight: '14px'}}>Returns</span>
+                            <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>& Orders</span>
                         </Link>
-                        <button onClick={() => setCartDrawerOpen(true)} style={{backgroundColor: 'var(--primary-orange)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                            <ShoppingCart style={{width: 18, height: 18}} />
-                            Cart {totalItems > 0 && `(${totalItems})`}
-                        </button>
+
+                        {/* Cart Tool */}
+                        <div onClick={() => setCartDrawerOpen(true)} style={{display: 'flex', alignItems: 'flex-end', cursor: 'pointer', padding: '5px', flexShrink: 0, position: 'relative'}}>
+                            <ShoppingCart style={{width: 36, height: 36, color: 'white'}} />
+                            {totalItems > 0 && (
+                                <span style={{position: 'absolute', top: '-2px', left: '22px', backgroundColor: '#f97316', color: 'white', fontWeight: 800, fontSize: '11px', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', border: '2px solid var(--slate-900)'}}>{totalItems}</span>
+                            )}
+                            <span style={{fontSize: '14px', fontWeight: 700, marginLeft: '4px', marginBottom: '4px'}}>Cart</span>
+                        </div>
+                    </div>
+
+                    {/* Bottom Sub-Tier Menu */}
+                    <div style={{backgroundColor: 'var(--slate-800)', color: 'white', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '24px', fontSize: '14px', fontWeight: 600}}>
+                        <div onClick={() => setMenuDrawerOpen(true)} style={{display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontWeight: 700}}>
+                            <Menu style={{width: 20, height: 20}} /> All
+                        </div>
+                        <Link href="/seller" style={{color: '#f97316', textDecoration: 'none'}}>Sell on BuildBazaar</Link>
+                        <a href="#categories" style={{color: 'white', textDecoration: 'none'}}>Categories</a>
+                        <a href="#products" style={{color: 'white', textDecoration: 'none'}}>Best Sellers</a>
+                        <a href="#calculator" style={{color: 'white', textDecoration: 'none'}}>Material Calculator</a>
+                        <a href="/products" style={{color: 'white', textDecoration: 'none'}}>Today's Deals</a>
+                        <a href="#how-it-works" style={{color: 'white', textDecoration: 'none'}}>Customer Service</a>
                     </div>
                 </header>
             </div>
