@@ -257,13 +257,25 @@ export default function BuildBazaar() {
             {/* Desktop Fallback Header */}
             <div className="desktop-header">
                 <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
-                    <Link href="/" style={{display: 'flex', alignItems: 'center', cursor: 'pointer', flexShrink: 0, color: 'white'}}>
+                    <Link href="/" style={{display: 'flex', alignItems: 'center', cursor: 'pointer', flexShrink: 0, color: 'white', textDecoration: 'none'}}>
                         <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
-                        <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
+                        <span style={{fontSize: '24px', fontWeight: 900, letterSpacing: '-0.5px'}}>BuildBazaar</span>
                     </Link>
-                    <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', backgroundColor: 'white', padding: '0 15px', alignItems: 'center'}}>
+                    <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', backgroundColor: 'white', padding: '0 15px', alignItems: 'center', maxWidth: '600px', margin: '0 auto'}}>
                         <Search style={{width: 20, color: '#94a3b8', marginRight: '10px'}} />
-                        <input type="text" placeholder="Search Materials..." style={{border: 'none', outline: 'none', flex: 1, fontWeight: 500}} />
+                        <input type="text" placeholder="Search Materials..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }} style={{border: 'none', outline: 'none', flex: 1, fontWeight: 500, color: 'black'}} />
+                    </div>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0}}>
+                        <Link href="/auth" style={{textDecoration: 'none'}}>
+                            <button style={{backgroundColor: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                <ShieldCheck style={{width: 18, height: 18}} />
+                                Account / Login
+                            </button>
+                        </Link>
+                        <button onClick={() => setCartDrawerOpen(true)} style={{backgroundColor: 'var(--primary-orange)', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                            <ShoppingCart style={{width: 18, height: 18}} />
+                            Cart {totalItems > 0 && `(${totalItems})`}
+                        </button>
                     </div>
                 </header>
             </div>
