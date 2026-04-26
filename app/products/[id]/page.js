@@ -109,14 +109,34 @@ export default function ProductDetailPage() {
             </nav>
 
             <main style={{maxWidth: '1280px', margin: '0 auto', padding: '3.5rem 1.5rem'}}>
-                <div style={{display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '4rem', alignItems: 'start'}}>
+                <style>{`
+                    .pdp-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+                    .pdp-col-5, .pdp-col-4, .pdp-col-3 { grid-column: span 1; }
+                    .mobile-responsive-pad { padding: 2.5rem; }
+                    
+                    @media (max-width: 768px) {
+                        .mobile-responsive-pad { padding: 1.5rem; border-radius: 1.5rem !important; }
+                        /* Ensure the sticky hub falls back nicely */
+                        .mobile-sticky-hub { position: relative !important; top: 0 !important; margin-top: 2rem; }
+                        .mobile-hide-on-small { display: none !important; }
+                    }
+                    
+                    @media (min-width: 1024px) {
+                        .pdp-grid { grid-template-columns: repeat(12, 1fr); gap: 4rem; }
+                        .pdp-col-5 { grid-column: span 5; }
+                        .pdp-col-4 { grid-column: span 4; }
+                        .pdp-col-3 { grid-column: span 3; }
+                        .mobile-sticky-hub { position: sticky !important; top: 100px !important; }
+                    }
+                `}</style>
+                <div className="pdp-grid">
                     
                     {/* Visual Asset Stage (Span 5) */}
-                    <div style={{gridColumn: 'span 5'}}>
-                        <div style={{position: 'sticky', top: '100px'}}>
+                    <div className="pdp-col-5">
+                        <div className="mobile-sticky-hub">
                             <ProductGallery images={product.images} brand={product.brand} productTitle={product.title} />
                             
-                            <div style={{marginTop: '2.5rem', padding: '2rem', backgroundColor: '#f8fafc', borderRadius: '1.5rem', border: '1px solid #f1f5f9'}}>
+                            <div className="mobile-hide-on-small" style={{marginTop: '2.5rem', padding: '2rem', backgroundColor: '#f8fafc', borderRadius: '1.5rem', border: '1px solid #f1f5f9'}}>
                                 <h3 style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#94a3b8', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px'}}>
                                     <FileText style={{width: 14, height: 14, color: '#f97316'}} />
                                     Material intelligence
@@ -129,7 +149,7 @@ export default function ProductDetailPage() {
                     </div>
 
                     {/* Datasheet Core (Span 4) */}
-                    <div style={{gridColumn: 'span 4'}}>
+                    <div className="pdp-col-4">
                         <div style={{marginBottom: '2.5rem'}}>
                             <div style={{display: 'flex', gap: '8px', marginBottom: '1.25rem'}}>
                                 <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '6px'}}>{product.brand}</span>
@@ -164,7 +184,7 @@ export default function ProductDetailPage() {
                     </div>
 
                     {/* Transactional Hub (Span 3) */}
-                    <div style={{gridColumn: 'span 3'}}>
+                    <div className="pdp-col-3">
                         <div style={{position: 'sticky', top: '100px', backgroundColor: '#fff', border: '2px solid #0f172a', borderRadius: '2.5rem', padding: '2.5rem', boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.15)'}}>
                             <div style={{marginBottom: '2.5rem'}}>
                                 <div style={{display: 'flex', flexDirection: 'column', gap: '2px'}}>
@@ -216,7 +236,7 @@ export default function ProductDetailPage() {
                 </div>
 
                 {/* Project Estimator Full-Width Block */}
-                <div style={{marginTop: '4rem', padding: '3.5rem', backgroundColor: '#0f172a', borderRadius: '2.5rem', color: '#fff', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'}}>
+                <div className="mobile-responsive-pad" style={{marginTop: '4rem', backgroundColor: '#0f172a', borderRadius: '2.5rem', color: '#fff', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'}}>
                      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '2.5rem'}}>
                         <Building2 style={{width: 24, height: 24, color: '#f97316'}} />
                         <span style={{fontSize: '1rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em'}}>Intelligent Project Estimator</span>
