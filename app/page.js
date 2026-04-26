@@ -194,7 +194,7 @@ export default function BuildBazaar() {
 
     return (
         <>
-            <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'var(--font-outfit)', backgroundColor: 'var(--slate-900)', padding: '12px 16px 16px 16px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)'}}>
+            <header className="mobile-header" style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'var(--font-outfit)', backgroundColor: 'var(--slate-900)', padding: '12px 16px 16px 16px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)'}}>
                 {/* Top Row: Logo & Profile */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div onClick={() => setMenuDrawerOpen(true)} style={{ color: 'white', cursor: 'pointer' }}>
@@ -244,14 +244,15 @@ export default function BuildBazaar() {
                     <span style={{ color: 'var(--primary-orange)', fontWeight: 700 }}>• Change</span>
                 </div>
 
-                <style>{`
-                    @media (min-width: 769px) {
-                        header { display: none !important; }
-                        .desktop-header { display: block !important; }
-                    }
-                    .desktop-header { display: none; }
-                `}</style>
             </header>
+
+            <style>{`
+                @media (min-width: 769px) {
+                    .mobile-header { display: none !important; }
+                    .desktop-header { display: block !important; }
+                }
+                .desktop-header { display: none; }
+            `}</style>
 
             {/* Desktop Fallback Header */}
             <div className="desktop-header">
