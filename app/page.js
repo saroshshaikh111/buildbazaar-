@@ -10,7 +10,7 @@ import {
     Building2, Search, ShoppingCart, Menu, Package, Server, 
     LayoutGrid, Mountain, PaintBucket, Droplet, Zap, TreePine, 
     ShieldCheck, Star, Truck, ThumbsUp, CheckCircle, Calculator, 
-    X, Trash2 
+    X, Trash2, MapPin, Plus 
 } from 'lucide-react';
 
 // Mock Data Fallbacks
