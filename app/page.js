@@ -194,131 +194,81 @@ export default function BuildBazaar() {
 
     return (
         <>
-            <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'Arial, sans-serif'}}>
-                {/* Top Dark Tier */}
-                <div style={{backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
+            <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'var(--font-outfit)', backgroundColor: 'var(--slate-900)'}}>
+                {/* Compact App Tier */}
+                <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div onClick={() => setMenuDrawerOpen(true)} style={{ color: 'white', cursor: 'pointer' }}>
+                        <Menu style={{ width: 24, height: 24 }} />
+                    </div>
                     
-                    {/* Logo Box */}
-                    <div style={{display: 'flex', alignItems: 'flex-start', cursor: 'pointer', flexShrink: 0}}>
-                        <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
-                        <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
-                        <span style={{fontSize: '14px', color: '#ccc', marginLeft: '4px', marginTop: '4px'}}>.com</span>
-                    </div>
-
-                    {/* Location Pin */}
-                    <div onClick={async () => { 
-                        const pin = prompt('Enter your delivery pincode:', pincode); 
-                        if (pin && pin.length === 6) {
-                            const success = await fetchCity(pin); 
-                            if (success) {
-                                setPincode(pin);
-                                localStorage.setItem('bb-pincode', pin);
-                            } else {
-                                alert(`Oops! Pincode ${pin} not found in our database. Reverting to last valid location.`);
-                            }
-                        } else if (pin) {
-                            alert('Please enter a valid 6-digit pincode.'); 
-                        }
-                    }} style={{display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '5px', flexShrink: 0, borderRadius: '4px', border: '1px solid transparent', transition: 'border 0.2s'}} onMouseEnter={e => e.currentTarget.style.borderColor='rgba(255,255,255,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor='transparent'}>
-                        <div style={{marginRight: '2px', marginTop: '8px'}}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
-                        <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <span style={{fontSize: '12px', color: '#ccc', lineHeight: '14px', marginLeft: '2px'}}>Delivering to {isUpdatingPin ? 'Finding...' : `${city} ${pincode}`}</span>
-                            <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Update location</span>
-                        </div>
-                    </div>
-
-                    {/* Massive Search Bar */}
-                    <div style={{flex: 1, display: 'flex', position: 'relative', height: '46px', borderRadius: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)'}}>
-                        <div style={{display: 'flex', width: '100%', height: '100%', overflow: 'hidden', borderRadius: '24px'}}>
-                            <select style={{background: 'var(--slate-50)', border: 'none', padding: '0 15px', fontSize: '13px', color: 'var(--slate-800)', borderRight: '1px solid var(--slate-200)', outline: 'none', fontWeight: 600}}>
-                                <option>All Categories</option>
-                                <option>Cement</option>
-                                <option>Steel</option>
-                                <option>Paint</option>
-                            </select>
-                            <input 
-                                type="text" 
-                                placeholder="Search materials, brands, suppliers..." 
-                                value={searchQuery}
-                                onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
-                                onFocus={() => setSearchOpen(true)}
-                                onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
-                                onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) { setSearchOpen(false); router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); } }}
-                                style={{flex: 1, padding: '0 20px', border: 'none', outline: 'none', fontSize: '15px', color: '#111'}}
-                            />
-                            <button 
-                                onClick={() => { if (searchQuery.trim()) { setSearchOpen(false); router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`); } }}
-                                style={{background: 'var(--primary-orange)', border: 'none', padding: '0 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s', zIndex: 2}}
-                            >
-                                <Search style={{color: 'white', width: 22}} />
-                            </button>
-                        </div>
-                        
-                        {/* Intelligent Search Autocomplete Dropdown */}
-                        {searchOpen && searchQuery.length >= 2 && (
-                            <div style={{position: 'absolute', top: '56px', left: 0, right: 0, backgroundColor: 'white', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.2)', overflow: 'hidden', zIndex: 1000, border: '1px solid var(--slate-200)'}}>
-                                {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5).map(prod => (
-                                    <div 
-                                        key={prod.id} 
-                                        onClick={() => { setSearchQuery(prod.title); setSearchOpen(false); router.push(`/products/${prod.id}`); }}
-                                        style={{padding: '12px 20px', display: 'flex', alignItems: 'center', cursor: 'pointer', borderBottom: '1px solid var(--slate-100)', color: 'var(--slate-900)'}}
-                                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--slate-50)'}
-                                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                                    >
-                                        <Search style={{width: 14, height: 14, color: 'var(--slate-400)', marginRight: '12px'}} />
-                                        <span style={{fontWeight: 700, fontSize: '14px'}}>{prod.title}</span>
-                                        <span style={{marginLeft: 'auto', fontSize: '12px', color: 'var(--slate-500)', fontWeight: 600}}>{prod.brand}</span>
-                                    </div>
-                                ))}
-                                {products.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-                                    <div style={{padding: '16px 20px', color: 'var(--slate-500)', fontSize: '14px'}}>
-                                        No materials found matching "{searchQuery}"
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Accounts Hub */}
-                    {user ? (
-                        <div style={{display: 'flex', flexDirection: 'column', color: 'white', flexShrink: 0, marginLeft: '12px'}}>
-                            <span style={{fontSize: '12px', lineHeight: '14px', whiteSpace: 'nowrap'}}>Hello, {user.email.split('@')[0]}</span>
-                            <span onClick={logout} style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px', cursor: 'pointer', color: '#fca5a5'}}>Sign Out</span>
-                        </div>
-                    ) : (
-                        <Link href="/auth" style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0, marginLeft: '12px'}}>
-                            <span style={{fontSize: '12px', lineHeight: '14px'}}>Hello, sign in</span>
-                            <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>Account & Lists</span>
-                        </Link>
-                    )}
-
-                    {/* Orders */}
-                    <Link href={user ? "/orders" : "/auth"} style={{display: 'flex', flexDirection: 'column', cursor: 'pointer', color: 'white', textDecoration: 'none', flexShrink: 0}}>
-                        <span style={{fontSize: '12px', lineHeight: '14px'}}>Returns</span>
-                        <span style={{fontSize: '14px', fontWeight: 700, lineHeight: '15px'}}>& Orders</span>
+                    <Link href="/" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Building2 style={{ color: 'var(--primary-orange)', width: 24, height: 24 }} />
+                        <span style={{ fontSize: '18px', fontWeight: 900 }}>BuildBazaar</span>
                     </Link>
 
-                    {/* Cart Tool */}
-                    <div onClick={() => setCartDrawerOpen(true)} style={{display: 'flex', alignItems: 'flex-end', cursor: 'pointer', padding: '5px', flexShrink: 0, position: 'relative'}}>
-                        <ShoppingCart style={{width: 36, height: 36, color: 'white'}} />
-                        {totalItems > 0 && (
-                            <span style={{position: 'absolute', top: '-2px', left: '22px', backgroundColor: '#f97316', color: 'white', fontWeight: 800, fontSize: '11px', minWidth: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', border: '2px solid var(--slate-900)'}}>{totalItems}</span>
-                        )}
-                        <span style={{fontSize: '14px', fontWeight: 700, marginLeft: '4px', marginBottom: '4px'}}>Cart</span>
+                    <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div onClick={() => setCartDrawerOpen(true)} style={{ position: 'relative', color: 'white', cursor: 'pointer' }}>
+                            <ShoppingCart style={{ width: 24, height: 24 }} />
+                            {totalItems > 0 && (
+                                <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary-orange)', color: 'white', fontSize: '10px', height: '18px', width: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontWeight: 800 }}>{totalItems}</span>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                {/* Bottom Sub-Tier Menu */}
-                <div style={{backgroundColor: 'var(--slate-800)', color: 'white', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '24px', fontSize: '14px', fontWeight: 600}}>
-                    <div onClick={() => setMenuDrawerOpen(true)} style={{display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontWeight: 700}}>
-                        <Menu style={{width: 20, height: 20}} /> All
+                {/* Persistent Search Bar (Mobile App Style) */}
+                <div style={{ padding: '0 16px 12px 16px' }}>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input 
+                            type="text" 
+                            placeholder="Search Cement, Bricks, Steel..." 
+                            value={searchQuery}
+                            onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                            style={{ width: '100%', height: '42px', borderRadius: '12px', border: 'none', padding: '0 16px 0 44px', fontSize: '14px', fontWeight: 500, outline: 'none', color: '#1e293b', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+                        />
+                        <Search style={{ position: 'absolute', left: '14px', width: 18, height: 18, color: '#94a3b8' }} />
                     </div>
-                    <Link href="/seller" style={{color: '#f97316', textDecoration: 'none'}}>Sell on BuildBazaar</Link>
-                    <a href="#categories" style={{color: 'white', textDecoration: 'none'}}>Categories</a>
-                    <a href="#products" style={{color: 'white', textDecoration: 'none'}}>Best Sellers</a>
-                    <a href="#calculator" style={{color: 'white', textDecoration: 'none'}}>Material Calculator</a>
-                    <a href="/products" style={{color: 'white', textDecoration: 'none'}}>Today's Deals</a>
-                    <a href="#how-it-works" style={{color: 'white', textDecoration: 'none'}}>Customer Service</a>
+                </div>
+
+                {/* Sub-menu (Slim Horizontal Scroll) */}
+                <div className="slim-nav-scroll" style={{ display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap', padding: '10px 16px', gap: '16px', backgroundColor: 'var(--slate-800)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    <style>{`
+                        .slim-nav-scroll::-webkit-scrollbar { display: none; }
+                        .slim-link { font-size: 13px; color: #cbd5e1; font-weight: 600; text-decoration: none; }
+                        .slim-link.active { color: var(--primary-orange); }
+                        @media (min-width: 769px) {
+                            header { display: none !important; }
+                        }
+                    `}</style>
+                    <Link href="/" className="slim-link active">Home</Link>
+                    <Link href="/products" className="slim-link">Shop All</Link>
+                    <Link href="/seller" className="slim-link">Sell Materials</Link>
+                    <a href="#calculator" className="slim-link">Calculator</a>
+                    <a href="#how-it-works" className="slim-link">Support</a>
+                </div>
+
+                {/* DESKTOP HEADER (Hidden on Mobile) */}
+                <style>{`
+                    .desktop-header { display: none; }
+                    @media (min-width: 769px) {
+                        .desktop-header { display: block !important; }
+                        header { position: sticky; top: 0; }
+                    }
+                `}</style>
+                <div className="desktop-header">
+                    {/* Previous Desktop Header Logic */}
+                    <div style={{backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
+                        <div style={{display: 'flex', alignItems: 'flex-start', cursor: 'pointer', flexShrink: 0}}>
+                            <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
+                            <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
+                        </div>
+                        <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', backgroundColor: 'white', padding: '0 15px', alignItems: 'center'}}>
+                            <Search style={{width: 20, color: '#94a3b8', marginRight: '10px'}} />
+                            <input type="text" placeholder="Search Materials..." style={{border: 'none', outline: 'none', flex: 1, fontWeight: 500}} />
+                        </div>
+                        <Link href="/seller" style={{color: 'white', fontWeight: 700}}>Seller Central</Link>
+                        <ShoppingCart onClick={() => setCartDrawerOpen(true)} style={{cursor:'pointer'}} />
+                    </div>
                 </div>
             </header>
 
@@ -335,13 +285,42 @@ export default function BuildBazaar() {
                     </div>
                 </section>
 
-                <section id="categories" className="py-16 bg-slate">
+                <section id="categories" style={{ padding: '24px 0', backgroundColor: 'white' }}>
                     <div className="container">
-                        <div className="section-header">
-                            <h2>Shop by Category</h2>
-                            <p>Select material categories for your construction project.</p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                            <h2 style={{ fontSize: '18px', fontWeight: 800 }}>Material Categories</h2>
+                            <Link href="/products" style={{ fontSize: '13px', color: 'var(--primary-orange)', fontWeight: 700 }}>See All</Link>
                         </div>
-                        <div className="grid categories-grid">
+                        
+                        <div className="horizontal-cat-scroll" style={{ display: 'flex', overflowX: 'auto', gap: '20px', padding: '4px 0 16px 0' }}>
+                            <style>{`
+                                .horizontal-cat-scroll::-webkit-scrollbar { display: none; }
+                                .cat-circle-item { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 75px; text-decoration: none; }
+                                .cat-icon-box { width: 64px; height: 64px; border-radius: 50%; background-color: #f1f5f9; display: flex; alignItems: center; justifyContent: center; color: #475569; transition: all 0.2s; border: 1px solid #e2e8f0; }
+                                .cat-circle-item:hover .cat-icon-box { background-color: #fff7ed; color: var(--primary-orange); border-color: #fed7aa; transform: translateY(-2px); }
+                                .cat-label { font-size: 11px; font-weight: 700; color: #1e293b; text-align: center; }
+                                @media (min-width: 769px) {
+                                    .horizontal-cat-scroll { display: none !important; }
+                                    .desktop-categories-grid { display: grid !important; }
+                                    #categories h2 { font-size: 2rem !important; }
+                                }
+                                .desktop-categories-grid { display: none; }
+                            `}</style>
+                            {categories.map(cat => {
+                                const IconComp = cat.icon;
+                                return (
+                                    <Link key={cat.id} href={`/products?category=${encodeURIComponent(cat.title)}`} className="cat-circle-item">
+                                        <div className="cat-icon-box">
+                                            <IconComp style={{ width: 28, height: 28 }} />
+                                        </div>
+                                        <span className="cat-label">{cat.title}</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop View Categories (Grid) */}
+                        <div className="desktop-categories-grid grid categories-grid" style={{ marginTop: '2rem' }}>
                             {categories.map(cat => {
                                 const IconComp = cat.icon;
                                 return (
@@ -355,68 +334,48 @@ export default function BuildBazaar() {
                     </div>
                 </section>
 
-                <section id="products" className="py-16">
+                <section id="products" style={{ padding: '24px 0 48px 0' }}>
                     <div className="container">
                         <div className="section-header space-between">
-                            <div>
-                                <h2>Featured Products</h2>
-                                <p>Handpicked materials from verified suppliers at the best prices.</p>
-                            </div>
-                            <Link href="/products" className="btn-outline" style={{textDecoration: 'none', display: 'inline-block'}}>View All Products</Link>
+                            <h2 style={{ fontSize: '18px', fontWeight: 800 }}>Featured Materials</h2>
+                            <Link href="/products" style={{ fontSize: '13px', color: 'var(--primary-orange)', fontWeight: 700 }}>View All</Link>
                         </div>
-                        <div className="grid products-grid">
-                            {products.map(prod => (
-                                <Link href={`/products/${prod.id}`} key={prod.id} style={{textDecoration: 'none', color: 'inherit'}}>
-                                    <div className="product-card" style={{cursor: 'pointer', height: '100%', display: 'flex', flexDirection: 'column'}}>
-                                        <div className="card-header" style={{padding: '1.5rem 1.5rem 0 1.5rem'}}>
-                                            <span className="tag-verified"><ShieldCheck style={{width: 12, height: 12, marginRight: 4, display: 'inline'}} /> Verified</span>
-                                            {prod.tag && (
-                                                <span className="tag-status" style={{
-                                                    backgroundColor: prod.tag === 'Best Seller' ? '#fff7ed' : '#f0fdf4',
-                                                    color: prod.tag === 'Best Seller' ? '#ea580c' : '#16a34a'
-                                                }}>{prod.tag}</span>
-                                            )}
-                                        </div>
-                                        
-                                        {/* New Product Image Container */}
-                                        <div style={{padding: '1rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '180px'}}>
-                                            {prod.images && prod.images[0] ? (
-                                                <img 
-                                                    src={prod.images[0]} 
-                                                    alt={prod.title} 
-                                                    style={{maxWidth: '100%', maxHeight: '160px', objectContain: 'contain', transition: 'transform 0.3s'}}
-                                                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                                                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-                                                />
-                                            ) : (
-                                                <Building2 style={{width: 64, height: 64, color: 'var(--slate-100)'}} />
-                                            )}
-                                        </div>
+                        
+                        <div className="app-product-grid">
+                            <style>{`
+                                .app-product-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+                                .mobile-product-card { background: white; border-radius: 16px; border: 1px solid #f1f5f9; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+                                .mpc-image { aspect-ratio: 1; display: flex; align-items: center; justifyContent: center; padding: 12px; background: #fafafa; }
+                                .mpc-content { padding: 12px; flex: 1; display: flex; flex-direction: column; }
+                                .mpc-brand { font-size: 10px; font-weight: 800; color: var(--primary-orange); text-transform: uppercase; margin-bottom: 2px; }
+                                .mpc-title { font-size: 13px; font-weight: 700; color: #1e293b; line-height: 1.3; height: 2.6em; overflow: hidden; margin-bottom: 6px; }
+                                .mpc-price-box { margin-top: auto; }
+                                .mpc-price { font-size: 16px; font-weight: 900; color: #0f172a; }
+                                .mpc-unit { font-size: 10px; color: #94a3b8; margin-bottom: 8px; }
+                                .mpc-add-btn { width: 100%; padding: 8px; background: #0f172a; color: white; border-radius: 8px; font-size: 12px; font-weight: 800; display: flex; align-items: center; justifyContent: center; gap: 4px; }
+                                
+                                @media (min-width: 769px) {
+                                    .app-product-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important; gap: 1.5rem !important; }
+                                    .mobile-product-card { padding: 1.25rem !important; border-radius: 24px !important; }
+                                    .mpc-title { font-size: 1.1rem !important; }
+                                    #products h2 { font-size: 2rem !important; }
+                                }
+                            `}</style>
 
-                                        <div style={{ padding: '1.25rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                                <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', backgroundColor: prod.origin_city === 'National' ? '#f1f5f9' : '#fff7ed', color: prod.origin_city === 'National' ? '#64748b' : '#f97316', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>
-                                                    {prod.origin_city === 'National' ? 'Ships Nationwide' : `Ships from ${prod.origin_city}`}
-                                                </span>
-                                            </div>
-                                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-orange)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>{prod.brand}</div>
-                                            <h3 className="product-title" style={{fontSize: '1.1rem', marginBottom: '0.5rem', height: '2.4em', overflow: 'hidden'}}>{prod.title}</h3>
-                                            <div className="product-rating">
-                                                <Star className="star-icon" />
-                                                <span><strong style={{color: 'var(--slate-900)'}}>{prod.rating}</strong> ({prod.reviews} reviews)</span>
-                                            </div>
-                                            <div className="product-footer" style={{marginTop: '1rem'}}>
-                                                <div className="price-container">
-                                                    <div className="price-current">
-                                                        ₹{prod.priceCurrent.toLocaleString('en-IN')}
-                                                        {prod.priceOld && <span className="price-old">₹{prod.priceOld.toLocaleString('en-IN')}</span>}
-                                                    </div>
-                                                    <span className="price-unit">{prod.unit}</span>
-                                                </div>
-                                                <button className="add-btn" onClick={(e) => { e.preventDefault(); addToCart(prod); }}>
-                                                    <ShoppingCart style={{width: 16, height: 16, display: 'inline-block', verticalAlign: 'middle'}} /> Add
-                                                </button>
-                                            </div>
+                            {products.map(prod => (
+                                <Link href={`/products/${prod.id}`} key={prod.id} className="mobile-product-card">
+                                    <div className="mpc-image">
+                                        <img src={prod.images?.[0] || 'https://via.placeholder.com/150'} alt={prod.title} style={{ maxWidth: '100%', maxHeight: '100px', objectFit: 'contain' }} />
+                                    </div>
+                                    <div className="mpc-content">
+                                        <div className="mpc-brand">{prod.brand}</div>
+                                        <h3 className="mpc-title">{prod.title}</h3>
+                                        <div className="mpc-price-box">
+                                            <div className="mpc-price">₹{prod.priceCurrent.toLocaleString('en-IN')}</div>
+                                            <div className="mpc-unit">{prod.unit}</div>
+                                            <button className="mpc-add-btn" onClick={(e) => { e.preventDefault(); addToCart(prod); }}>
+                                                <Plus style={{ width: 14 }} /> Add
+                                            </button>
                                         </div>
                                     </div>
                                 </Link>
