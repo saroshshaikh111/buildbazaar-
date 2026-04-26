@@ -293,6 +293,20 @@ button {
     margin-bottom: 1rem;
 }
 
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  overscroll-behavior-y: none; /* App-like feel, disable pull-to-refresh */
+  padding-bottom: 0;
+}
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: 80px; /* Space for MobileNav */
+  }
+}
+
 .tag-verified {
     background-color: var(--green-bg);
     color: var(--green);
