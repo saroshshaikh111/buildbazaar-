@@ -194,11 +194,11 @@ export default function BuildBazaar() {
 
     return (
         <>
-            <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'var(--font-outfit)', backgroundColor: 'var(--slate-900)'}}>
-                {/* Compact App Tier */}
-                <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, fontFamily: 'var(--font-outfit)', backgroundColor: 'var(--slate-900)', padding: '12px 16px 16px 16px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)'}}>
+                {/* Top Row: Logo & Profile */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div onClick={() => setMenuDrawerOpen(true)} style={{ color: 'white', cursor: 'pointer' }}>
-                        <Menu style={{ width: 24, height: 24 }} />
+                        <Menu style={{ width: 26, height: 26 }} />
                     </div>
                     
                     <Link href="/" style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -206,81 +206,74 @@ export default function BuildBazaar() {
                         <span style={{ fontSize: '18px', fontWeight: 900 }}>BuildBazaar</span>
                     </Link>
 
-                    <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div onClick={() => setCartDrawerOpen(true)} style={{ position: 'relative', color: 'white', cursor: 'pointer' }}>
-                            <ShoppingCart style={{ width: 24, height: 24 }} />
-                            {totalItems > 0 && (
-                                <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary-orange)', color: 'white', fontSize: '10px', height: '18px', width: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontWeight: 800 }}>{totalItems}</span>
-                            )}
-                        </div>
+                    <div onClick={() => setCartDrawerOpen(true)} style={{ position: 'relative', color: 'white', cursor: 'pointer' }}>
+                        <ShoppingCart style={{ width: 24, height: 24 }} />
+                        {totalItems > 0 && (
+                            <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary-orange)', color: 'white', fontSize: '10px', height: '18px', width: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontWeight: 800, border: '2px solid var(--slate-900)' }}>{totalItems}</span>
+                        )}
                     </div>
                 </div>
 
-                {/* Persistent Search Bar (Mobile App Style) */}
-                <div style={{ padding: '0 16px 12px 16px' }}>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                        <input 
-                            type="text" 
-                            placeholder="Search Cement, Bricks, Steel..." 
-                            value={searchQuery}
-                            onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
-                            style={{ width: '100%', height: '42px', borderRadius: '12px', border: 'none', padding: '0 16px 0 44px', fontSize: '14px', fontWeight: 500, outline: 'none', color: '#1e293b', backgroundColor: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-                        />
-                        <Search style={{ position: 'absolute', left: '14px', width: 18, height: 18, color: '#94a3b8' }} />
-                    </div>
+                {/* Second Row: Persistent Search Bar */}
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <Search style={{ position: 'absolute', left: '14px', width: 18, height: 18, color: '#94a3b8', zIndex: 10 }} />
+                    <input 
+                        type="text" 
+                        placeholder="Search Cement, Steel, Bricks..." 
+                        value={searchQuery}
+                        onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                        style={{ width: '100%', height: '46px', borderRadius: '14px', border: 'none', padding: '0 16px 0 44px', fontSize: '15px', fontWeight: 500, outline: 'none', color: '#1e293b', backgroundColor: 'white', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
+                    />
                 </div>
 
-                {/* Sub-menu (Slim Horizontal Scroll) */}
-                <div className="slim-nav-scroll" style={{ display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap', padding: '10px 16px', gap: '16px', backgroundColor: 'var(--slate-800)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                    <style>{`
-                        .slim-nav-scroll::-webkit-scrollbar { display: none; }
-                        .slim-link { font-size: 13px; color: #cbd5e1; font-weight: 600; text-decoration: none; }
-                        .slim-link.active { color: var(--primary-orange); }
-                        @media (min-width: 769px) {
-                            header { display: none !important; }
-                        }
-                    `}</style>
-                    <Link href="/" className="slim-link active">Home</Link>
-                    <Link href="/products" className="slim-link">Shop All</Link>
-                    <Link href="/seller" className="slim-link">Sell Materials</Link>
-                    <a href="#calculator" className="slim-link">Calculator</a>
-                    <a href="#how-it-works" className="slim-link">Support</a>
+                {/* Third Row: Delivery Location (Compact) */}
+                <div onClick={async () => {
+                        const pin = prompt('Enter delivery pincode:', pincode);
+                        if (pin && pin.length === 6) await fetchCity(pin);
+                    }} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '12px', color: '#cbd5e1', fontSize: '12px', cursor: 'pointer' }}>
+                    <MapPin style={{ width: 14, height: 14, color: 'var(--primary-orange)' }} />
+                    <span>Delivering to <strong>{city} {pincode}</strong></span>
+                    <span style={{ color: 'var(--primary-orange)', fontWeight: 700 }}>• Change</span>
                 </div>
 
-                {/* DESKTOP HEADER (Hidden on Mobile) */}
                 <style>{`
-                    .desktop-header { display: none; }
                     @media (min-width: 769px) {
+                        header { display: none !important; }
                         .desktop-header { display: block !important; }
-                        header { position: sticky; top: 0; }
                     }
+                    .desktop-header { display: none; }
                 `}</style>
-                <div className="desktop-header">
-                    {/* Previous Desktop Header Logic */}
-                    <div style={{backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
-                        <div style={{display: 'flex', alignItems: 'flex-start', cursor: 'pointer', flexShrink: 0}}>
-                            <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
-                            <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
-                        </div>
-                        <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', backgroundColor: 'white', padding: '0 15px', alignItems: 'center'}}>
-                            <Search style={{width: 20, color: '#94a3b8', marginRight: '10px'}} />
-                            <input type="text" placeholder="Search Materials..." style={{border: 'none', outline: 'none', flex: 1, fontWeight: 500}} />
-                        </div>
-                        <Link href="/seller" style={{color: 'white', fontWeight: 700}}>Seller Central</Link>
-                        <ShoppingCart onClick={() => setCartDrawerOpen(true)} style={{cursor:'pointer'}} />
-                    </div>
-                </div>
             </header>
 
+            {/* Desktop Fallback Header */}
+            <div className="desktop-header">
+                <header style={{width: '100%', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'var(--slate-900)', color: 'white', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '24px'}}>
+                    <Link href="/" style={{display: 'flex', alignItems: 'center', cursor: 'pointer', flexShrink: 0, color: 'white'}}>
+                        <Building2 style={{color: '#f97316', width: 32, height: 32, marginRight: '4px'}} />
+                        <span style={{fontSize: '24px', fontWeight: 800, letterSpacing: '-0.5px'}}>BuildBazaar</span>
+                    </Link>
+                    <div style={{flex: 1, display: 'flex', height: '46px', borderRadius: '24px', backgroundColor: 'white', padding: '0 15px', alignItems: 'center'}}>
+                        <Search style={{width: 20, color: '#94a3b8', marginRight: '10px'}} />
+                        <input type="text" placeholder="Search Materials..." style={{border: 'none', outline: 'none', flex: 1, fontWeight: 500}} />
+                    </div>
+                </header>
+            </div>
+
             <main>
-                <section className="hero dark-section">
+                <section className="hero dark-section" style={{ padding: '3rem 0', textAlign: 'center', minHeight: 'auto' }}>
                     <div className="container hero-content">
                         <div className="badge-tag">MARKETPLACE</div>
-                        <h1>Transparent Prices <br/><span className="text-orange">Zero Hassle.</span></h1>
-                        <p>India's trusted digital marketplace for construction materials. Compare prices, order in bulk, get doorstep delivery.</p>
-                        <div className="hero-actions">
-                            <Link href="/products" className="btn-primary btn-large" style={{textDecoration: 'none', display: 'inline-block'}}>Browse Materials</Link>
-                            <button className="btn-ghost btn-large text-white" style={{borderColor: 'rgba(255,255,255,0.2)'}} onClick={() => setDemoModalOpen(true)}>Watch Demo</button>
+                        <h1 style={{ fontSize: '2.2rem' }}>Transparent Prices <br/><span className="text-orange">Zero Hassle.</span></h1>
+                        <p style={{ fontSize: '1rem', opacity: 0.8 }}>India's trusted digital marketplace for construction materials.</p>
+                        <div className="hero-actions" style={{ marginTop: '1.5rem' }}>
+                            <Link href="/products" className="btn-primary" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px' }}>Browse Materials</Link>
+                            <button 
+                                className="btn-ghost" 
+                                style={{ color: 'white', border: '1px solid rgba(255,255,255,0.3)', padding: '0.8rem 1.5rem', borderRadius: '12px' }} 
+                                onClick={() => setDemoModalOpen(true)}
+                            >
+                                Watch Demo
+                            </button>
                         </div>
                     </div>
                 </section>
