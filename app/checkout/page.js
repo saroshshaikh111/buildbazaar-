@@ -140,11 +140,21 @@ export default function CheckoutPage() {
                 </div>
             </nav>
 
+            <style>{`
+                .checkout-layout { display: flex; gap: clamp(2rem, 5vw, 5rem); align-items: flex-start; flex-wrap: wrap; }
+                .checkout-left { flex: 1 1 100%; min-width: 0; }
+                .checkout-right { flex: 1 1 100%; min-width: 0; }
+
+                @media (min-width: 1024px) {
+                    .checkout-left { flex: 1 1 60%; }
+                    .checkout-right { flex: 1 1 35%; }
+                }
+            `}</style>
             <main style={{maxWidth: '1280px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) 1rem'}}>
-                <div style={{display: 'flex', gap: 'clamp(2rem, 5vw, 5rem)', alignItems: 'flex-start', flexWrap: 'wrap'}}>
+                <div className="checkout-layout">
                     
                     {/* Left: Procurement Form */}
-                    <div style={{flex: '1 1 60%', minWidth: '300px'}}>
+                    <div className="checkout-left">
                         
                         {/* Step Indicator */}
                         <div style={{display: 'flex', gap: '0.5rem', marginBottom: '2rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '1rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none'}}>
@@ -269,7 +279,7 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Right: Order Summary */}
-                    <div style={{flex: '1 1 35%', minWidth: '350px'}}>
+                    <div className="checkout-right">
                         <CheckoutSummary />
                     </div>
                 </div>

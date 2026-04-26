@@ -291,6 +291,8 @@ export default function SellerDashboard() {
                 .seller-sidebar { width: 100%; flex-shrink: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
                 .seller-sidebar-nav { display: flex; flex-direction: row; gap: 0.5rem; position: relative; top: 0; padding-bottom: 0.5rem; }
                 .seller-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
+                .seller-form-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+                .seller-form-col-2 { grid-column: span 1; }
                 .table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
                 
                 @media (min-width: 768px) {
@@ -298,6 +300,8 @@ export default function SellerDashboard() {
                     .seller-sidebar { width: 240px; overflow-x: visible; }
                     .seller-sidebar-nav { flex-direction: column; position: sticky; top: 100px; padding-bottom: 0; }
                     .seller-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+                    .seller-form-grid { grid-template-columns: 1fr 1fr; }
+                    .seller-form-col-2 { grid-column: span 2; }
                 }
                 
                 @media (max-width: 767px) {
@@ -520,8 +524,8 @@ export default function SellerDashboard() {
                             <button onClick={() => { setShowModal(false); setEditingProductId(null); }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', borderRadius: '50%' }}><X style={{ color: '#64748b' }} /></button>
                         </div>
                         <form onSubmit={handleAddProduct} style={{ padding: '2rem' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                                <div style={{ gridColumn: 'span 2' }}>
+                            <div className="seller-form-grid">
+                                <div className="seller-form-col-2">
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Product Title</label>
                                     <input required value={newProduct.title} onChange={e => setNewProduct({...newProduct, title: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. UltraTech Weather Plus Cement" />
                                 </div>
@@ -548,18 +552,18 @@ export default function SellerDashboard() {
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Selling Unit</label>
                                     <input required value={newProduct.unit} onChange={e => setNewProduct({...newProduct, unit: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. per bag (50kg)" />
                                 </div>
-                                <div style={{ gridColumn: 'span 2' }}>
+                                <div className="seller-form-col-2">
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Shipping Origin (City)</label>
                                     <input required value={newProduct.originCity} onChange={e => setNewProduct({...newProduct, originCity: e.target.value})} type="text" style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600 }} placeholder="e.g. Hubli, Delhi, or National" />
                                 </div>
-                                <div style={{ gridColumn: 'span 2' }}>
+                                <div className="seller-form-col-2">
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Delivery Speed Option</label>
                                     <select value={newProduct.deliverySpeed} onChange={e => setNewProduct({...newProduct, deliverySpeed: e.target.value})} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', outline: 'none', fontSize: '1rem', fontWeight: 600, background: 'white' }}>
                                         <option value="Express (24h)">Express (24h)</option>
                                         <option value="Standard (3-5 Days)">Standard (3-5 Days)</option>
                                     </select>
                                 </div>
-                                <div style={{ gridColumn: 'span 2' }}>
+                                <div className="seller-form-col-2">
                                     <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 800, marginBottom: '0.5rem', color: '#0f172a' }}>Product Default Image {editingProductId && <span style={{color: '#94a3b8', fontWeight: 500}}>(Leave empty to keep existing image)</span>}</label>
                                     <input required={!editingProductId} type="file" accept="image/*" onChange={handleFileUpload} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px dashed #cbd5e1', background: '#f8fafc', outline: 'none' }} />
                                 </div>

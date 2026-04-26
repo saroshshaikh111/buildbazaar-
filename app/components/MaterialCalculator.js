@@ -62,7 +62,13 @@ export default function MaterialCalculator({ category, unit }) {
                 </h3>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: category !== 'Paint & Finishes' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+            <style>{`
+                .calc-grid { display: grid; gap: 1rem; margin-bottom: 1.5rem; grid-template-columns: 1fr; }
+                @media (min-width: 640px) {
+                    .calc-grid { grid-template-columns: ${category !== 'Paint & Finishes' ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)'}; }
+                }
+            `}</style>
+            <div className="calc-grid">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c2410c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Length (ft)</label>
                     <div style={{ position: 'relative' }}>
