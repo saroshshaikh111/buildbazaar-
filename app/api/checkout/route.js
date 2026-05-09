@@ -54,6 +54,7 @@ export async function POST(request) {
                 user_id: userId,
                 customer_name: formData.customerName,
                 buyer_email: formData.email || '',
+                buyer_phone: formData.phone || '',
                 shipping_address: formData.shippingAddress,
                 pincode: formData.pincode,
                 project_name: formData.projectName,

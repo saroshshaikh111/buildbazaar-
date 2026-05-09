@@ -36,6 +36,7 @@ export default function CheckoutPage() {
     const [formData, setFormData] = useState({
         customerName: '',
         email: '',
+        phone: '',
         shippingAddress: '',
         pincode: '',
         projectName: '',
@@ -53,11 +54,18 @@ export default function CheckoutPage() {
         }
     }, [user, authLoading, router]);
 
-    // Auto-fill from localStorage (pincode/city)
+    // Auto-fill email from auth + pincode from localStorage
     useEffect(() => {
-        const savedPincode = localStorage.getItem('buildbazaar_pincode');
-        if (savedPincode) setFormData(prev => ({ ...prev, pincode: savedPincode }));
-    }, []);
+        const savedPincode = localStorage.getItem('buildbazaar_pincode') || localStorage.getItem('bb-pincode');
+        const authEmail = user?.email || '';
+        const authName = user?.user_metadata?.full_name || user?.user_metadata?.name || '';
+        setFormData(prev => ({
+            ...prev,
+            pincode: savedPincode || prev.pincode,
+            email: authEmail || prev.email,
+            customerName: authName || prev.customerName
+        }));
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -187,12 +195,20 @@ export default function CheckoutPage() {
                                             <input required name="customerName" value={formData.customerName} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="Full name of manager" />
                                         </div>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
-                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Email (for order confirmation)</label>
-                                            <input required type="email" name="email" value={formData.email} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="you@company.com" />
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Email (auto-filled from your account)</label>
+                                            <input required type="email" name="email" value={formData.email} onChange={handleChange} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: formData.email ? '#f0fdf4' : '#f8fafc', border: '1px solid', borderColor: formData.email ? '#bbf7d0' : '#e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="you@company.com" />
+                                        </div>
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Phone Number <span style={{color: '#ef4444'}}>*</span></label>
+                                            <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} pattern="[0-9]{10}" title="Enter a 10-digit phone number" style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box'}} placeholder="9876543210" />
                                         </div>
                                         <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
                                             <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Full Site Address</label>
                                             <textarea required name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} rows={3} style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box', resize: 'vertical'}} placeholder="Plot No, Landmark, Sector, etc." />
+                                        </div>
+                                        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                                            <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>Delivery Pincode <span style={{color: '#ef4444'}}>*</span></label>
+                                            <input required type="text" name="pincode" value={formData.pincode} onChange={handleChange} pattern="[0-9]{6}" title="Enter a 6-digit pincode" style={{width: '100%', padding: '1rem 1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '1rem', fontSize: '1rem', fontWeight: 700, outline: 'none', boxSizing: 'border-box', letterSpacing: '0.15em', fontFamily: 'monospace'}} placeholder="580020" />
                                         </div>
                                     </div>
                                     <button type="button" onClick={() => setStep(2)} style={{width: '100%', padding: '1rem', backgroundColor: '#f97316', color: '#fff', border: 'none', borderRadius: '1rem', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: '0.2s', boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)'}}>
