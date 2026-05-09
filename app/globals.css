@@ -963,3 +963,23 @@ body {
 .hidden {
     display: none !important;
 }
+
+/* ========================== */
+/* MOBILE-FIRST RESPONSIVE    */
+/* ========================== */
+
+/* Mobile: Show mobile header, hide desktop header */
+.desktop-header { display: none !important; }
+.mobile-header { display: block !important; }
+
+/* Mobile: Show horizontal category scroll, hide desktop grid */
+.desktop-categories-grid { display: none !important; }
+.horizontal-cat-scroll { display: flex !important; }
+
+/* Desktop overrides (769px+) */
+@media (min-width: 769px) {
+    .desktop-header { display: block !important; }
+    .mobile-header { display: none !important; }
+    .desktop-categories-grid { display: grid !important; }
+    .horizontal-cat-scroll { display: none !important; }
+}
