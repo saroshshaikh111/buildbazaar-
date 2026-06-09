@@ -94,11 +94,15 @@ CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id),
     customer_name VARCHAR NOT NULL,
+    buyer_email VARCHAR DEFAULT '',
+    buyer_phone VARCHAR DEFAULT '',
     shipping_address TEXT NOT NULL,
     pincode VARCHAR(6),
     project_name VARCHAR, -- For site tagging
     gstin VARCHAR(15),     -- For B2B invoicing
     total_amount NUMERIC NOT NULL,
+    platform_fee NUMERIC DEFAULT 0,
+    vendor_payout NUMERIC DEFAULT 0,
     delivery_date DATE,
     delivery_slot VARCHAR, -- e.g., 'Morning (8AM-12PM)'
     status VARCHAR DEFAULT 'Processing',

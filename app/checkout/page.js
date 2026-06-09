@@ -16,7 +16,10 @@ import {
     ArrowRight,
     Calendar,
     Briefcase,
-    ShoppingBag
+    ShoppingBag,
+    Banknote,
+    Copy,
+    Check
 } from 'lucide-react';
 import Link from 'next/link';
 import CheckoutSummary from '@/app/components/CheckoutSummary';
@@ -31,6 +34,8 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [orderId, setOrderId] = useState(null);
+    const [escrowDetails, setEscrowDetails] = useState(null);
+    const [copiedField, setCopiedField] = useState(null);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -66,6 +71,17 @@ export default function CheckoutPage() {
             customerName: authName || prev.customerName
         }));
     }, [user]);
+
+    // Fetch escrow details for UPI/Bank Transfer
+    useEffect(() => {
+        fetch('/api/escrow').then(r => r.json()).then(setEscrowDetails).catch(console.error);
+    }, []);
+
+    const copyToClipboard = (text, field) => {
+        navigator.clipboard.writeText(text);
+        setCopiedField(field);
+        setTimeout(() => setCopiedField(null), 2000);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -243,10 +259,10 @@ export default function CheckoutPage() {
                                 </div>
                             )}
 
-                            {/* STEP 3: LOGISTICS */}
+                            {/* STEP 3: LOGISTICS & PAYMENT */}
                             {step === 3 && (
                                 <div style={{animation: 'fade-in 0.3s ease-out'}}>
-                                    <h2 style={{fontSize: '2.5rem', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Site Logistics</h2>
+                                    <h2 style={{fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 900, marginBottom: '2.5rem', color: '#0f172a', letterSpacing: '-0.02em'}}>Site Logistics & Payment</h2>
                                     
                                     <div style={{display: 'flex', gap: '1.5rem', marginBottom: '2.5rem', flexWrap: 'wrap'}}>
                                         <div style={{flex: '1 1 calc(50% - 0.75rem)', minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
@@ -267,12 +283,86 @@ export default function CheckoutPage() {
                                         </div>
                                     </div>
 
+                                    {/* Payment Method Selection */}
+                                    <div style={{marginBottom: '2rem'}}>
+                                        <label style={{fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em', marginBottom: '0.75rem', display: 'block'}}>Payment Method</label>
+                                        <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
+                                            {['Cash on Delivery', 'UPI / Bank Transfer'].map((method) => (
+                                                <button
+                                                    key={method}
+                                                    type="button"
+                                                    onClick={() => setFormData(prev => ({...prev, paymentMethod: method}))}
+                                                    style={{
+                                                        flex: '1 1 calc(50% - 0.5rem)',
+                                                        minWidth: '180px',
+                                                        padding: '1.25rem 1.5rem',
+                                                        backgroundColor: formData.paymentMethod === method ? '#0f172a' : '#f8fafc',
+                                                        color: formData.paymentMethod === method ? '#fff' : '#0f172a',
+                                                        border: '2px solid',
+                                                        borderColor: formData.paymentMethod === method ? '#0f172a' : '#e2e8f0',
+                                                        borderRadius: '1rem',
+                                                        fontWeight: 900,
+                                                        fontSize: '0.9rem',
+                                                        cursor: 'pointer',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.75rem',
+                                                        transition: '0.2s'
+                                                    }}
+                                                >
+                                                    {method === 'Cash on Delivery' ? <Truck style={{width: 20, height: 20}} /> : <Banknote style={{width: 20, height: 20}} />}
+                                                    {method}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* UPI / Bank Transfer Details */}
+                                    {formData.paymentMethod === 'UPI / Bank Transfer' && escrowDetails && (
+                                        <div style={{padding: '1.5rem', backgroundColor: '#f0fdf4', border: '2px solid #bbf7d0', borderRadius: '1.5rem', marginBottom: '2rem'}}>
+                                            <h3 style={{fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                                                <Banknote style={{width: 16, height: 16}} /> Payment Details
+                                            </h3>
+                                            <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '1.25rem', lineHeight: 1.6}}>
+                                                Transfer the order amount to the escrow account below. Use your Order ID as the payment reference after placing the order.
+                                            </p>
+                                            <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem'}}>
+                                                {[
+                                                    { label: 'UPI ID', value: escrowDetails.upiId, field: 'upi' },
+                                                    { label: 'Account Name', value: escrowDetails.accountName, field: 'name' },
+                                                    { label: 'Bank', value: escrowDetails.bankName, field: 'bank' },
+                                                    { label: 'Account No.', value: escrowDetails.accountNumber, field: 'account' },
+                                                    { label: 'IFSC', value: escrowDetails.ifscCode, field: 'ifsc' },
+                                                ].map(item => (
+                                                    <div key={item.field} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0'}}>
+                                                        <div>
+                                                            <div style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', letterSpacing: '0.1em'}}>{item.label}</div>
+                                                            <div style={{fontSize: '0.95rem', fontWeight: 700, color: '#0f172a', fontFamily: 'monospace'}}>{item.value}</div>
+                                                        </div>
+                                                        <button type="button" onClick={() => copyToClipboard(item.value, item.field)} style={{padding: '0.5rem', backgroundColor: copiedField === item.field ? '#dcfce7' : '#f1f5f9', border: 'none', borderRadius: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.2s'}}>
+                                                            {copiedField === item.field ? <Check style={{width: 16, height: 16, color: '#16a34a'}} /> : <Copy style={{width: 16, height: 16, color: '#64748b'}} />}
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div style={{marginTop: '1rem', padding: '0.75rem 1rem', backgroundColor: '#fefce8', borderRadius: '0.75rem', border: '1px solid #fde68a', display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
+                                                <AlertCircle style={{width: 16, height: 16, color: '#d97706', flexShrink: 0, marginTop: '2px'}} />
+                                                <p style={{fontSize: '0.8rem', color: '#92400e', lineHeight: 1.5, margin: 0}}>
+                                                    A {escrowDetails.platformFeePercent}% platform fee is included. Funds are held in escrow and released to the vendor after delivery confirmation.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div style={{padding: '2rem', backgroundColor: '#0f172a', borderRadius: '1.5rem', color: '#fff'}}>
                                         <h3 style={{fontSize: '0.875rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f97316'}}>
                                             <CreditCard style={{width: 16, height: 16}} /> Final Step
                                         </h3>
                                         <p style={{color: '#94a3b8', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.6, fontWeight: 500}}>
-                                            By placing this order, you authorize the dispatch of materials to the specified project site. You will receive a technical inspection report upon delivery.
+                                            {formData.paymentMethod === 'UPI / Bank Transfer' 
+                                                ? 'Place your order now. After placing, transfer the amount to the escrow account above using your Order ID as reference.'
+                                                : 'By placing this order, you authorize the dispatch of materials to the specified project site. You will receive a technical inspection report upon delivery.'
+                                            }
                                         </p>
 
                                         <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
