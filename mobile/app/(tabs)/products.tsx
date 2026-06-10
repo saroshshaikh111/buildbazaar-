@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator, Dimensions, Modal } from 'react-native';
-import { useRouter, Link, useLocalSearchParams } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
+import { useRoute } from '@react-navigation/native';
 import { supabase } from '../../lib/supabase';
 import { useCart } from '../../context/CartContext';
 import { Search, Star, Filter, Package, Building2, MapPin, ShoppingCart, User, ShieldCheck } from 'lucide-react-native';
@@ -45,7 +46,8 @@ const categories = ['All', 'Cement', 'Steel & TMT', 'Bricks & Blocks', 'Sand & A
 
 export default function ProductsScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams();
+  const route = useRoute();
+  const params = route.params || {};
   const { addToCart } = useCart();
 
   const [products, setProducts] = useState(mockProducts);

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useRoute } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { Building2, AlertTriangle } from 'lucide-react-native';
 
 export default function AuthScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams();
+  const route = useRoute();
+  const params = route.params || {};
   
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);

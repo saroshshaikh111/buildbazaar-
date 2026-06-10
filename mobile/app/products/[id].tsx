@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useRoute } from '@react-navigation/native';
 import { supabase } from '../../lib/supabase';
 import { useCart } from '../../context/CartContext';
 import { ChevronLeft, Star, ShieldCheck, ShoppingCart, Plus, Minus, FileText } from 'lucide-react-native';
@@ -39,7 +40,8 @@ const mockProducts = [
 
 export default function ProductDetailPage() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const route = useRoute();
+  const id = route.params?.id;
   const { addToCart } = useCart();
   
   const [product, setProduct] = useState(null);
