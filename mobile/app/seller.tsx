@@ -19,8 +19,8 @@ export default function SellerDashboard() {
 
   // Modal State
   const [showModal, setShowModal] = useState(false);
-  const [editingProductId, setEditingProductId] = useState(null);
-  const [newProduct, setNewProduct] = useState({
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
+  const [newProduct, setNewProduct] = useState<any>({
     title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', fileUri: null, originCity: 'National', deliverySpeed: 'Standard (3-5 Days)'
   });
   const [uploading, setUploading] = useState(false);
@@ -94,14 +94,14 @@ export default function SellerDashboard() {
       if (error) throw error;
       setIsAuthorized(true);
       setLoading(true); // Trigger re-fetch
-    } catch (err) {
+    } catch (err: any) {
       Alert.alert('Onboarding Failed', err.message);
     } finally {
       setUploading(false);
     }
   };
 
-  const handleStatusUpdate = async (orderId, newStatus) => {
+  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
     if (!error) {
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
@@ -143,7 +143,7 @@ export default function SellerDashboard() {
           uri: newProduct.fileUri,
           name: fileName,
           type: `image/${fileExt}`,
-        });
+        } as any);
 
         const { data, error: uploadError } = await supabase.storage
           .from('product-images')
@@ -163,7 +163,7 @@ export default function SellerDashboard() {
         imageUrl = publicUrlData.publicUrl;
       }
 
-      const payload = {
+      const payload: any = {
         title: newProduct.title,
         brand: newProduct.brand,
         category: newProduct.category,
@@ -171,8 +171,8 @@ export default function SellerDashboard() {
         priceOld: newProduct.priceOld ? Number(newProduct.priceOld) : null,
         unit: newProduct.unit,
         verified: true,
-        seller_id: user.id,
-        origin_city: newProduct.originCity || user.user_metadata?.warehouse_city || 'National',
+        seller_id: user?.id,
+        origin_city: newProduct.originCity || user?.user_metadata?.warehouse_city || 'National',
         delivery_speed: newProduct.deliverySpeed || 'Standard (3-5 Days)'
       };
       
@@ -202,14 +202,14 @@ export default function SellerDashboard() {
       setNewProduct({ title: '', brand: '', category: 'Cement', priceCurrent: '', priceOld: '', unit: '', fileUri: null, originCity: 'National', deliverySpeed: 'Standard (3-5 Days)' });
       Alert.alert('Success', 'Catalog updated successfully!');
 
-    } catch (err) {
+    } catch (err: any) {
       Alert.alert('Upload Error', err.message || 'Error uploading product.');
     } finally {
       setUploading(false);
     }
   };
 
-  const StatCard = ({ title, value, IconComponent, trend, colorCode }) => (
+  const StatCard = ({ title, value, IconComponent, trend, colorCode }: any) => (
     <View style={styles.statCard}>
       <View style={styles.statHeader}>
         <View style={{flex: 1}}>
@@ -363,7 +363,7 @@ export default function SellerDashboard() {
                 </View>
 
                 <View style={styles.orderItemsBox}>
-                  {order.order_items?.map(item => (
+                  {order.order_items?.map((item: any) => (
                     <View key={item.id} style={styles.orderItemRow}>
                       <Text style={styles.orderItemTitle}>{item.title}</Text>
                       <Text style={styles.orderItemQty}>Qty: {item.quantity} x ₹{Number(item.price).toLocaleString('en-IN')}</Text>
@@ -475,8 +475,8 @@ export default function SellerDashboard() {
             </View>
             <View style={styles.formGroupHalfRight}>
               <Text style={styles.label}>Category</Text>
-              <View style={styles.pickerFake}>
-                <TextInput style={styles.input} value={newProduct.category} onChangeText={t => setNewProduct({...newProduct, category: t})} placeholder="Cement, Steel..." />
+              <View style={styles.input}>
+                <TextInput style={{flex: 1}} value={newProduct.category} onChangeText={t => setNewProduct({...newProduct, category: t})} placeholder="Cement, Steel..." />
               </View>
             </View>
           </View>

@@ -85,7 +85,7 @@ export default function CheckoutPage() {
           }
         ]
       );
-    } catch (err) {
+    } catch (err: any) {
       console.log('Order error:', err);
       Alert.alert('Sourcing Failure', err.message || 'Failed to connect to order pipeline.');
     } finally {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator, Dimensions, Modal } from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { useRoute } from '@react-navigation/native';
+import { useRouter, Link, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 import { useCart } from '../../context/CartContext';
 import { Search, Star, Filter, Package, Building2, MapPin, ShoppingCart, User, ShieldCheck } from 'lucide-react-native';
@@ -46,8 +45,8 @@ const categories = ['All', 'Cement', 'Steel & TMT', 'Bricks & Blocks', 'Sand & A
 
 export default function ProductsScreen() {
   const router = useRouter();
-  const route = useRoute();
-  const params = route.params || {};
+  const { category: rawCategory, search: rawSearch } = useLocalSearchParams<{ category?: string; search?: string }>();
+  const params = { category: rawCategory, search: rawSearch };
   const { addToCart } = useCart();
 
   const [products, setProducts] = useState(mockProducts);
@@ -65,7 +64,7 @@ export default function ProductsScreen() {
   const [tempPin, setTempPin] = useState('');
   const [loadingPin, setLoadingPin] = useState(false);
 
-  const fetchCity = async (pin) => {
+  const fetchCity = async (pin: string) => {
     setLoadingPin(true);
     try {
       const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
@@ -129,13 +128,13 @@ export default function ProductsScreen() {
     loadProducts();
   }, []);
 
-  const getImageUri = (imagePath) => {
+  const getImageUri = (imagePath: any) => {
     if (!imagePath) return 'https://via.placeholder.com/150';
     if (imagePath.startsWith('http')) return imagePath;
     return `https://buildbazaar-two.vercel.app${imagePath}`;
   };
 
-  const filteredProducts = products.filter(prod => {
+  const filteredProducts = products.filter((prod: any) => {
     const matchesCategory = selectedCategory === 'All' || prod.category === selectedCategory;
     const matchesSearch = prod.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           prod.brand.toLowerCase().includes(searchQuery.toLowerCase());

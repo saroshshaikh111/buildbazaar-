@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image, Dimensions, ActivityIndicator, Modal } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image, Dimensions, ActivityIndicator, Modal, Animated } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { supabase } from '../../lib/supabase';
-import { Search, MapPin, Plus, Calculator, Star, AlertTriangle, ShoppingCart, User, Building2 } from 'lucide-react-native';
+import { Search, MapPin, Plus, Calculator, Star, AlertTriangle, ShoppingCart, User, Building2, Menu, X, Package, Server, LayoutGrid, Mountain, PaintBucket, Droplet, Zap, TreePine } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
 // Mock Data Fallbacks
 const mockCategories = [
-  { id: 'c1', title: 'Cement', count: '120+ Products', bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af' },
-  { id: 'c2', title: 'Steel & TMT', count: '85+ Products', bg: '#f0fdf4', border: '#bbf7d0', color: '#166534' },
-  { id: 'c3', title: 'Bricks & Blocks', count: '45+ Products', bg: '#fdf2f8', border: '#fbcfe8', color: '#9d174d' },
-  { id: 'c4', title: 'Sand & Aggregates', count: '30+ Products', bg: '#fefbeb', border: '#fef08a', color: '#854d0e' },
-  { id: 'c5', title: 'Paint & Finishes', count: '200+ Products', bg: '#faf5ff', border: '#e9d5ff', color: '#6b21a8' },
-  { id: 'c6', title: 'Plumbing', count: '150+ Products', bg: '#ecfeff', border: '#a5f3fc', color: '#075985' },
-  { id: 'c7', title: 'Electricals', count: '300+ Products', bg: '#fff7ed', border: '#ffedd5', color: '#c2410c' },
-  { id: 'c8', title: 'Wood & Plywood', count: '60+ Products', bg: '#f0fdfa', border: '#99f6e4', color: '#0f766e' }
+  { id: 'c1', title: 'Cement', count: '120+ Products', bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af', icon: Package },
+  { id: 'c2', title: 'Steel & TMT', count: '85+ Products', bg: '#f0fdf4', border: '#bbf7d0', color: '#166534', icon: Server },
+  { id: 'c3', title: 'Bricks & Blocks', count: '45+ Products', bg: '#fdf2f8', border: '#fbcfe8', color: '#9d174d', icon: LayoutGrid },
+  { id: 'c4', title: 'Sand & Aggregates', count: '30+ Products', bg: '#fefbeb', border: '#fef08a', color: '#854d0e', icon: Mountain },
+  { id: 'c5', title: 'Paint & Finishes', count: '200+ Products', bg: '#faf5ff', border: '#e9d5ff', color: '#6b21a8', icon: PaintBucket },
+  { id: 'c6', title: 'Plumbing', count: '150+ Products', bg: '#ecfeff', border: '#a5f3fc', color: '#075985', icon: Droplet },
+  { id: 'c7', title: 'Electricals', count: '300+ Products', bg: '#fff7ed', border: '#ffedd5', color: '#c2410c', icon: Zap },
+  { id: 'c8', title: 'Wood & Plywood', count: '60+ Products', bg: '#f0fdfa', border: '#99f6e4', color: '#0f766e', icon: TreePine }
 ];
 
 const mockProducts = [
@@ -49,16 +49,38 @@ export default function TabOneScreen() {
   const { user } = useAuth();
   const { addToCart, totalItems } = useCart();
   const insets = useSafeAreaInsets();
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const [products, setProducts] = useState(mockProducts);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
+
+  const slideAnim = useRef(new Animated.Value(-280)).current;
+
+  const openDrawer = () => {
+    setMenuDrawerOpen(true);
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeDrawer = () => {
+    Animated.timing(slideAnim, {
+      toValue: -280,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setMenuDrawerOpen(false);
+    });
+  };
   
   // Calculator State
   const [calcArea, setCalcArea] = useState('');
   const [calcFloors, setCalcFloors] = useState('1');
-  const [estimates, setEstimates] = useState(null);
+  const [estimates, setEstimates] = useState<any>(null);
 
   // Delivery Location State
   const [pincode, setPincode] = useState('110001');
@@ -78,7 +100,7 @@ export default function TabOneScreen() {
   const [tempPin, setTempPin] = useState('');
   const [loadingPin, setLoadingPin] = useState(false);
 
-  const fetchCity = async (pin) => {
+  const fetchCity = async (pin: string) => {
     setLoadingPin(true);
     try {
       const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
@@ -133,7 +155,7 @@ export default function TabOneScreen() {
     loadProducts();
   }, []);
 
-  const getImageUri = (imagePath) => {
+  const getImageUri = (imagePath: any) => {
     if (!imagePath) return 'https://via.placeholder.com/150';
     if (imagePath.startsWith('http')) return imagePath;
     return `https://buildbazaar-two.vercel.app${imagePath}`;
@@ -179,6 +201,94 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.mainContainer}>
+      {/* Sidebar Menu Drawer Modal */}
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={menuDrawerOpen}
+        onRequestClose={closeDrawer}
+      >
+        <View style={styles.drawerOverlay}>
+          <Animated.View style={[styles.drawerContent, { transform: [{ translateX: slideAnim }] }]}>
+            {/* Drawer Header */}
+            <View style={styles.drawerHeader}>
+              <TouchableOpacity 
+                style={styles.drawerUserInfo} 
+                onPress={() => {
+                  closeDrawer();
+                  if (user) {
+                    router.push('/account');
+                  } else {
+                    router.push('/auth');
+                  }
+                }}
+              >
+                <User color="#ffffff" size={20} style={{ marginRight: 10 }} />
+                <Text style={styles.drawerUserText}>
+                  {user ? `Hello, ${user.email.split('@')[0]}` : 'Hello, Sign In'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={closeDrawer} style={styles.drawerCloseBtn}>
+                <X color="#ffffff" size={24} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Drawer Links Scroll */}
+            <ScrollView style={styles.drawerScroll} contentContainerStyle={styles.drawerScrollContent}>
+              <Text style={styles.drawerSectionHeader}>Trending</Text>
+              <TouchableOpacity style={styles.drawerItem} onPress={() => { closeDrawer(); router.push('/products'); }}>
+                <Text style={styles.drawerItemText}>Bestsellers</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.drawerItem} onPress={() => { closeDrawer(); router.push('/products'); }}>
+                <Text style={styles.drawerItemText}>New Releases</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.drawerItem} onPress={() => { closeDrawer(); router.push('/products'); }}>
+                <Text style={styles.drawerItemText}>Movers and Shakers</Text>
+              </TouchableOpacity>
+
+              <View style={styles.drawerSeparator} />
+
+              <Text style={styles.drawerSectionHeader}>Shop by Category</Text>
+              {mockCategories.map((cat) => (
+                <TouchableOpacity 
+                  key={cat.id} 
+                  style={styles.drawerItem} 
+                  onPress={() => { 
+                    closeDrawer(); 
+                    router.push(`/products?category=${encodeURIComponent(cat.title)}`); 
+                  }}
+                >
+                  <Text style={styles.drawerItemText}>{cat.title}</Text>
+                </TouchableOpacity>
+              ))}
+
+              <View style={styles.drawerSeparator} />
+
+              <Text style={styles.drawerSectionHeader}>Resources</Text>
+              <Link href="/seller" asChild>
+                <TouchableOpacity style={styles.drawerItem} onPress={closeDrawer}>
+                  <Text style={[styles.drawerItemText, { color: '#ea580c' }]}>Sell on BuildBazaar</Text>
+                </TouchableOpacity>
+              </Link>
+              <TouchableOpacity 
+                style={styles.drawerItem} 
+                onPress={() => { 
+                  closeDrawer(); 
+                  scrollViewRef.current?.scrollTo({ y: 550, animated: true }); 
+                }}
+              >
+                <Text style={styles.drawerItemText}>Material Calculator</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </Animated.View>
+          <TouchableOpacity 
+            style={styles.drawerDismissZone} 
+            activeOpacity={1} 
+            onPress={closeDrawer} 
+          />
+        </View>
+      </Modal>
+
       {/* Pincode Selection Modal */}
       <Modal
         animationType="slide"
@@ -291,6 +401,13 @@ export default function TabOneScreen() {
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={styles.subNavbarScroll}
           >
+            <TouchableOpacity 
+              style={[styles.subNavAction, { flexDirection: 'row', alignItems: 'center', gap: 4 }]} 
+              onPress={openDrawer}
+            >
+              <Menu color="#ffffff" size={16} />
+              <Text style={styles.subNavText}>All</Text>
+            </TouchableOpacity>
             <Link href="/products" asChild>
               <TouchableOpacity style={styles.subNavAction}>
                 <Text style={styles.subNavText}>All Materials</Text>
@@ -354,28 +471,28 @@ export default function TabOneScreen() {
           </View>
         </View>
 
-        {/* Categories Horizontal Scroller */}
+        {/* Categories Grid (2 Columns) */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Material Categories</Text>
         </View>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          contentContainerStyle={styles.categoryScroll}
-        >
-          {mockCategories.map((cat) => (
-            <TouchableOpacity 
-              key={cat.id} 
-              style={[styles.categoryChip, { backgroundColor: cat.bg, borderColor: cat.border }]}
-              onPress={() => router.navigate(`/products?category=${encodeURIComponent(cat.title)}`)}
-            >
-              <View style={[styles.categoryIconBox, { backgroundColor: '#ffffff', borderColor: cat.border }]}>
-                <Text style={[styles.categoryLabel, { color: cat.color }]}>{cat.title.substring(0, 2).toUpperCase()}</Text>
-              </View>
-              <Text style={[styles.categoryText, { color: cat.color }]} numberOfLines={1}>{cat.title}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <View style={styles.categoriesGrid}>
+          {mockCategories.map((cat) => {
+            const IconComp = cat.icon;
+            return (
+              <TouchableOpacity 
+                key={cat.id} 
+                style={[styles.categoryCard, { backgroundColor: cat.bg, borderColor: cat.border }]}
+                onPress={() => router.navigate(`/products?category=${encodeURIComponent(cat.title)}`)}
+              >
+                <View style={[styles.categoryIconBox, { backgroundColor: '#ffffff', borderColor: cat.border }]}>
+                  <IconComp color={cat.color} size={24} />
+                </View>
+                <Text style={[styles.categoryCardTitle, { color: cat.color }]}>{cat.title}</Text>
+                <Text style={styles.categoryCardCount}>{cat.count}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
         {/* Featured Products */}
         <View style={styles.sectionHeader}>
@@ -663,9 +780,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     lineHeight: 34,
     marginBottom: 8,
-  },
-  orangeText: {
-    color: '#ea580c',
   },
   heroSub: {
     fontSize: 14,
@@ -1024,5 +1138,110 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 14,
     fontWeight: '800',
+  },
+  categoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  categoryCard: {
+    width: (width - 44) / 2,
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  categoryCardTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  categoryCardCount: {
+    fontSize: 11,
+    color: '#64748b',
+    fontWeight: '700',
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  drawerOverlay: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+  },
+  drawerDismissZone: {
+    flex: 1,
+  },
+  drawerContent: {
+    width: 280,
+    backgroundColor: '#ffffff',
+    height: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  drawerHeader: {
+    backgroundColor: '#0f172a',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  drawerUserInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  drawerUserText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  drawerCloseBtn: {
+    padding: 4,
+  },
+  drawerScroll: {
+    flex: 1,
+  },
+  drawerScrollContent: {
+    paddingVertical: 16,
+  },
+  drawerSectionHeader: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#0f172a',
+    paddingHorizontal: 20,
+    marginTop: 12,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  drawerItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  drawerItemText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#334155',
+  },
+  drawerSeparator: {
+    height: 1,
+    backgroundColor: '#e2e8f0',
+    marginVertical: 12,
+    marginHorizontal: 20,
   },
 });

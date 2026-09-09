@@ -12,7 +12,7 @@ export default function CartScreen() {
   const { cart, updateQuantity, removeItem, totalItems, totalPrice } = useCart();
   const insets = useSafeAreaInsets();
 
-  const getImageUri = (imagePath) => {
+  const getImageUri = (imagePath: any) => {
     if (!imagePath) return 'https://via.placeholder.com/150';
     if (imagePath.startsWith('http')) return imagePath;
     return `https://buildbazaar-two.vercel.app${imagePath}`;
@@ -45,7 +45,7 @@ export default function CartScreen() {
       {/* Premium Header */}
       <View style={[styles.customHeader, { paddingTop: insets.top }]}>
         <View style={styles.headerTopRow}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/')} style={styles.logoContainer}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)')} style={styles.logoContainer}>
             <Building2 color="#ea580c" size={20} style={{ marginRight: 6 }} />
             <Text style={styles.logoText}>
               Build<Text style={styles.orangeLogoText}>Bazaar</Text><Text style={styles.dotComText}>.com</Text>

@@ -3,12 +3,12 @@
 
 export function getEscrowDetails() {
     return {
-        upiId: 'buildbazaar@ybl',
-        accountName: 'BuildBazaar Escrow Account',
-        bankName: 'State Bank of India',
-        accountNumber: '39201234567890',
-        ifscCode: 'SBIN0001234',
-        branchName: 'Hubli Main Branch',
+        upiId: process.env.ESCROW_UPI_ID || '8867855362@ybl',
+        accountName: process.env.ESCROW_ACCOUNT_NAME || 'Sarosh Aasim Shaikh',
+        bankName: process.env.ESCROW_BANK_NAME || 'HSBC Bank',
+        accountNumber: process.env.ESCROW_ACCOUNT_NUMBER || '106246788006',
+        ifscCode: process.env.ESCROW_IFSC_CODE || 'HSBC0411002',
+        branchName: process.env.ESCROW_BRANCH_NAME || 'Main Branch',
         platformFeePercent: 3,
         note: 'Please use your Order ID as the payment reference/narration.'
     };

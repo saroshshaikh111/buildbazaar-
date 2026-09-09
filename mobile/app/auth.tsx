@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useRoute } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { Building2, AlertTriangle } from 'lucide-react-native';
 
 export default function AuthScreen() {
   const router = useRouter();
-  const route = useRoute();
-  const params = route.params || {};
+  const { returnTo: rawReturnTo } = useLocalSearchParams();
+  const returnTo = rawReturnTo || '/';
   
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -35,8 +34,8 @@ export default function AuthScreen() {
         if (error) throw error;
 
         // Redirect
-        if (params.redirect) {
-          router.replace(params.redirect.toString());
+        if (returnTo) {
+          router.replace(returnTo.toString() as any);
         } else {
           router.replace('/(tabs)/account');
         }
@@ -58,8 +57,8 @@ export default function AuthScreen() {
               text: 'OK', 
               onPress: () => {
                 if (data?.session) {
-                  if (params.redirect) {
-                    router.replace(params.redirect.toString());
+                  if (returnTo) {
+                    router.replace(returnTo.toString() as any);
                   } else {
                     router.replace('/(tabs)/account');
                   }
@@ -72,7 +71,7 @@ export default function AuthScreen() {
           ]
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log('Auth error:', error);
       setErrorMsg(error.message || 'Authentication failed.');
     } finally {

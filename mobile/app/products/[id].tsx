@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useRoute } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 import { useCart } from '../../context/CartContext';
 import { ChevronLeft, Star, ShieldCheck, ShoppingCart, Plus, Minus, FileText } from 'lucide-react-native';
@@ -40,11 +39,10 @@ const mockProducts = [
 
 export default function ProductDetailPage() {
   const router = useRouter();
-  const route = useRoute();
-  const id = route.params?.id;
+  const { id } = useLocalSearchParams();
   const { addToCart } = useCart();
   
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
@@ -65,7 +63,7 @@ export default function ProductDetailPage() {
           const localMatch = mockProducts.find(p => p.id === id);
           if (localMatch) setProduct(localMatch);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.log('Error fetching product from Supabase:', error);
         const localMatch = mockProducts.find(p => p.id === id);
         if (localMatch) setProduct(localMatch);
@@ -79,7 +77,7 @@ export default function ProductDetailPage() {
     }
   }, [id]);
 
-  const getImageUri = (imagePath) => {
+  const getImageUri = (imagePath: any) => {
     if (!imagePath) return 'https://via.placeholder.com/150';
     if (imagePath.startsWith('http')) return imagePath;
     return `https://buildbazaar-two.vercel.app${imagePath}`;
@@ -201,7 +199,7 @@ export default function ProductDetailPage() {
       {/* Technical Specs Tabular */}
       <View style={styles.specsSection}>
         <Text style={styles.specsHeader}>Technical Datasheet</Text>
-        {Object.entries(product.product_specs || {}).map(([key, value], idx, arr) => (
+        {Object.entries(product.product_specs || {}).map(([key, value]: [string, any], idx, arr) => (
           <View 
             key={idx} 
             style={[
@@ -210,7 +208,7 @@ export default function ProductDetailPage() {
             ]}
           >
             <Text style={styles.specKey}>{key.replace(/_/g, ' ').toUpperCase()}</Text>
-            <Text style={styles.specValue}>{value.toString()}</Text>
+            <Text style={styles.specValue}>{String(value)}</Text>
           </View>
         ))}
       </View>

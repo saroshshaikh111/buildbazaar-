@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function AccountScreen() {
   const router = useRouter();
   const { user, logout } = useAuth();
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const insets = useSafeAreaInsets();
 
@@ -37,6 +37,52 @@ export default function AccountScreen() {
     fetchOrders();
   }, [user]);
 
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    Alert.alert(
+      'Confirm Action',
+      `Are you sure you want to mark this order as ${newStatus}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Confirm', 
+          onPress: async () => {
+            try {
+              const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+              if (error) throw error;
+              
+              setOrders((prevOrders: any[]) => prevOrders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+              
+              // Trigger notify hook
+              if (newStatus === 'Delivered') {
+                const order = orders.find((o: any) => o.id === orderId);
+                if (order) {
+                  fetch('https://buildbazaar-two.vercel.app/api/notify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      type: 'ESCROW_RELEASED',
+                      order: {
+                        id: order.id,
+                        customerName: order.customer_name,
+                        buyerEmail: order.buyer_email || '',
+                        projectName: order.project_name,
+                        totalAmount: order.total_amount,
+                        vendorPayout: order.vendor_payout
+                      }
+                    })
+                  }).catch(err => console.warn('Notify failed:', err));
+                }
+              }
+              Alert.alert('Success', `Order marked as ${newStatus}.`);
+            } catch (err: any) {
+              Alert.alert('Error', err.message || 'Failed to update status.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const handleLogout = () => {
     logout();
     setOrders([]);
@@ -48,7 +94,7 @@ export default function AccountScreen() {
       {/* Premium Header */}
       <View style={[styles.customHeader, { paddingTop: insets.top }]}>
         <View style={styles.headerTopRow}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/')} style={styles.logoContainer}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)')} style={styles.logoContainer}>
             <Building2 color="#ea580c" size={20} style={{ marginRight: 6 }} />
             <Text style={styles.logoText}>
               Build<Text style={styles.orangeLogoText}>Bazaar</Text><Text style={styles.dotComText}>.com</Text>
@@ -126,16 +172,20 @@ export default function AccountScreen() {
                     </View>
                     <View style={[
                       styles.statusBadge,
-                      order.status === 'Delivered' ? styles.statusBadgeDelivered : styles.statusBadgeProcessing
+                      order.status === 'Delivered' ? styles.statusBadgeDelivered : 
+                      order.status === 'Disputed' ? styles.statusBadgeDisputed : styles.statusBadgeProcessing
                     ]}>
                       {order.status === 'Delivered' ? (
                         <CheckCircle color="#16a34a" size={12} />
+                      ) : order.status === 'Disputed' ? (
+                        <CheckCircle color="#ef4444" size={12} />
                       ) : (
                         <Clock color="#ea580c" size={12} />
                       )}
                       <Text style={[
                         styles.statusBadgeText,
-                        order.status === 'Delivered' ? styles.statusBadgeTextDelivered : styles.statusBadgeTextProcessing
+                        order.status === 'Delivered' ? styles.statusBadgeTextDelivered : 
+                        order.status === 'Disputed' ? styles.statusBadgeTextDisputed : styles.statusBadgeTextProcessing
                       ]}>
                         {order.status}
                       </Text>
@@ -144,12 +194,29 @@ export default function AccountScreen() {
 
                   {/* Order Items list preview */}
                   <View style={styles.orderItemsBox}>
-                    {order.order_items?.map((item) => (
+                    {order.order_items?.map((item: any) => (
                       <Text key={item.id} style={styles.orderItemRow}>
                         • {item.title} <Text style={styles.dimText}>x {item.quantity}</Text>
                       </Text>
                     ))}
                   </View>
+
+                  {order.status === 'Dispatched' && (
+                    <View style={styles.escrowActionsRow}>
+                      <TouchableOpacity 
+                        style={styles.confirmDeliveryBtn}
+                        onPress={() => handleUpdateStatus(order.id, 'Delivered')}
+                      >
+                        <Text style={styles.confirmDeliveryBtnText}>Confirm Delivery (Release Escrow)</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity 
+                        style={styles.reportIssueBtn}
+                        onPress={() => handleUpdateStatus(order.id, 'Disputed')}
+                      >
+                        <Text style={styles.reportIssueBtnText}>Report Issue</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
 
                   <View style={styles.orderCardFooter}>
                     <Text style={styles.addressText} numberOfLines={1}>
@@ -419,5 +486,44 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  statusBadgeDisputed: {
+    backgroundColor: '#fef2f2',
+  },
+  statusBadgeTextDisputed: {
+    color: '#ef4444',
+  },
+  escrowActionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  confirmDeliveryBtn: {
+    flex: 2,
+    backgroundColor: '#16a34a',
+    borderRadius: 8,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmDeliveryBtnText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  reportIssueBtn: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: '#ef4444',
+    borderRadius: 8,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reportIssueBtnText: {
+    color: '#ef4444',
+    fontSize: 11,
+    fontWeight: '800',
   },
 });
