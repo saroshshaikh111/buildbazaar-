@@ -2,74 +2,125 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../lib/supabase';
-import { Building2, AlertTriangle } from 'lucide-react-native';
+import { Building2, AlertTriangle, Smartphone, Mail } from 'lucide-react-native';
 
 export default function AuthScreen() {
   const router = useRouter();
   const { returnTo: rawReturnTo } = useLocalSearchParams();
   const returnTo = rawReturnTo || '/';
   
+  const [authMode, setAuthMode] = useState<'email' | 'phone'>('phone'); // default to phone
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  // Email state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+
+  // Phone state
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+
+  const formatPhoneNumber = (num: string) => {
+    let clean = (num || '').replace(/[\s\-\(\)]/g, '');
+    if (!clean.startsWith('+')) {
+      if (clean.length === 10) {
+        clean = '+91' + clean;
+      } else if (clean.length > 0 && !clean.startsWith('+')) {
+        clean = '+' + clean;
+      }
+    }
+    return clean;
+  };
 
   const handleAuth = async () => {
-    if (!email.trim() || !password) {
-      setErrorMsg('Please enter both email and password.');
-      return;
-    }
-
-    setLoading(true);
     setErrorMsg('');
+    setSuccessMsg('');
+    setLoading(true);
 
     try {
-      if (isLogin) {
-        // Sign In
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-        if (error) throw error;
+      if (authMode === 'phone') {
+        const formattedPhone = formatPhoneNumber(phone);
+        if (!formattedPhone || formattedPhone.length < 10) {
+          throw new Error('Please enter a valid 10-digit mobile number (e.g. 9876543210 or +91...)');
+        }
 
-        // Redirect
-        if (returnTo) {
-          router.replace(returnTo.toString() as any);
+        if (!otpSent) {
+          // Send OTP
+          const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
+          if (error) throw error;
+
+          setOtpSent(true);
+          setSuccessMsg(`OTP sent to ${formattedPhone}! Check your SMS.`);
         } else {
-          router.replace('/(tabs)/account');
+          // Verify OTP
+          if (!otp.trim()) throw new Error('Please enter the 6-digit verification OTP');
+
+          const { data, error } = await supabase.auth.verifyOtp({
+            phone: formattedPhone,
+            token: otp.trim(),
+            type: 'sms',
+          });
+          if (error) throw error;
+
+          if (returnTo) {
+            router.replace(returnTo.toString() as any);
+          } else {
+            router.replace('/(tabs)/account');
+          }
         }
       } else {
-        // Sign Up
-        const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
-          password,
-        });
-        if (error) throw error;
+        // Email Auth
+        if (!email.trim() || !password) {
+          throw new Error('Please enter both email and password.');
+        }
 
-        Alert.alert(
-          'Registration Successful',
-          data?.session 
-            ? 'Your account has been created!'
-            : 'Verification email sent! Check your inbox to confirm your account.',
-          [
-            { 
-              text: 'OK', 
-              onPress: () => {
-                if (data?.session) {
-                  if (returnTo) {
-                    router.replace(returnTo.toString() as any);
+        if (isLogin) {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password,
+          });
+          if (error) throw error;
+
+          if (returnTo) {
+            router.replace(returnTo.toString() as any);
+          } else {
+            router.replace('/(tabs)/account');
+          }
+        } else {
+          const { data, error } = await supabase.auth.signUp({
+            email: email.trim(),
+            password,
+          });
+          if (error) throw error;
+
+          Alert.alert(
+            'Registration Successful',
+            data?.session
+              ? 'Your account has been created!'
+              : 'Verification email sent! Check your inbox to confirm your account.',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  if (data?.session) {
+                    if (returnTo) {
+                      router.replace(returnTo.toString() as any);
+                    } else {
+                      router.replace('/(tabs)/account');
+                    }
                   } else {
-                    router.replace('/(tabs)/account');
+                    setIsLogin(true);
+                    setPassword('');
                   }
-                } else {
-                  setIsLogin(true);
-                  setPassword('');
-                }
-              } 
-            }
-          ]
-        );
+                },
+              },
+            ]
+          );
+        }
       }
     } catch (error: any) {
       console.log('Auth error:', error);
@@ -90,8 +141,35 @@ export default function AuthScreen() {
       {/* Main card box */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>
-          {isLogin ? 'Sign in' : 'Create account'}
+          {authMode === 'phone' ? 'Mobile Verification' : (isLogin ? 'Sign in' : 'Create account')}
         </Text>
+
+        {/* Tab Switcher: Mobile No vs Email */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tab, authMode === 'phone' && styles.activeTab]}
+            onPress={() => {
+              setAuthMode('phone');
+              setErrorMsg('');
+              setSuccessMsg('');
+            }}
+          >
+            <Smartphone color={authMode === 'phone' ? '#0f172a' : '#64748b'} size={16} />
+            <Text style={[styles.tabText, authMode === 'phone' && styles.activeTabText]}>Mobile No.</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.tab, authMode === 'email' && styles.activeTab]}
+            onPress={() => {
+              setAuthMode('email');
+              setErrorMsg('');
+              setSuccessMsg('');
+            }}
+          >
+            <Mail color={authMode === 'email' ? '#0f172a' : '#64748b'} size={16} />
+            <Text style={[styles.tabText, authMode === 'email' && styles.activeTabText]}>Email</Text>
+          </TouchableOpacity>
+        </View>
 
         {errorMsg ? (
           <View style={styles.errorBox}>
@@ -100,32 +178,84 @@ export default function AuthScreen() {
           </View>
         ) : null}
 
-        {/* Inputs */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Email Address</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="name@company.com"
-            placeholderTextColor="#94a3b8"
-          />
-        </View>
+        {successMsg ? (
+          <View style={styles.successBox}>
+            <Text style={styles.successText}>{successMsg}</Text>
+          </View>
+        ) : null}
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            secureTextEntry
-            autoCapitalize="none"
-            value={password}
-            onChangeText={setPassword}
-            placeholder={!isLogin ? 'At least 6 characters' : '••••••••'}
-            placeholderTextColor="#94a3b8"
-          />
-        </View>
+        {/* Inputs */}
+        {authMode === 'phone' ? (
+          <>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Mobile Number</Text>
+              <TextInput
+                style={[styles.input, otpSent && styles.disabledInput]}
+                keyboardType="phone-pad"
+                editable={!otpSent}
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="9876543210 or +91..."
+                placeholderTextColor="#94a3b8"
+              />
+              {otpSent && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setOtpSent(false);
+                    setOtp('');
+                    setSuccessMsg('');
+                  }}
+                  style={styles.changeNumberBtn}
+                >
+                  <Text style={styles.changeNumberText}>Change Number</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {otpSent && (
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>One-Time Password (OTP)</Text>
+                <TextInput
+                  style={[styles.input, styles.otpInput]}
+                  keyboardType="number-pad"
+                  value={otp}
+                  onChangeText={setOtp}
+                  placeholder="Enter 6-digit OTP"
+                  placeholderTextColor="#94a3b8"
+                  maxLength={6}
+                />
+              </View>
+            )}
+          </>
+        ) : (
+          <>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email Address</Text>
+              <TextInput
+                style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="name@company.com"
+                placeholderTextColor="#94a3b8"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                secureTextEntry
+                autoCapitalize="none"
+                value={password}
+                onChangeText={setPassword}
+                placeholder={!isLogin ? 'At least 6 characters' : '••••••••'}
+                placeholderTextColor="#94a3b8"
+              />
+            </View>
+          </>
+        )}
 
         <TouchableOpacity 
           style={[styles.submitBtn, loading && styles.disabledBtn]} 
@@ -136,7 +266,9 @@ export default function AuthScreen() {
             <ActivityIndicator color="#ffffff" size="small" />
           ) : (
             <Text style={styles.submitBtnText}>
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {authMode === 'phone'
+                ? (otpSent ? 'Verify OTP & Sign In' : 'Send Verification OTP')
+                : (isLogin ? 'Sign In' : 'Create Account')}
             </Text>
           )}
         </TouchableOpacity>
@@ -146,28 +278,30 @@ export default function AuthScreen() {
         </Text>
       </View>
 
-      {/* Switch Toggle Box */}
-      <View style={styles.toggleContainer}>
-        <View style={styles.dividerRow}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>
-            {isLogin ? 'New to BuildBazaar?' : 'Already have an account?'}
-          </Text>
-          <View style={styles.divider} />
-        </View>
+      {/* Switch Toggle Box for Email Mode */}
+      {authMode === 'email' && (
+        <View style={styles.toggleContainer}>
+          <View style={styles.dividerRow}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>
+              {isLogin ? 'New to BuildBazaar?' : 'Already have an account?'}
+            </Text>
+            <View style={styles.divider} />
+          </View>
 
-        <TouchableOpacity 
-          style={styles.toggleBtn}
-          onPress={() => {
-            setIsLogin(!isLogin);
-            setErrorMsg('');
-          }}
-        >
-          <Text style={styles.toggleBtnText}>
-            {isLogin ? 'Create your BuildBazaar account' : 'Sign in to existing account'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity 
+            style={styles.toggleBtn}
+            onPress={() => {
+              setIsLogin(!isLogin);
+              setErrorMsg('');
+            }}
+          >
+            <Text style={styles.toggleBtnText}>
+              {isLogin ? 'Create your BuildBazaar account' : 'Sign in to existing account'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -211,7 +345,40 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '900',
     color: '#0f172a',
+    marginBottom: 16,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#f1f5f9',
+    borderRadius: 8,
+    padding: 4,
     marginBottom: 20,
+  },
+  tab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: 6,
+    gap: 6,
+  },
+  activeTab: {
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  tabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748b',
+  },
+  activeTabText: {
+    color: '#0f172a',
+    fontWeight: '800',
   },
   errorBox: {
     flexDirection: 'row',
@@ -220,7 +387,7 @@ const styles = StyleSheet.create({
     borderColor: '#fca5a5',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 20,
+    marginBottom: 16,
     alignItems: 'center',
   },
   errorIcon: {
@@ -232,6 +399,19 @@ const styles = StyleSheet.create({
     color: '#991b1b',
     fontWeight: '600',
     lineHeight: 16,
+  },
+  successBox: {
+    backgroundColor: '#ecfdf5',
+    borderWidth: 1,
+    borderColor: '#6ee7b7',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+  },
+  successText: {
+    fontSize: 12,
+    color: '#065f46',
+    fontWeight: '600',
   },
   inputGroup: {
     marginBottom: 16,
@@ -253,6 +433,26 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#0f172a',
     fontWeight: '600',
+  },
+  disabledInput: {
+    backgroundColor: '#f1f5f9',
+    color: '#64748b',
+  },
+  otpInput: {
+    borderColor: '#ea580c',
+    textAlign: 'center',
+    letterSpacing: 6,
+    fontWeight: '800',
+    fontSize: 18,
+  },
+  changeNumberBtn: {
+    marginTop: 6,
+    alignSelf: 'flex-start',
+  },
+  changeNumberText: {
+    fontSize: 12,
+    color: '#ea580c',
+    fontWeight: '700',
   },
   submitBtn: {
     backgroundColor: '#ea580c',

@@ -30,12 +30,25 @@ export default function AuthPage() {
         if (error) alert(error.message);
     };
 
+    const formatPhoneNumber = (num) => {
+        let clean = (num || '').replace(/[\s\-\(\)]/g, '');
+        if (!clean.startsWith('+')) {
+            if (clean.length === 10) {
+                clean = '+91' + clean;
+            } else if (clean.length > 0 && !clean.startsWith('+')) {
+                clean = '+' + clean;
+            }
+        }
+        return clean;
+    };
+
     const handleOtpVerify = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
+            const formattedPhone = formatPhoneNumber(phone);
             const { error } = await supabase.auth.verifyOtp({
-                phone: phone.trim(),
+                phone: formattedPhone,
                 token: verificationCode,
                 type: 'sms'
             });
@@ -74,8 +87,12 @@ export default function AuthPage() {
         
         try {
             if (authMode === 'phone') {
+                const formattedPhone = formatPhoneNumber(phone);
+                if (!formattedPhone || formattedPhone.length < 10) {
+                    throw new Error("Please enter a valid 10-digit mobile number");
+                }
                 const { error } = await supabase.auth.signInWithOtp({
-                    phone: phone.trim(),
+                    phone: formattedPhone,
                 });
                 if (error) throw error;
                 setOtpSent(true);

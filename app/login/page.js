@@ -20,6 +20,18 @@ export default function LoginPage() {
     const [otp, setOtp] = useState("");
     const [otpSent, setOtpSent] = useState(false);
 
+    const formatPhoneNumber = (num) => {
+        let clean = (num || '').replace(/[\s\-\(\)]/g, '');
+        if (!clean.startsWith('+')) {
+            if (clean.length === 10) {
+                clean = '+91' + clean;
+            } else if (clean.length > 0 && !clean.startsWith('+')) {
+                clean = '+' + clean;
+            }
+        }
+        return clean;
+    };
+
     const handleAuth = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -28,18 +40,21 @@ export default function LoginPage() {
 
         try {
             if (loginMethod === "phone") {
-                if (!phone) throw new Error("Please enter a valid mobile number with country code (e.g. +91...)");
+                const formattedPhone = formatPhoneNumber(phone);
+                if (!formattedPhone || formattedPhone.length < 10) {
+                    throw new Error("Please enter a valid 10-digit mobile number (e.g. 9876543210 or +91...)");
+                }
                 
                 if (!otpSent) {
-                    // Send OTP
-                    const { error } = await supabase.auth.signInWithOtp({ phone: phone.trim() });
+                    // Send OTP via Supabase (Twilio)
+                    const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
                     if (error) throw error;
                     setOtpSent(true);
-                    setSuccessMsg("OTP sent! Please check your mobile number.");
+                    setSuccessMsg(`OTP sent to ${formattedPhone}! Please check your SMS messages.`);
                 } else {
-                    if (!otp) throw new Error("Please enter the OTP");
+                    if (!otp) throw new Error("Please enter the 6-digit OTP");
                     // Verify OTP
-                    const { error } = await supabase.auth.verifyOtp({ phone: phone.trim(), token: otp.trim(), type: 'sms' });
+                    const { error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp.trim(), type: 'sms' });
                     if (error) throw error;
                     router.push('/');
                 }
