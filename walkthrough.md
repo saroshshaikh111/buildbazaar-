@@ -28,11 +28,18 @@ The **BuildBazaar** B2B Construction Materials Marketplace is officially deploye
 
 ---
 
-### 📊 Deployment Summary Checklist
-
 - [x] Web E2E Verification & Vercel Production Deployment
 - [x] 0% Commission Payment Gateway Setup (HSBC Bank & UPI: `8867855362@ybl`)
 - [x] Mobile React Native App E2E Verification & Material Calculator logic test
 - [x] Expo EAS Cloud Build configuration & authentication (`EXPO_TOKEN`)
 - [x] Package Name resolution (`com.gobuildbazaar.app`)
 - [x] Android App Bundle (`.aab`) compilation & Play Console submission
+- [x] Mobile Number & Twilio OTP Authentication setup (E.164 +91 phone formatting & React Native SMS OTP tab)
+
+---
+
+### 📲 3. Mobile Number OTP Authentication (Twilio + Supabase)
+
+- **Issue Resolved**: Twilio and Supabase require strict **E.164 phone formatting** (e.g. `+918867855362`). 10-digit Indian inputs without country codes were rejected by Twilio API.
+- **Web Fix**: Updated `app/login/page.js` & `app/auth/page.js` to automatically format 10-digit mobile inputs to `+91XXXXXXXXXX`.
+- **Mobile Expo App Fix**: Updated `mobile/app/auth.tsx` with a dual tab UI (`[ Mobile No. | Email ]`) to support SMS OTP sending (`signInWithOtp`) and 6-digit OTP verification (`verifyOtp`).
