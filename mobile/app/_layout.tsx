@@ -18,7 +18,11 @@ export const unstable_settings = {
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+try {
+  SplashScreen.preventAutoHideAsync().catch(() => {});
+} catch (e) {
+  // Ignore splash screen errors in release builds
+}
 
 export default function RootLayout() {
   useEffect(() => {

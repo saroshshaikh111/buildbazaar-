@@ -14,8 +14,8 @@ if (typeof window === 'undefined' && typeof global !== 'undefined' && !global.We
   };
 }
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://suqwlcobbirvsnbjjsxn.supabase.co';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_ehCJHB5z_LZUrPo4zozifw_-u3X7E6W';
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase URL or Anon Key is missing from EXPO_PUBLIC environment variables.');
