@@ -33,14 +33,36 @@ export async function POST(request) {
             if (livePrice === undefined) {
                  return NextResponse.json({ error: `Product ${item.id} no longer exists.` }, { status: 400 });
             }
-            secureTotal += livePrice * item.quantity;
+
+            // Validate quantity to prevent negative or manipulated values
+            const qty = parseInt(item.quantity, 10);
+            if (isNaN(qty) || qty <= 0 || qty > 100000) {
+                return NextResponse.json({ error: `Invalid quantity for item ${item.title || item.id}. Must be a positive integer.` }, { status: 400 });
+            }
+
+            secureTotal += livePrice * qty;
             
             finalOrderItems.push({
                 product_id: item.id,
                 title: item.title,
-                quantity: item.quantity,
+                quantity: qty,
                 price: livePrice
             });
+        }
+
+        // Verify authenticated user from token if available to prevent userId spoofing
+        let verifiedUserId = userId || null;
+        const authHeader = request.headers.get('authorization');
+        if (authHeader) {
+            try {
+                const token = authHeader.replace('Bearer ', '');
+                const { data: { user: authUser } } = await supabase.auth.getUser(token);
+                if (authUser) {
+                    verifiedUserId = authUser.id;
+                }
+            } catch (err) {
+                console.warn('Auth token verification skipped:', err);
+            }
         }
 
         // 2. MONETIZATION ENGINE: The 3% Platform Fee Split
@@ -51,7 +73,7 @@ export async function POST(request) {
         const { data: order, error: orderError } = await supabase
             .from('orders')
             .insert({
-                user_id: userId,
+                user_id: verifiedUserId,
                 customer_name: formData.customerName,
                 buyer_email: formData.email || '',
                 buyer_phone: formData.phone || '',

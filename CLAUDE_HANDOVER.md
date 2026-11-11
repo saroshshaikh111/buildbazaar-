@@ -58,6 +58,7 @@ npx eas-cli build -p android --profile preview
 | **Google Play Console** | **CruxBox** Developer Account (Account Owner) | [play.google.com/console](https://play.google.com/console) | **App ID:** `com.gobuildbazaar.app`<br>Closed Testing track active |
 | **Resend (Email)** | `saroshaasim@gmail.com` | [resend.com/dashboard](https://resend.com/dashboard) | Transactional emails from `orders@gobuildbazaar.com`<br>*(Key stored in `.env.local`: `re_CdH3o5SZ...`)* |
 | **Google Cloud Console** | `saroshaasim@gmail.com` | [console.cloud.google.com](https://console.cloud.google.com) | Google OAuth 2.0 Client ID & Secret |
+| **Twilio (SMS OTP)** | Managed via Supabase | Supabase → Auth → Providers → Phone | Powering Indian phone SMS OTP (`+91XXXXXXXXXX`) |
 | **Domain Registrar** | BigRock | [bigrock.in](https://www.bigrock.in/) | Domain `gobuildbazaar.com` (DNS points to Vercel) |
 
 ---
