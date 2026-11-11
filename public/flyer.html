@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildBazaar - Direct Site Procurement Flyer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            padding: 16mm;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #0f172a;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #ea580c;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: #ea580c;
+        }
+
+        .tagline-badge {
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 6px 14px;
+            border-radius: 50px;
+        }
+
+        /* Hero Pitch Banner */
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 14px;
+            padding: 20px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border-left: 6px solid #ea580c;
+        }
+
+        .hero-title {
+            font-size: 24px;
+            font-weight: 900;
+            line-height: 1.25;
+            margin-bottom: 8px;
+        }
+
+        .hero-title span {
+            color: #fb923c;
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.5;
+            max-width: 80%;
+        }
+
+        /* 3 Value Pillars */
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .pillar-card {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .pillar-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .pillar-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .pillar-desc {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* Core Catalog Pricing Table */
+        .section-title {
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ea580c;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pricing-table th {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 800;
+            text-align: left;
+            padding: 10px 12px;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .pricing-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #166534;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* Material Estimator Box */
+        .calculator-banner {
+            background: #fff7ed;
+            border: 1.5px solid #fed7aa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .calc-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #9a3412;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .calc-card {
+            background: #ffffff;
+            border: 1px solid #fdba74;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .calc-card-metric {
+            font-size: 16px;
+            font-weight: 900;
+            color: #ea580c;
+        }
+
+        .calc-card-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #7c2d12;
+            text-transform: uppercase;
+        }
+
+        /* Comparison Section */
+        .compare-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .compare-col {
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 11px;
+        }
+
+        .compare-bad {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .compare-good {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .compare-col ul {
+            list-style: none;
+            margin-top: 6px;
+        }
+
+        .compare-col li {
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        /* Footer CTA with QR Code & Contact */
+        .footer-cta {
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cta-details h3 {
+            font-size: 16px;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .cta-details p {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .contact-pills {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .contact-pill {
+            background: #1e293b;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #fb923c;
+            border: 1px solid #334155;
+        }
+
+        .qr-placeholder {
+            width: 80px;
+            height: 80px;
+            background: #ffffff;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-weight: 900;
+            font-size: 10px;
+            text-align: center;
+            padding: 4px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                min-height: 100vh;
+                padding: 10mm;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <!-- Header -->
+        <div>
+            <div class="header">
+                <div class="logo-box">
+                    <div class="logo-icon">B</div>
+                    <div class="logo-text">Build<span>Bazaar</span>.com</div>
+                </div>
+                <div class="tagline-badge">B2B Materials Exchange</div>
+            </div>
+
+            <!-- Hero Pitch Banner -->
+            <div class="hero-banner">
+                <div class="hero-title">Direct From Verified Depots To <span>Your Job Site.</span></div>
+                <div class="hero-subtitle">Eliminate local middlemen margins, unorganized broker phone calls, and delayed deliveries. Get wholesale rates on cement, steel, bricks, and CPVC with 100% transparent GST billing.</div>
+            </div>
+
+            <!-- 3 Pillars -->
+            <div class="pillars-grid">
+                <div class="pillar-card">
+                    <div class="pillar-icon">💰</div>
+                    <div class="pillar-title">Wholesale Depot Rates</div>
+                    <div class="pillar-desc">Up to 8–15% lower than retail hardware counters. 0% broker fee.</div>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-icon">🚚</div>
+                    <div class="pillar-title">Site Slot Delivery</div>
+                    <div class="pillar-desc">Guaranteed mini-truck & heavy trailer unloading scheduled to your pour time.</div>
+                </div>
+                <div class="pillar-card">
+                    <div class="pillar-icon">🛡️</div>
+                    <div class="pillar-title">Verified HSBC Escrow</div>
+                    <div class="pillar-desc">Funds remain protected until materials arrive and pass site inspection.</div>
+                </div>
+            </div>
+
+            <!-- Material Categories & Pricing Guide -->
+            <div class="section-title">📦 Wholesale Sourcing Rate Guide</div>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Standard Specification</th>
+                        <th>Depot Sourcing Rate</th>
+                        <th>Quality Guarantee</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Grade 53 OPC Cement</strong></td>
+                        <td>UltraTech / ACC / Ambuja (50kg Bag)</td>
+                        <td>Wholesale Live Rate</td>
+                        <td><span class="badge-verified">BIS Certified Fresh</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TMT Rebar Steel (Fe 550D)</strong></td>
+                        <td>Tata Tiscon / JSW Neosteel (Per Ton)</td>
+                        <td>Daily Primary Mill Rate</td>
+                        <td><span class="badge-verified">MTC Report Included</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>First-Class Red Bricks</strong></td>
+                        <td>Kiln-Burnt High Density (Per 1000 Pcs)</td>
+                        <td>Direct Kiln Rate</td>
+                        <td><span class="badge-verified">&lt; 3% Breakage Guarantee</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CPVC Plumbing Pipes</strong></td>
+                        <td>Astral / Ashirvad SDR-11 (Per Length)</td>
+                        <td>Distributor Master Pack</td>
+                        <td><span class="badge-verified">100% Virgin Compound</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Smart Estimator Tool Highlight -->
+            <div class="calculator-banner">
+                <div class="calc-header">
+                    <div class="calc-title">📐 Free Digital Material Estimator on gobuildbazaar.com</div>
+                    <span style="font-size: 11px; font-weight: 800; color: #ea580c;">No More Site Wastage</span>
+                </div>
+                <div class="calc-grid">
+                    <div class="calc-card">
+                        <div class="calc-card-metric">59 Bags</div>
+                        <div class="calc-card-label">Cement / 20'x10' Slab</div>
+                    </div>
+                    <div class="calc-card">
+                        <div class="calc-card-metric">1,000 Pcs</div>
+                        <div class="calc-card-label">Bricks / 10'x10' Wall</div>
+                    </div>
+                    <div class="calc-card">
+                        <div class="calc-card-metric">0.85 Ton</div>
+                        <div class="calc-card-label">TMT Steel / 1000 Sq Ft</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Contractors Switch -->
+            <div class="compare-box">
+                <div class="compare-col compare-bad">
+                    <strong>❌ Traditional Dealer Sourcing:</strong>
+                    <ul>
+                        <li>• Calling 5 dealers to find daily prices</li>
+                        <li>• Arbitrary retailer markups & broker commissions</li>
+                        <li>• Late unloading halting site laborers</li>
+                        <li>• Cash payments with zero legal tax invoicing</li>
+                    </ul>
+                </div>
+                <div class="compare-col compare-good">
+                    <strong>✅ Sourcing via BuildBazaar:</strong>
+                    <ul>
+                        <li>• Real-time transparent depot rates in seconds</li>
+                        <li>• 0% Commission direct HSBC/UPI Escrow</li>
+                        <li>• Scheduled delivery slots (Morning 8 AM - 12 PM)</li>
+                        <li>• Instant GST invoice for 100% input tax credit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer / Contact CTA -->
+        <div class="footer-cta">
+            <div class="cta-details">
+                <h3>Ready to procure for your job site?</h3>
+                <p>Order online in 2 minutes or get an instant bulk quotation on WhatsApp.</p>
+                <div class="contact-pills">
+                    <div class="contact-pill">🌐 gobuildbazaar.com</div>
+                    <div class="contact-pill">📱 WhatsApp: +91 88678 55362</div>
+                    <div class="contact-pill">📧 orders@gobuildbazaar.com</div>
+                </div>
+            </div>
+            <div class="qr-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>SCAN TO ORDER</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+

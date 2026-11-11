@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, Alert, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { User, ClipboardList, LogOut, CheckCircle, Clock, Building2 } from 'lucide-react-native';
+import { User, ClipboardList, LogOut, CheckCircle, Clock, Building2, MessageSquare, Star } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AccountScreen() {
@@ -56,7 +56,7 @@ export default function AccountScreen() {
               if (newStatus === 'Delivered') {
                 const order = orders.find((o: any) => o.id === orderId);
                 if (order) {
-                  fetch('https://buildbazaar-two.vercel.app/api/notify', {
+                  fetch('https://gobuildbazaar.com/api/notify', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -134,6 +134,24 @@ export default function AccountScreen() {
               </View>
               <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
                 <LogOut color="#ef4444" size={20} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Direct Tester Feedback Card for Play Store Compliance */}
+            <View style={styles.feedbackCard}>
+              <View style={styles.feedbackCardHeader}>
+                <Star color="#ea580c" size={18} fill="#ea580c" />
+                <Text style={styles.feedbackCardTitle}>Help Us Improve BuildBazaar</Text>
+              </View>
+              <Text style={styles.feedbackCardDesc}>
+                Testing our procurement app? Share your review or feature request directly on Google Play to help us launch public!
+              </Text>
+              <TouchableOpacity 
+                style={styles.feedbackBtn} 
+                onPress={() => Linking.openURL('https://play.google.com/store/apps/details?id=com.gobuildbazaar.app')}
+              >
+                <MessageSquare color="#ffffff" size={16} style={{ marginRight: 8 }} />
+                <Text style={styles.feedbackBtnText}>Leave Feedback on Google Play</Text>
               </TouchableOpacity>
             </View>
 
@@ -320,6 +338,45 @@ const styles = StyleSheet.create({
   },
   logoutBtn: {
     padding: 8,
+  },
+  feedbackCard: {
+    backgroundColor: '#fff7ed',
+    borderWidth: 1,
+    borderColor: '#ffedd5',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+  },
+  feedbackCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  feedbackCardTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#9a3412',
+    marginLeft: 6,
+  },
+  feedbackCardDesc: {
+    fontSize: 12,
+    color: '#7c2d12',
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+  feedbackBtn: {
+    backgroundColor: '#ea580c',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  feedbackBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '800',
   },
   historyHeader: {
     flexDirection: 'row',

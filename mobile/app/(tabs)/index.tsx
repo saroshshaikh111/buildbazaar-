@@ -158,7 +158,7 @@ export default function TabOneScreen() {
   const getImageUri = (imagePath: any) => {
     if (!imagePath) return 'https://via.placeholder.com/150';
     if (imagePath.startsWith('http')) return imagePath;
-    return `https://buildbazaar-two.vercel.app${imagePath}`;
+    return `https://gobuildbazaar.com${imagePath}`;
   };
 
   const calculateMaterials = () => {

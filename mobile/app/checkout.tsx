@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Activi
 import { useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, Briefcase, CreditCard, Truck, ArrowRight, ShieldCheck, Calendar, Clock } from 'lucide-react-native';
+import { ChevronLeft, Briefcase, CreditCard, Truck, ArrowRight, ShieldCheck, Calendar, Clock, Banknote } from 'lucide-react-native';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -24,6 +24,7 @@ export default function CheckoutPage() {
   const [businessName, setBusinessName] = useState('');
   const [deliveryDate, setDeliveryDate] = useState('');
   const [deliverySlot, setDeliverySlot] = useState('Morning (8AM-12PM)');
+  const [paymentMethod, setPaymentMethod] = useState<'Cash on Delivery' | 'UPI / Bank Transfer'>('Cash on Delivery');
 
   // Auto-fill user email
   useEffect(() => {
@@ -55,13 +56,13 @@ export default function CheckoutPage() {
           businessName,
           deliveryDate,
           deliverySlot,
-          paymentMethod: 'Cash on Delivery'
+          paymentMethod
         },
         userId: user?.id
       };
 
       // Call the live Next.js backend API directly to trigger secure validations, platform split, and Resend emails
-      const response = await fetch('https://buildbazaar-two.vercel.app/api/checkout', {
+      const response = await fetch('https://gobuildbazaar.com/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload)
@@ -75,9 +76,14 @@ export default function CheckoutPage() {
 
       // Success
       clearCart();
+      const refId = data.orderId.substring(0, 8).toUpperCase();
+      const alertMsg = paymentMethod === 'UPI / Bank Transfer'
+        ? `Order confirmed! Ref ID: ${refId}\n\nPlease transfer ₹${totalPrice.toLocaleString('en-IN')} to HSBC Escrow or UPI (8867855362@ybl) using Ref ID ${refId} as narration.`
+        : `Your materials order has been scheduled with Cash on Delivery! Ref ID: ${refId}`;
+
       Alert.alert(
         'Procurement Confirmed',
-        `Your materials order has been successfully scheduled! Ref ID: ${data.orderId.substring(0, 8).toUpperCase()}`,
+        alertMsg,
         [
           { 
             text: 'View Dashboard', 
@@ -272,6 +278,91 @@ export default function CheckoutPage() {
               placeholderTextColor="#94a3b8"
             />
           </View>
+
+          {/* Payment Method Selector */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Payment Method *</Text>
+            <View style={styles.paymentMethodRow}>
+              <TouchableOpacity
+                style={[
+                  styles.paymentMethodBtn,
+                  paymentMethod === 'Cash on Delivery' && styles.paymentMethodBtnActive
+                ]}
+                onPress={() => setPaymentMethod('Cash on Delivery')}
+              >
+                <Truck 
+                  color={paymentMethod === 'Cash on Delivery' ? '#ffffff' : '#0f172a'} 
+                  size={18} 
+                  style={{ marginRight: 6 }} 
+                />
+                <Text style={[
+                  styles.paymentMethodText,
+                  paymentMethod === 'Cash on Delivery' && styles.paymentMethodTextActive
+                ]}>
+                  Cash on Delivery
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.paymentMethodBtn,
+                  paymentMethod === 'UPI / Bank Transfer' && styles.paymentMethodBtnActive
+                ]}
+                onPress={() => setPaymentMethod('UPI / Bank Transfer')}
+              >
+                <Banknote 
+                  color={paymentMethod === 'UPI / Bank Transfer' ? '#ffffff' : '#0f172a'} 
+                  size={18} 
+                  style={{ marginRight: 6 }} 
+                />
+                <Text style={[
+                  styles.paymentMethodText,
+                  paymentMethod === 'UPI / Bank Transfer' && styles.paymentMethodTextActive
+                ]}>
+                  UPI / HSBC Bank
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* 0% Escrow Details Card */}
+          {paymentMethod === 'UPI / Bank Transfer' && (
+            <View style={styles.escrowCard}>
+              <View style={styles.escrowHeader}>
+                <ShieldCheck color="#16a34a" size={18} />
+                <Text style={styles.escrowTitle}>0% Commission HSBC Escrow</Text>
+              </View>
+              <Text style={styles.escrowSubtitle}>
+                Transfer order amount to our verified HSBC Escrow account. Funds remain secured until materials arrive at your site.
+              </Text>
+
+              <View style={styles.escrowDetailsBox}>
+                <View style={styles.escrowRow}>
+                  <Text style={styles.escrowLabel}>UPI ID:</Text>
+                  <Text style={styles.escrowValue} selectable>8867855362@ybl</Text>
+                </View>
+                <View style={styles.escrowRow}>
+                  <Text style={styles.escrowLabel}>Bank Name:</Text>
+                  <Text style={styles.escrowValue}>HSBC Bank</Text>
+                </View>
+                <View style={styles.escrowRow}>
+                  <Text style={styles.escrowLabel}>Account Name:</Text>
+                  <Text style={styles.escrowValue}>Sarosh Aasim Shaikh</Text>
+                </View>
+                <View style={styles.escrowRow}>
+                  <Text style={styles.escrowLabel}>Account No:</Text>
+                  <Text style={styles.escrowValue} selectable>106246788006</Text>
+                </View>
+                <View style={styles.escrowRow}>
+                  <Text style={styles.escrowLabel}>IFSC Code:</Text>
+                  <Text style={styles.escrowValue} selectable>HSBC0411002</Text>
+                </View>
+              </View>
+              <Text style={styles.escrowNote}>
+                💡 Long-press to copy account details. Use Order Ref ID in payment remarks.
+              </Text>
+            </View>
+          )}
 
           <View style={styles.summaryHighlight}>
             <View style={styles.highlightHeader}>
@@ -496,5 +587,88 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#ea580c',
     fontWeight: '900',
+  },
+  paymentMethodRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  paymentMethodBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  paymentMethodBtnActive: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  paymentMethodText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0f172a',
+  },
+  paymentMethodTextActive: {
+    color: '#ffffff',
+  },
+  escrowCard: {
+    backgroundColor: '#f0fdf4',
+    borderWidth: 1.5,
+    borderColor: '#bbf7d0',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+  },
+  escrowHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  escrowTitle: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#166534',
+  },
+  escrowSubtitle: {
+    fontSize: 11,
+    color: '#15803d',
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  escrowDetailsBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#dcfce7',
+    marginBottom: 8,
+    gap: 6,
+  },
+  escrowRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  escrowLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#64748b',
+  },
+  escrowValue: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0f172a',
+  },
+  escrowNote: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#15803d',
   }
 });
