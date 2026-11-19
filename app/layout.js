@@ -6,7 +6,7 @@ import MobileNav from './components/MobileNav';
 
 export const metadata = {
   title: 'BuildBazaar — Construction Materials Marketplace',
-  description: "India's trusted digital marketplace for construction materials.",
+  description: "Building materials from Hubballi-Dharwad's dealers, in one place.",
 };
 
 export const viewport = {

@@ -361,7 +361,7 @@ export default function CheckoutPage() {
                                         <p style={{color: '#94a3b8', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.6, fontWeight: 500}}>
                                             {formData.paymentMethod === 'UPI / Bank Transfer' 
                                                 ? 'Place your order now. After placing, transfer the amount to the escrow account above using your Order ID as reference.'
-                                                : 'By placing this order, you authorize the dispatch of materials to the specified project site. You will receive a technical inspection report upon delivery.'
+                                                : 'By placing this order, you authorize the dispatch of materials to the specified project site. Please check the material at your site before you accept it.'
                                             }
                                         </p>
 

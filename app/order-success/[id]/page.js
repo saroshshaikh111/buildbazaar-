@@ -152,11 +152,11 @@ export default function OrderSuccessPage() {
                         <div style={{backgroundColor: '#f8fafc', borderRadius: '1.5rem', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em'}}>
                                 <span>Total Taxable Value</span>
-                                <span>₹{(order.total_amount / 1.18).toLocaleString()}</span>
+                                <span>₹{(Math.round(order.total_amount / 1.18 * 100) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em'}}>
                                 <span>GST (CGST + SGST)</span>
-                                <span>₹{(order.total_amount - (order.total_amount / 1.18)).toLocaleString()}</span>
+                                <span>₹{(Math.round((order.total_amount - order.total_amount / 1.18) * 100) / 100).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <div style={{paddingTop: '1rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem'}}>
                                 <span style={{fontSize: '0.875rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0f172a'}}>Total Sourcing Cost</span>

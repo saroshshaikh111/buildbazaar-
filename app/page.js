@@ -79,8 +79,8 @@ export default function BuildBazaar() {
     const [estimates, setEstimates] = useState(null);
 
     // Delivery Location State
-    const [pincode, setPincode] = useState('110001');
-    const [city, setCity] = useState('Delhi');
+    const [pincode, setPincode] = useState('580020');
+    const [city, setCity] = useState('Hubballi');
     const [isUpdatingPin, setIsUpdatingPin] = useState(false);
 
     const fetchCity = async (pin) => {
@@ -390,7 +390,7 @@ export default function BuildBazaar() {
                     <div className="container hero-content">
                         <div className="badge-tag">MARKETPLACE</div>
                         <h1 style={{ fontSize: '2.2rem' }}>Transparent Prices <br/><span className="text-orange">Zero Hassle.</span></h1>
-                        <p style={{ fontSize: '1rem', opacity: 0.8 }}>India's trusted digital marketplace for construction materials.</p>
+                        <p style={{ fontSize: '1rem', opacity: 0.8 }}>Building materials from Hubballi-Dharwad's dealers, in one place.</p>
                         <div className="hero-actions" style={{ marginTop: '1.5rem' }}>
                             <Link href="/products" className="btn-primary" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px' }}>Browse Materials</Link>
                             <button 
@@ -599,7 +599,7 @@ export default function BuildBazaar() {
                 <section className="py-16 dark-section cta-section" style={{backgroundColor: 'var(--slate-900)', padding: '5rem 0', textAlign: 'center'}}>
                     <div className="container">
                         <h2 style={{color: 'white', fontSize: '2.5rem', marginBottom: '1rem'}}>Ready to simplify your sourcing?</h2>
-                        <p style={{color: 'var(--slate-300)', fontSize: '1.125rem', maxWidth: 600, margin: '0 auto 2rem auto'}}>Join 10,000+ builders to save up to 25% and get free delivery on your first bulk order.</p>
+                        <p style={{color: 'var(--slate-300)', fontSize: '1.125rem', maxWidth: 600, margin: '0 auto 2rem auto'}}>See local dealer rates and order straight to your site. No extra charges for buyers.</p>
                         <div style={{display: 'flex', gap: '1rem', justifyContent: 'center'}}>
                             <Link href="/auth" className="btn-primary btn-large" style={{textDecoration: 'none'}}>Create Free Account</Link>
                             <Link href="mailto:sales@buildbazaar.com" className="btn-outline btn-large" style={{textDecoration: 'none', color: 'white', borderColor: 'rgba(255,255,255,0.2)'}}>Talk to Sales</Link>

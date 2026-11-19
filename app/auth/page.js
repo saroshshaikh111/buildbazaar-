@@ -112,7 +112,7 @@ export default function AuthPage() {
                     password: password
                 });
                 if (error) throw error;
-                alert('Success! Check your email to verify your account.');
+                alert('Account created. You can sign in now.');
                 setIsLogin(true);
             }
         } catch (err) {
@@ -144,7 +144,7 @@ export default function AuthPage() {
                     
                     <div style={{textAlign: 'center', marginBottom: '2rem'}}>
                         <h1 style={{fontSize: '2rem', color: 'var(--slate-900)', marginBottom: '0.5rem'}}>{isLogin ? 'Welcome back' : 'Create an account'}</h1>
-                        <p style={{color: 'var(--slate-500)'}}>{isLogin ? 'Enter your details to access your dashboard.' : 'Join 10,000+ builders streamlining their material sourcing.'}</p>
+                        <p style={{color: 'var(--slate-500)'}}>{isLogin ? 'Enter your details to access your dashboard.' : 'Order building materials from Hubballi-Dharwad dealers.'}</p>
                     </div>
 
                     <form onSubmit={handleCredAuth} style={{display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>

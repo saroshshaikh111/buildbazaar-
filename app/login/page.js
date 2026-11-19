@@ -69,7 +69,7 @@ export default function LoginPage() {
                 } else {
                     const { data, error } = await supabase.auth.signUp({ email: email.trim(), password });
                     if (error) throw error;
-                    setSuccessMsg("Registration successful! Check your email to verify your account.");
+                    setSuccessMsg("Account created. You can sign in now.");
                     if (data?.session) {
                         router.push('/');
                     }

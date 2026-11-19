@@ -138,13 +138,13 @@ function ProductCatalog() {
                                 <div className="card-header" style={{display: 'flex', justifyContent: 'space-between', marginBottom: '1rem'}}>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                         <span style={{fontSize: '0.75rem', fontWeight: 700, color: 'var(--green)', display: 'flex', alignItems: 'center', backgroundColor: '#f0fdf4', padding: '2px 8px', borderRadius: '12px', width: 'fit-content'}}>
-                                            <ShieldCheck style={{width: 12, height: 12, marginRight: 4}} /> Verified
+                                            Local dealer
                                         </span>
                                         <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', backgroundColor: prod.origin_city === 'National' ? '#f1f5f9' : '#fff7ed', color: prod.origin_city === 'National' ? '#64748b' : '#f97316', padding: '0.2rem 0.5rem', borderRadius: '4px', width: 'fit-content' }}>
-                                            {prod.origin_city === 'National' ? 'Ships Nationwide' : `Ships from ${prod.origin_city}`}
+                                            {(prod.origin_city === 'National' || !prod.origin_city) ? 'Hubballi-Dharwad' : `From ${prod.origin_city}`}
                                         </span>
                                     </div>
-                                    {prod.tag && (
+                                    {false && prod.tag && (
                                         <span style={{
                                             fontSize: '0.75rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px',
                                             backgroundColor: prod.tag === 'Best Seller' ? '#fff7ed' : '#f0fdf4',
@@ -173,7 +173,7 @@ function ProductCatalog() {
                                     </h3>
                                 </Link>
                                 
-                                <div style={{display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--slate-500)'}}>
+                                <div style={{display: 'none', alignItems: 'center', gap: '4px', marginBottom: '1rem', fontSize: '0.875rem', color: 'var(--slate-500)'}}>
                                     <Star style={{width: 16, height: 16, fill: '#eab308', color: '#eab308'}} />
                                     <span><strong style={{color: 'var(--slate-900)'}}>{prod.rating}</strong> ({prod.reviews} reviews)</span>
                                 </div>
@@ -182,7 +182,7 @@ function ProductCatalog() {
                                     <div>
                                         <div style={{fontSize: '1.25rem', fontWeight: 800, color: 'var(--slate-900)', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
                                             ₹{prod.priceCurrent.toLocaleString('en-IN')}
-                                            {prod.priceOld && <span style={{fontSize: '0.875rem', fontWeight: 500, color: 'var(--slate-400)', textDecoration: 'line-through'}}>₹{prod.priceOld.toLocaleString('en-IN')}</span>}
+                                            {false && prod.priceOld && <span style={{fontSize: '0.875rem', fontWeight: 500, color: 'var(--slate-400)', textDecoration: 'line-through'}}>₹{prod.priceOld.toLocaleString('en-IN')}</span>}
                                         </div>
                                         <div style={{fontSize: '0.75rem', color: 'var(--slate-500)', marginTop: '2px'}}>{prod.unit}</div>
                                     </div>

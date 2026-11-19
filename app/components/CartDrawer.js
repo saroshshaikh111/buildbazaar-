@@ -91,7 +91,7 @@ export default function CartDrawer() {
                     </Link>
                     
                     <p style={{fontSize: '0.6rem', textAlign: 'center', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.15em', marginTop: '1rem', marginBottom: 0}}>
-                        Ships to site in 48-72 hours
+                        Same-city delivery, usually within a day
                     </p>
                 </div>
             </div>

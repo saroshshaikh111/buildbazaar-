@@ -41,17 +41,13 @@ export default function ProductDetailPage() {
 
                 if (error) throw error;
 
-                // FINAL RESTORATION: Data-driven price & visual integrity
+                // Price always comes from the database (the server charges this same price).
+                // Only the picture may be swapped for a stock image.
                 let updatedProduct = { ...data };
                 if (updatedProduct.title && updatedProduct.title.toLowerCase().includes('cement')) {
-                    // Verifed High-Fidelity material assets
-                    updatedProduct.images = [
-                        '/cement_bag.png'
-                    ];
-                    updatedProduct.priceCurrent = 450;
+                    updatedProduct.images = ['/cement_bag.png'];
                 } else if (updatedProduct.title && updatedProduct.title.toLowerCase().includes('tmt')) {
                     updatedProduct.images = ['/tmt_bars.png'];
-                    updatedProduct.priceCurrent = 65500;
                 } else if (updatedProduct.images && updatedProduct.images.some(img => img.includes('unsplash.com'))) {
                     // Fail-safe to remove broken or arbitrary unsplash photos entirely
                     updatedProduct.images = ['/cement_bag.png'];
@@ -153,13 +149,13 @@ export default function ProductDetailPage() {
                         <div style={{marginBottom: '2.5rem'}}>
                             <div style={{display: 'flex', gap: '8px', marginBottom: '1.25rem'}}>
                                 <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '6px'}}>{product.brand}</span>
-                                {product.verified && <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: '#f0fdf4', color: '#16a34a', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px'}}><ShieldCheck style={{width: 10, height: 10}} /> BIS CERTIFIED</span>}
+                                {false && <span style={{fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: '#f0fdf4', color: '#16a34a', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px'}}><ShieldCheck style={{width: 10, height: 10}} /> BIS CERTIFIED</span>}
                                 <span style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', padding: '4px 10px', backgroundColor: (product.origin_city === 'National' || !product.origin_city) ? '#f1f5f9' : '#fff7ed', color: (product.origin_city === 'National' || !product.origin_city) ? '#475569' : '#f97316', borderRadius: '6px' }}>
-                                    {(product.origin_city === 'National' || !product.origin_city) ? 'Ships Nationwide' : `Ships from ${product.origin_city}`}
+                                    {(product.origin_city === 'National' || !product.origin_city) ? 'Hubballi-Dharwad' : `From ${product.origin_city}`}
                                 </span>
                             </div>
                             <h1 style={{fontSize: '2.75rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.04em'}}>{product.title}</h1>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                            <div style={{display: 'none', alignItems: 'center', gap: '12px'}}>
                                 <div style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
                                     <Star style={{width: 16, height: 16, color: '#fbbf24', fill: '#fbbf24'}} />
                                     <span style={{fontWeight: 900, color: '#0f172a'}}>{product.rating}</span>
@@ -192,7 +188,7 @@ export default function ProductDetailPage() {
                                         <span style={{fontSize: 'clamp(2rem, 5vw, 2.75rem)', fontWeight: 900, color: '#0f172a'}}>₹{product.priceCurrent.toLocaleString()}</span>
                                         <span style={{fontSize: '0.7rem', fontWeight: 900, color: '#f97316', textTransform: 'uppercase', whiteSpace: 'nowrap'}}>{product.unit}</span>
                                     </div>
-                                    {product.priceOld && <span style={{fontSize: '1.125rem', color: '#cbd5e1', textDecoration: 'line-through', fontWeight: 700}}>₹{product.priceOld.toLocaleString()}</span>}
+                                    {false && product.priceOld && <span style={{fontSize: '1.125rem', color: '#cbd5e1', textDecoration: 'line-through', fontWeight: 700}}>₹{product.priceOld.toLocaleString()}</span>}
                                 </div>
                             </div>
 
@@ -224,11 +220,11 @@ export default function ProductDetailPage() {
                             <div style={{marginTop: '2.5rem', paddingTop: '2.5rem', borderTop: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '1.25rem'}}>
                                 <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                                     <Truck style={{width: 18, height: 18, color: '#94a3b8'}} />
-                                    <span style={{fontSize: '0.75rem', fontWeight: 800, color: '#64748b'}}>Ships to site: 48-72 hours</span>
+                                    <span style={{fontSize: '0.75rem', fontWeight: 800, color: '#64748b'}}>Same-city delivery, usually within a day</span>
                                 </div>
                                 <div style={{padding: '1.25rem', backgroundColor: '#f8fafc', borderRadius: '1.25rem', border: '1px solid #f1f5f9'}}>
-                                    <p style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '6px'}}>Technical Note</p>
-                                    <p style={{fontSize: '0.75rem', lineHeight: 1.5, color: '#475569', fontWeight: 600}}>IS-certified batch reports shared upon dispatch completion.</p>
+                                    <p style={{fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', color: '#94a3b8', marginBottom: '6px'}}>Note</p>
+                                    <p style={{fontSize: '0.75rem', lineHeight: 1.5, color: '#475569', fontWeight: 600}}>Delivery time depends on the seller. Check the material at your site before you accept it.</p>
                                 </div>
                             </div>
                         </div>
