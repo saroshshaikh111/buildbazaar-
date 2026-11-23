@@ -36,6 +36,28 @@ export default function AuthScreen() {
     return clean;
   };
 
+  // Reset link opens the website's reset page (same as web), then the user signs in here.
+  const handleForgotPassword = async () => {
+    setErrorMsg('');
+    setSuccessMsg('');
+    if (!email.trim()) {
+      setErrorMsg('Enter your email above first, then tap "Forgot password?".');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: 'https://www.gobuildbazaar.com/reset-password',
+      });
+      if (error) throw error;
+      setSuccessMsg('Reset link sent. Check your email (and the Spam folder).');
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Could not send the reset email. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAuth = async () => {
     setErrorMsg('');
     setSuccessMsg('');
@@ -253,6 +275,11 @@ export default function AuthScreen() {
                 placeholder={!isLogin ? 'At least 6 characters' : '••••••••'}
                 placeholderTextColor="#94a3b8"
               />
+              {isLogin && (
+                <TouchableOpacity onPress={handleForgotPassword} disabled={loading} style={styles.forgotBtn}>
+                  <Text style={styles.forgotText}>Forgot password?</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </>
         )}
@@ -307,6 +334,16 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
+  forgotBtn: {
+    alignSelf: 'flex-end',
+    paddingVertical: 8,
+    marginTop: 4,
+  },
+  forgotText: {
+    color: '#ea580c',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
