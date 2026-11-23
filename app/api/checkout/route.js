@@ -1,79 +1,80 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin, getRequestUser } from '@/lib/supabaseAdmin';
 import { sendOrderPlaced } from '@/lib/emailService';
 
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { cart, formData, userId } = body;
+        const { cart, formData = {}, userId: bodyUserId } = body;
 
-        if (!cart || cart.length === 0) {
+        if (!Array.isArray(cart) || cart.length === 0) {
             return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
         }
 
-        // 1. SECURE VALIDATION: Fetch live prices from DB to prevent Price Injection
+        // 1. IDENTITY: Trust only a verified Supabase session token.
+        //    Web (and mobile >= 1.0.3) send `Authorization: Bearer <access_token>`.
+        //    LEGACY: mobile 1.0.2 (live in Play testing) sends no token, only body.userId.
+        //    We accept that temporarily so testers' checkout keeps working.
+        //    TODO: once 1.0.3+ is the only build in use, return 401 when no token.
+        let userId = null;
+        const hasAuthHeader = !!request.headers.get('authorization');
+        if (hasAuthHeader) {
+            const authUser = await getRequestUser(request);
+            if (!authUser) {
+                return NextResponse.json({ error: 'Your session has expired. Please log in again.' }, { status: 401 });
+            }
+            userId = authUser.id;
+        } else if (bodyUserId) {
+            console.warn('Checkout without auth token (legacy mobile client).');
+            userId = bodyUserId;
+        }
+
+        // 2. SECURE VALIDATION: live prices AND titles come from the DB, never the client.
         const productIds = cart.map(item => item.id);
-        const { data: liveProducts, error: prodError } = await supabase
+        const { data: liveProducts, error: prodError } = await supabaseAdmin
             .from('products')
-            .select('id, "priceCurrent"')
+            .select('id, title, "priceCurrent"')
             .in('id', productIds);
 
         if (prodError || !liveProducts) {
             return NextResponse.json({ error: 'Failed to validate catalog prices.' }, { status: 400 });
         }
 
-        const priceMap = {};
-        liveProducts.forEach(p => { priceMap[p.id] = p.priceCurrent; });
+        const productMap = {};
+        liveProducts.forEach(p => { productMap[p.id] = p; });
 
         let secureTotal = 0;
         const finalOrderItems = [];
 
         for (const item of cart) {
-            const livePrice = priceMap[item.id];
-            if (livePrice === undefined) {
-                 return NextResponse.json({ error: `Product ${item.id} no longer exists.` }, { status: 400 });
+            const product = productMap[item.id];
+            if (!product) {
+                return NextResponse.json({ error: `Product ${item.id} no longer exists.` }, { status: 400 });
             }
 
-            // Validate quantity to prevent negative or manipulated values
-            const qty = parseInt(item.quantity, 10);
-            if (isNaN(qty) || qty <= 0 || qty > 100000) {
-                return NextResponse.json({ error: `Invalid quantity for item ${item.title || item.id}. Must be a positive integer.` }, { status: 400 });
+            const qty = Number(item.quantity);
+            if (!Number.isInteger(qty) || qty <= 0 || qty > 100000) {
+                return NextResponse.json({ error: `Invalid quantity for ${product.title}. Must be a positive whole number.` }, { status: 400 });
             }
 
-            secureTotal += livePrice * qty;
-            
+            secureTotal += Number(product.priceCurrent) * qty;
             finalOrderItems.push({
-                product_id: item.id,
-                title: item.title,
+                product_id: product.id,
+                title: product.title,
                 quantity: qty,
-                price: livePrice
+                price: product.priceCurrent,
             });
         }
 
-        // Verify authenticated user from token if available to prevent userId spoofing
-        let verifiedUserId = userId || null;
-        const authHeader = request.headers.get('authorization');
-        if (authHeader) {
-            try {
-                const token = authHeader.replace('Bearer ', '');
-                const { data: { user: authUser } } = await supabase.auth.getUser(token);
-                if (authUser) {
-                    verifiedUserId = authUser.id;
-                }
-            } catch (err) {
-                console.warn('Auth token verification skipped:', err);
-            }
-        }
-
-        // 2. MONETIZATION ENGINE: The 3% Platform Fee Split
-        const platformFee = Math.round(secureTotal * 0.03); 
+        // 3. MONETIZATION ENGINE: The 3% Platform Fee Split
+        const platformFee = Math.round(secureTotal * 0.03);
         const vendorPayout = secureTotal - platformFee;
 
-        // 3. Create Order
-        const { data: order, error: orderError } = await supabase
+        // 4. Create Order (server key: RLS blocks direct client inserts)
+        const { data: order, error: orderError } = await supabaseAdmin
             .from('orders')
             .insert({
-                user_id: verifiedUserId,
+                user_id: userId,
                 customer_name: formData.customerName,
                 buyer_email: formData.email || '',
                 buyer_phone: formData.phone || '',
@@ -87,37 +88,41 @@ export async function POST(request) {
                 delivery_date: formData.deliveryDate || null,
                 delivery_slot: formData.deliverySlot,
                 payment_method: formData.paymentMethod,
-                status: 'Processing'
+                status: 'Processing',
             })
             .select()
             .single();
 
         if (orderError) throw orderError;
 
-        // 4. Attach Order ID & Insert Items
-        finalOrderItems.forEach(item => item.order_id = order.id);
-        const { error: itemsError } = await supabase
+        // 5. Attach Order ID & Insert Items
+        finalOrderItems.forEach(item => { item.order_id = order.id; });
+        const { error: itemsError } = await supabaseAdmin
             .from('order_items')
             .insert(finalOrderItems);
 
-        if (itemsError) throw itemsError;
+        if (itemsError) {
+            // Don't leave an order with no items behind
+            await supabaseAdmin.from('orders').delete().eq('id', order.id);
+            throw itemsError;
+        }
 
-        // 5. Fire automated email (directly imported, no relative fetch)
+        // 6. Fire automated email
         await sendOrderPlaced({
             id: order.id,
-            customerName: formData.customerName,
-            buyerEmail: formData.email || '',
-            projectName: formData.projectName,
-            deliveryDate: formData.deliveryDate,
-            deliverySlot: formData.deliverySlot,
+            customerName: order.customer_name,
+            buyerEmail: order.buyer_email,
+            projectName: order.project_name,
+            deliveryDate: order.delivery_date,
+            deliverySlot: order.delivery_slot,
             totalAmount: secureTotal,
-            vendorPayout: vendorPayout,
-            items: finalOrderItems
+            vendorPayout,
+            items: finalOrderItems,
         });
 
         return NextResponse.json({ success: true, orderId: order.id });
     } catch (error) {
         console.error('Checkout Secure API Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: 'Could not place the order. Please try again.' }, { status: 500 });
     }
 }

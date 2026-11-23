@@ -161,8 +161,8 @@ export default function AuthPage() {
                             <div style={{flex: 1, height: '1px', background: 'var(--slate-200)'}}></div>
                         </div>
 
-                        {/* Mode Switcher */}
-                        <div style={{display: 'flex', background: 'var(--slate-100)', padding: '0.25rem', borderRadius: '0.5rem', gap: '0.25rem'}}>
+                        {/* Mode Switcher hidden until phone OTP works (Twilio trial can't text real users) */}
+                        <div style={{display: 'none', background: 'var(--slate-100)', padding: '0.25rem', borderRadius: '0.5rem', gap: '0.25rem'}}>
                             <button type="button" onClick={() => setAuthMode('email')} style={{flex: 1, padding: '0.5rem', borderRadius: '0.375rem', border: 'none', background: authMode === 'email' ? 'white' : 'transparent', boxShadow: authMode === 'email' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', fontWeight: 500, color: authMode === 'email' ? 'var(--slate-900)' : 'var(--slate-500)', cursor: 'pointer', transition: 'all 0.2s'}}>Email</button>
                             <button type="button" onClick={() => setAuthMode('phone')} style={{flex: 1, padding: '0.5rem', borderRadius: '0.375rem', border: 'none', background: authMode === 'phone' ? 'white' : 'transparent', boxShadow: authMode === 'phone' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', fontWeight: 500, color: authMode === 'phone' ? 'var(--slate-900)' : 'var(--slate-500)', cursor: 'pointer', transition: 'all 0.2s'}}>Phone Number</button>
                         </div>

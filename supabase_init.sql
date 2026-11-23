@@ -143,50 +143,7 @@ CREATE POLICY "Auth Uploads" ON storage.objects FOR INSERT WITH CHECK (
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ==========================================
 
--- Enable RLS on core tables
-ALTER TABLE products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE sellers ENABLE ROW LEVEL SECURITY;
-
--- 1. Products Policies
-DROP POLICY IF EXISTS "Public Read Products" ON products;
-CREATE POLICY "Public Read Products" ON products FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Seller Insert Products" ON products;
-CREATE POLICY "Seller Insert Products" ON products FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-
-DROP POLICY IF EXISTS "Seller Update Products" ON products;
-CREATE POLICY "Seller Update Products" ON products FOR UPDATE USING (
-    auth.uid() = seller_id OR auth.jwt() ->> 'email' = 'saroshaasim@gmail.com'
-);
-
--- 2. Orders Policies (Strict PII Protection)
-DROP POLICY IF EXISTS "Users Read Own Orders" ON orders;
-CREATE POLICY "Users Read Own Orders" ON orders FOR SELECT USING (
-    auth.uid() = user_id OR auth.jwt() ->> 'email' = 'saroshaasim@gmail.com'
-);
-
-DROP POLICY IF EXISTS "Insert Orders Policy" ON orders;
-CREATE POLICY "Insert Orders Policy" ON orders FOR INSERT WITH CHECK (
-    auth.uid() = user_id OR user_id IS NULL OR auth.role() = 'anon'
-);
-
-DROP POLICY IF EXISTS "Admin Update Orders" ON orders;
-CREATE POLICY "Admin Update Orders" ON orders FOR UPDATE USING (
-    auth.jwt() ->> 'email' = 'saroshaasim@gmail.com'
-);
-
--- 3. Order Items Policies
-DROP POLICY IF EXISTS "Users Read Own Order Items" ON order_items;
-CREATE POLICY "Users Read Own Order Items" ON order_items FOR SELECT USING (
-    EXISTS (
-        SELECT 1 FROM orders 
-        WHERE orders.id = order_items.order_id 
-        AND (orders.user_id = auth.uid() OR auth.jwt() ->> 'email' = 'saroshaasim@gmail.com')
-    )
-);
-
-DROP POLICY IF EXISTS "Insert Order Items Policy" ON order_items;
-CREATE POLICY "Insert Order Items Policy" ON order_items FOR INSERT WITH CHECK (true);
+-- The live RLS policies are maintained in supabase/rls_policies.sql.
+-- Run that file after this one. (The draft policies that used to be here
+-- were never applied and would have broken checkout.)
 

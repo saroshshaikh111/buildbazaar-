@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { updateOrderStatus } from '@/lib/apiClient';
 import { useAuth } from '@/app/context/AuthContext';
 import { 
     Package, 
@@ -55,33 +56,12 @@ export default function OrdersPage() {
     const handleUpdateStatus = async (orderId, newStatus) => {
         if (!confirm(`Are you sure you want to mark this order as ${newStatus}?`)) return;
         
-        const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
-        if (!error) {
+        try {
+            // Server verifies ownership, updates status and sends the escrow email
+            await updateOrderStatus(orderId, newStatus);
             setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-
-            // Fire escrow release email when buyer confirms delivery
-            if (newStatus === 'Delivered') {
-                const order = orders.find(o => o.id === orderId);
-                if (order) {
-                    fetch('/api/notify', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            type: 'ESCROW_RELEASED',
-                            order: {
-                                id: order.id,
-                                customerName: order.customer_name,
-                                buyerEmail: order.buyer_email || '',
-                                projectName: order.project_name,
-                                totalAmount: order.total_amount,
-                                vendorPayout: order.vendor_payout
-                            }
-                        })
-                    }).catch(err => console.warn('Notify failed:', err));
-                }
-            }
-        } else {
-            alert("Error updating order: " + error.message);
+        } catch (err) {
+            alert("Error updating order: " + err.message);
         }
     };
 
@@ -213,9 +193,6 @@ export default function OrdersPage() {
                                                         <Link href={`/products/${item.product_id}`} style={{fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', textDecoration: 'none', display: 'block'}}>{item.title}</Link>
                                                         <span style={{fontSize: '0.75rem', fontWeight: 700, color: '#64748b', display: 'block', marginTop: '0.25rem'}}>Qty: {item.quantity}</span>
                                                     </div>
-                                                </div>
-                                                <div style={{display: 'flex', gap: '0.5rem'}}>
-                                                    <button style={{padding: '0.6rem 1rem', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 800, color: '#0f172a', cursor: 'pointer'}}>Return Items</button>
                                                 </div>
                                             </div>
                                         ))}

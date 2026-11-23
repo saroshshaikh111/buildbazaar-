@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image,
 import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { updateOrderStatus } from '../lib/api';
 import { TrendingUp, Package, PackageOpen, DollarSign, Clock, Plus, X, Building2, ChevronLeft, Search, Image as ImageIcon } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -102,12 +103,13 @@ export default function SellerDashboard() {
   };
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
-    const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
-    if (!error) {
+    try {
+      // Server checks admin/owner rights, updates status and sends the emails
+      await updateOrderStatus(orderId, newStatus);
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
       Alert.alert('Success', `Order marked as ${newStatus}`);
-    } else {
-      Alert.alert("Error updating status", error.message);
+    } catch (err: any) {
+      Alert.alert("Error updating status", err.message);
     }
   };
 

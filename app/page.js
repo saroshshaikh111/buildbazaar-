@@ -166,30 +166,10 @@ export default function BuildBazaar() {
         });
     };
 
+    // The estimate is a guide only. Send the buyer to real dealer listings
+    // (the old version added made-up items that checkout could not accept).
     const addAllEstimatesToCart = () => {
-        if (!estimates) return;
-        
-        const estimatedItems = [
-            { id: 'est_cement', title: 'UltraTech Cement OPC 53', brand: 'UltraTech', priceCurrent: 380, priceOld: 420, quantity: estimates.cement, unit: 'bags' },
-            { id: 'est_steel', title: 'Tata Tiscon TMT Bar Fe500D', brand: 'Tata Steel', priceCurrent: 62, priceOld: 68, quantity: estimates.steel, unit: 'kg' },
-            { id: 'est_sand', title: 'Construction Sand', brand: 'Local Supplier', priceCurrent: 45, priceOld: 50, quantity: estimates.sand, unit: 'cft' },
-            { id: 'est_bricks', title: 'First Class Red Bricks', brand: 'Local Supplier', priceCurrent: 8, priceOld: 10, quantity: estimates.bricks, unit: 'pcs' }
-        ];
-
-        setCart(prev => {
-            let newCart = [...prev];
-            estimatedItems.forEach(estItem => {
-                const existingIndex = newCart.findIndex(item => item.id === estItem.id);
-                if (existingIndex >= 0) {
-                    newCart[existingIndex].quantity += estItem.quantity;
-                } else {
-                    newCart.push(estItem);
-                }
-            });
-            return newCart;
-        });
-
-        setCartDrawerOpen(true);
+        window.location.href = '/products';
     };
 
     return (
@@ -586,7 +566,7 @@ export default function BuildBazaar() {
                                                 <div className="result-item"><span>Bricks</span> <strong style={{color:'var(--slate-900)', fontSize:'1.125rem'}}>{estimates.bricks.toLocaleString('en-IN')} pcs</strong></div>
                                             </div>
                                             <button className="btn-outline w-full" style={{marginTop: '1rem', fontSize: '0.875rem'}} onClick={addAllEstimatesToCart}>
-                                                <ShoppingCart style={{width: 14, height: 14, display: 'inline', verticalAlign: 'middle', marginRight: 4}} /> Add Items to Cart
+                                                <ShoppingCart style={{width: 14, height: 14, display: 'inline', verticalAlign: 'middle', marginRight: 4}} /> See dealer rates for these items
                                             </button>
                                         </div>
                                     )}

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, Activit
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { updateOrderStatus } from '../../lib/api';
 import { User, ClipboardList, LogOut, CheckCircle, Clock, Building2, MessageSquare, Star } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -47,32 +48,9 @@ export default function AccountScreen() {
           text: 'Confirm', 
           onPress: async () => {
             try {
-              const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
-              if (error) throw error;
-              
+              // Server verifies ownership, updates status and sends the escrow email
+              await updateOrderStatus(orderId, newStatus);
               setOrders((prevOrders: any[]) => prevOrders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-              
-              // Trigger notify hook
-              if (newStatus === 'Delivered') {
-                const order = orders.find((o: any) => o.id === orderId);
-                if (order) {
-                  fetch('https://gobuildbazaar.com/api/notify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      type: 'ESCROW_RELEASED',
-                      order: {
-                        id: order.id,
-                        customerName: order.customer_name,
-                        buyerEmail: order.buyer_email || '',
-                        projectName: order.project_name,
-                        totalAmount: order.total_amount,
-                        vendorPayout: order.vendor_payout
-                      }
-                    })
-                  }).catch(err => console.warn('Notify failed:', err));
-                }
-              }
               Alert.alert('Success', `Order marked as ${newStatus}.`);
             } catch (err: any) {
               Alert.alert('Error', err.message || 'Failed to update status.');

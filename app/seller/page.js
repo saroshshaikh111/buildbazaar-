@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { updateOrderStatus } from '@/lib/apiClient';
 import { Package, TrendingUp, DollarSign, Clock, CheckCircle, Truck, PackageOpen, Plus, Image as ImageIcon, X, MapPin, Search, Building2, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
@@ -108,24 +109,12 @@ export default function SellerDashboard() {
     };
 
     const handleStatusUpdate = async (orderId, newStatus) => {
-        const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
-        if (!error) {
+        try {
+            // Server checks admin/owner rights, updates status and sends the emails
+            await updateOrderStatus(orderId, newStatus);
             setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-            // Client-side fetch to notify API (relative URL works fine from browser)
-            const order = orders.find(o => o.id === orderId);
-            const notifyType = newStatus === 'Dispatched' ? 'ORDER_DISPATCHED' : newStatus === 'Delivered' ? 'ESCROW_RELEASED' : null;
-            if (notifyType && order) {
-                fetch('/api/notify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: notifyType,
-                        order: { id: order.id, customerName: order.customer_name, buyerEmail: order.buyer_email || '', projectName: order.project_name, deliveryDate: order.delivery_date, deliverySlot: order.delivery_slot, totalAmount: order.total_amount, vendorPayout: order.vendor_payout }
-                    })
-                }).catch(err => console.warn('Notify hook failed:', err));
-            }
-        } else {
-            alert("Error updating status: " + error.message);
+        } catch (err) {
+            alert("Error updating status: " + err.message);
         }
     };
 

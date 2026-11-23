@@ -96,7 +96,7 @@ export default function LoginPage() {
                 </h1>
 
                 {/* Login Method Tabs */}
-                <div style={{display: 'flex', backgroundColor: 'var(--slate-50)', padding: '0.25rem', borderRadius: '0.5rem', marginBottom: '1.5rem'}}>
+                <div style={{display: 'none', backgroundColor: 'var(--slate-50)', padding: '0.25rem', borderRadius: '0.5rem', marginBottom: '1.5rem'}}>
                     <button 
                         type="button"
                         onClick={() => { setLoginMethod("email"); setErrorMsg(""); setSuccessMsg(""); }}

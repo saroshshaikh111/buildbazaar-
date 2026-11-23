@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Activi
 import { useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { authedPost } from '../lib/api';
 import { ChevronLeft, Briefcase, CreditCard, Truck, ArrowRight, ShieldCheck, Calendar, Clock, Banknote } from 'lucide-react-native';
 
 export default function CheckoutPage() {
@@ -58,21 +59,10 @@ export default function CheckoutPage() {
           deliverySlot,
           paymentMethod
         },
-        userId: user?.id
       };
 
-      // Call the live Next.js backend API directly to trigger secure validations, platform split, and Resend emails
-      const response = await fetch('https://gobuildbazaar.com/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderPayload)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to place order.');
-      }
+      // Live backend API: verifies the session token, validates prices, applies the 3% split, sends emails
+      const data = await authedPost('/api/checkout', orderPayload);
 
       // Success
       clearCart();

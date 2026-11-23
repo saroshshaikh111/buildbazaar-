@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { authedPost } from '@/lib/apiClient';
 import { useCart } from '@/app/context/CartContext';
 import { useAuth } from '@/app/context/AuthContext';
 import { 
@@ -93,21 +94,10 @@ export default function CheckoutPage() {
         setLoading(true);
 
         try {
-            const response = await fetch('/api/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    cart: cart,
-                    formData: formData,
-                    userId: user.id
-                })
+            const data = await authedPost('/api/checkout', {
+                cart: cart,
+                formData: formData
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to sync with secure payment gateway.');
-            }
 
             // Success!
             setOrderId(data.orderId);
